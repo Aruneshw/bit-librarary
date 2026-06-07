@@ -37,11 +37,15 @@ export default function SubjectPage() {
 
   // Fetch user
   useEffect(() => {
-    if (!isAuthenticated && !authLoading) fetchUser();
-  }, [isAuthenticated, authLoading, fetchUser]);
+    if (!isAuthenticated) fetchUser();
+  }, [isAuthenticated, fetchUser]);
 
   useEffect(() => {
-    if (!authLoading && !isAuthenticated) router.push('/login');
+    if (!authLoading && !isAuthenticated) {
+      // Small timeout to prevent aggressive redirects
+      const timer = setTimeout(() => router.push('/login'), 500);
+      return () => clearTimeout(timer);
+    }
   }, [authLoading, isAuthenticated, router]);
 
   // Fetch subject name

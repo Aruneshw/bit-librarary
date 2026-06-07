@@ -43,21 +43,28 @@ export default function TranslatorPopup() {
         .goog-te-gadget {
           color: transparent !important;
           font-family: 'Rajdhani', sans-serif !important;
+          font-size: 0px !important; /* Hides extra text */
         }
         .goog-te-gadget .goog-te-combo {
-          color: var(--arc-blue);
-          background-color: transparent;
-          border: 1px solid var(--glass-border);
-          border-radius: 4px;
-          padding: 2px 4px;
-          font-family: 'Rajdhani', sans-serif;
-          font-weight: 600;
-          outline: none;
-          cursor: pointer;
+          color: var(--arc-blue) !important;
+          background-color: #050A15 !important;
+          border: 1px solid rgba(0, 217, 255, 0.4) !important;
+          border-radius: 12px !important;
+          padding: 4px 8px !important;
+          font-family: 'Rajdhani', sans-serif !important;
+          font-weight: 600 !important;
+          font-size: 12px !important;
+          outline: none !important;
+          cursor: pointer !important;
+          box-shadow: 0 0 8px rgba(0, 217, 255, 0.2) !important;
+          appearance: none !important; /* Removes default OS styling on mobile */
+          -webkit-appearance: none !important;
+          -moz-appearance: none !important;
         }
         .goog-te-gadget .goog-te-combo option {
-          background-color: #000;
-          color: #fff;
+          background-color: #050A15 !important;
+          color: #fff !important;
+          font-family: 'Rajdhani', sans-serif !important;
         }
         /* Hide the top banner frame */
         .skiptranslate iframe {

@@ -13,23 +13,42 @@ interface QuestionModalProps {
   onClose: () => void;
 }
 
+// Initialize mermaid once outside the component to prevent repeated heavy initialization calls
+if (typeof window !== 'undefined') {
+  mermaid.initialize({ 
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    fontFamily: 'Rajdhani, sans-serif'
+  });
+}
+
 const Mermaid = ({ chart }: { chart: string }) => {
   const ref = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    if (ref.current && chart) {
-      try {
-        mermaid.initialize({ theme: 'dark', startOnLoad: false });
-        const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
-        mermaid.render(id, chart).then(({ svg }) => {
-          if (ref.current) {
+    let isMounted = true;
+
+    const renderChart = async () => {
+      if (ref.current && chart) {
+        try {
+          // Generate a unique ID that starts with a letter (required by Mermaid)
+          const id = `mermaid_${Math.random().toString(36).substr(2, 9)}`;
+          const { svg } = await mermaid.render(id, chart);
+          if (isMounted && ref.current) {
             ref.current.innerHTML = svg;
           }
-        }).catch(err => console.error("Mermaid render error", err));
-      } catch (err) {
-        console.error("Mermaid parse error", err);
+        } catch (err) {
+          console.error("Mermaid render error", err);
+        }
       }
-    }
+    };
+
+    renderChart();
+
+    return () => {
+      isMounted = false;
+    };
   }, [chart]);
 
   return <div ref={ref} className="flex justify-center w-full my-6 overflow-x-auto overflow-y-hidden" />;

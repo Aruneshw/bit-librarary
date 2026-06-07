@@ -58,7 +58,7 @@ Importance:
 Provided employment.
 Supported foreign trade.
 Enhanced economic prosperity.
-Demonstrated advanced technological skills.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 17),
+Demonstrated advanced technological skills.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 17),
   ('faca0000-0000-0000-0000-000000000018', 'a1000000-0000-0000-0000-000000000006', 'What are glossy and unpolished pottery? Explain the process of making pottery.', 'Glossy Pottery
 
 Pottery with a smooth polished surface.
@@ -78,7 +78,7 @@ Firing in kiln.
 Polishing if required.
 Importance:
 
-Pottery was used for storage, cooking, trade and rituals.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 18),
+Pottery was used for storage, cooking, trade and rituals.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 18),
   ('faca0000-0000-0000-0000-000000000019', 'a1000000-0000-0000-0000-000000000006', 'Explain in detail about Black and Red Ware.', 'Black and Red Ware is one of the most important archaeological findings in South India.
 
 Characteristics:
@@ -94,7 +94,7 @@ Trade
 Significance:
 Indicates advanced ceramic technology.
 Helps archaeologists determine historical periods.
-Found in many Sangam-age sites.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 19),
+Found in many Sangam-age sites.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 19),
   ('faca0000-0000-0000-0000-000000000020', 'a1000000-0000-0000-0000-000000000006', 'Write in detail about the incised marks and symbols engraved on ancient Indian pottery.', 'Ancient pottery contains many symbols and incised marks.
 
 Common Symbols:
@@ -118,7 +118,7 @@ Trade marks.
 Religious beliefs.
 Historical Importance:
 
-These symbols help researchers understand ancient culture, language and social organization.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 20),
+These symbols help researchers understand ancient culture, language and social organization.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 20),
   ('faca0000-0000-0000-0000-000000000021', 'a1000000-0000-0000-0000-000000000006', 'Explain the efforts taken to preserve ancient weaving and pottery technologies.', 'Ancient weaving and pottery technologies are important cultural heritages.
 
 Preservation Efforts:
@@ -132,36 +132,36 @@ Cultural exhibitions.
 Educational awareness programs.
 Conclusion:
 
-Preserving these technologies helps protect Tamil heritage and traditional craftsmanship for future generations.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 21),
-  ('faca0000-0000-0000-0000-000000000022', 'a1000000-0000-0000-0000-000000000006', 'What is Architecture?', 'Architecture is the art and science of designing and constructing buildings, monuments, temples, and other structures.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 22),
+Preserving these technologies helps protect Tamil heritage and traditional craftsmanship for future generations.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 21),
+  ('faca0000-0000-0000-0000-000000000022', 'a1000000-0000-0000-0000-000000000006', 'What is Architecture?', 'Architecture is the art and science of designing and constructing buildings, monuments, temples, and other structures.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 22),
   ('faca0000-0000-0000-0000-000000000023', 'a1000000-0000-0000-0000-000000000006', 'Name some construction materials used during the Sangam period.', 'Stone
 Brick
 Wood
 Clay
-Lime mortar', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 23),
-  ('faca0000-0000-0000-0000-000000000024', 'a1000000-0000-0000-0000-000000000006', 'Which script is predominantly found on hero stones discovered in Tamil Nadu?', 'Most hero stones contain inscriptions written in Tamil-Brahmi and later Vatteluttu scripts.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 24),
-  ('faca0000-0000-0000-0000-000000000025', 'a1000000-0000-0000-0000-000000000006', 'What are moats?', 'Moats are deep trenches filled with water surrounding forts and palaces for protection from enemies.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 25),
+Lime mortar', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 23),
+  ('faca0000-0000-0000-0000-000000000024', 'a1000000-0000-0000-0000-000000000006', 'Which script is predominantly found on hero stones discovered in Tamil Nadu?', 'Most hero stones contain inscriptions written in Tamil-Brahmi and later Vatteluttu scripts.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 24),
+  ('faca0000-0000-0000-0000-000000000025', 'a1000000-0000-0000-0000-000000000006', 'What are moats?', 'Moats are deep trenches filled with water surrounding forts and palaces for protection from enemies.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 25),
   ('faca0000-0000-0000-0000-000000000026', 'a1000000-0000-0000-0000-000000000006', 'What are the types of temples built in India?', 'Dravidian Style
 Nagara Style
-Vesara Style', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 26),
-  ('faca0000-0000-0000-0000-000000000027', 'a1000000-0000-0000-0000-000000000006', 'Which is considered the tallest temple gopuram in Tamil Nadu?', 'The Rajagopuram of Srirangam Ranganathaswamy Temple is considered the tallest temple gopuram in Tamil Nadu.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 27),
+Vesara Style', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 26),
+  ('faca0000-0000-0000-0000-000000000027', 'a1000000-0000-0000-0000-000000000006', 'Which is considered the tallest temple gopuram in Tamil Nadu?', 'The Rajagopuram of Srirangam Ranganathaswamy Temple is considered the tallest temple gopuram in Tamil Nadu.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 27),
   ('faca0000-0000-0000-0000-000000000028', 'a1000000-0000-0000-0000-000000000006', 'What are the six stages of hero stones mentioned by Tholkappiyar?', 'Katchi
 Kalkol
 Neerppadai
 Naduthal
 Perumpadai
-Vaazhththal', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 28),
+Vaazhththal', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 28),
   ('faca0000-0000-0000-0000-000000000029', 'a1000000-0000-0000-0000-000000000006', 'Name some grand temples built by the Cholas.', 'Brihadeeswarar Temple, Thanjavur
 Gangaikonda Cholapuram Temple
-Airavatesvara Temple', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 29),
-  ('faca0000-0000-0000-0000-000000000030', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note on Thirumalai Nayakkar Palace.', 'It was built by King Thirumalai Nayak in Madurai in the 17th century and is famous for its large pillars and Indo-Dravidian architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 30),
-  ('faca0000-0000-0000-0000-000000000031', 'a1000000-0000-0000-0000-000000000006', 'Who built the Shore Temple at Mahabalipuram?', 'The Shore Temple was built by Narasimhavarman II (Rajasimha Pallava).', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 31),
+Airavatesvara Temple', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 29),
+  ('faca0000-0000-0000-0000-000000000030', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note on Thirumalai Nayakkar Palace.', 'It was built by King Thirumalai Nayak in Madurai in the 17th century and is famous for its large pillars and Indo-Dravidian architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 30),
+  ('faca0000-0000-0000-0000-000000000031', 'a1000000-0000-0000-0000-000000000006', 'Who built the Shore Temple at Mahabalipuram?', 'The Shore Temple was built by Narasimhavarman II (Rajasimha Pallava).', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 31),
   ('faca0000-0000-0000-0000-000000000032', 'a1000000-0000-0000-0000-000000000006', 'What are the other names of Mahabalipuram?', 'Mamallapuram
-Mahabalipuram', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 32),
-  ('faca0000-0000-0000-0000-000000000033', 'a1000000-0000-0000-0000-000000000006', 'What is the Pancha Pandava Rathas?', 'They are five monolithic rock-cut temples built during the Pallava period at Mahabalipuram.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 33),
-  ('faca0000-0000-0000-0000-000000000034', 'a1000000-0000-0000-0000-000000000006', 'What is a rock-cut cave temple?', 'A temple carved directly into a rock hill or mountain is called a rock-cut cave temple.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 34),
-  ('faca0000-0000-0000-0000-000000000035', 'a1000000-0000-0000-0000-000000000006', 'Who built the Aayiram Kaal Mandapam in Madurai Meenakshi Temple?', 'It was built by Ariyanatha Mudaliyar, the minister of the Madurai Nayak rulers.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 35),
-  ('faca0000-0000-0000-0000-000000000036', 'a1000000-0000-0000-0000-000000000006', 'Write a short note on Indo-Saracenic Architecture.', 'Indo-Saracenic architecture combines Indian, Islamic, Mughal, Gothic, and European architectural styles. It became popular during British rule.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 36),
+Mahabalipuram', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 32),
+  ('faca0000-0000-0000-0000-000000000033', 'a1000000-0000-0000-0000-000000000006', 'What is the Pancha Pandava Rathas?', 'They are five monolithic rock-cut temples built during the Pallava period at Mahabalipuram.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 33),
+  ('faca0000-0000-0000-0000-000000000034', 'a1000000-0000-0000-0000-000000000006', 'What is a rock-cut cave temple?', 'A temple carved directly into a rock hill or mountain is called a rock-cut cave temple.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 34),
+  ('faca0000-0000-0000-0000-000000000035', 'a1000000-0000-0000-0000-000000000006', 'Who built the Aayiram Kaal Mandapam in Madurai Meenakshi Temple?', 'It was built by Ariyanatha Mudaliyar, the minister of the Madurai Nayak rulers.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 35),
+  ('faca0000-0000-0000-0000-000000000036', 'a1000000-0000-0000-0000-000000000006', 'Write a short note on Indo-Saracenic Architecture.', 'Indo-Saracenic architecture combines Indian, Islamic, Mughal, Gothic, and European architectural styles. It became popular during British rule.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 36),
   ('faca0000-0000-0000-0000-000000000037', 'a1000000-0000-0000-0000-000000000006', 'Describe the Architectural Styles of the Pallava Period.', 'Introduction
 
 The Pallavas ruled South India between the 4th and 9th centuries CE. They were pioneers in temple architecture and introduced many innovative construction techniques.
@@ -198,7 +198,7 @@ Influenced Chola and Vijayanagara architecture.
 UNESCO-recognized monuments.
 Conclusion
 
-The Pallavas transformed South Indian architecture from cave temples to magnificent stone temples.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 37),
+The Pallavas transformed South Indian architecture from cave temples to magnificent stone temples.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 37),
   ('faca0000-0000-0000-0000-000000000038', 'a1000000-0000-0000-0000-000000000006', 'Explain the Hero Stone Worship Tradition (Nadukkal Worship System).', 'Introduction
 
 Hero stones (Nadukkal) were memorial stones erected in honor of warriors who died in battle.
@@ -212,7 +212,7 @@ graph TD
   "Naduthal" --> "Perumpadai"
   "Perumpadai" --> "Vaazhththal"
 ```
-Explanation', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 38),
+Explanation', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 38),
   ('faca0000-0000-0000-0000-000000000039', 'a1000000-0000-0000-0000-000000000006', 'Discuss the Stage Construction Methods Mentioned in Silappadikaram.', 'Introduction
 
 Silappadikaram provides valuable information about ancient Tamil theatre and stage construction.
@@ -245,7 +245,7 @@ Reflected advanced engineering skills.
 Supported cultural development.
 Conclusion
 
-Ancient Tamils possessed sophisticated knowledge of theatre architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 39),
+Ancient Tamils possessed sophisticated knowledge of theatre architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 39),
   ('faca0000-0000-0000-0000-000000000040', 'a1000000-0000-0000-0000-000000000006', 'Describe the Grand Temples and Other Worship Sites of the Chola Period.', 'Introduction
 
 The Cholas built some of the finest temples in Indian history.
@@ -279,7 +279,7 @@ The temples demonstrate the engineering, artistic, and administrative excellence
 
 Conclusion
 
-Chola temples remain masterpieces of world architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 40),
+Chola temples remain masterpieces of world architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 40),
   ('faca0000-0000-0000-0000-000000000041', 'a1000000-0000-0000-0000-000000000006', 'Explain the Distinctive Features of Chettinad House Architecture.', 'Introduction
 
 Chettinad houses were built by the Nagarathar community and are famous for luxury and craftsmanship.
@@ -312,7 +312,7 @@ Symbol of Tamil heritage.
 Architectural excellence.
 Conclusion
 
-Chettinad houses represent a perfect blend of beauty, functionality, and sustainability.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 41),
+Chettinad houses represent a perfect blend of beauty, functionality, and sustainability.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 41),
   ('faca0000-0000-0000-0000-000000000042', 'a1000000-0000-0000-0000-000000000006', 'Explain the Key Features of Indo-Saracenic Architecture During British Rule.', 'Introduction
 
 Indo-Saracenic architecture emerged during British rule by combining Indian and European styles.
@@ -342,7 +342,7 @@ Unique colonial architecture.
 Historical landmarks.
 Conclusion
 
-Indo-Saracenic architecture symbolizes the blending of Eastern and Western architectural traditions.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 42),
+Indo-Saracenic architecture symbolizes the blending of Eastern and Western architectural traditions.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 42),
   ('faca0000-0000-0000-0000-000000000043', 'a1000000-0000-0000-0000-000000000006', 'Describe the Shore Temple and Cave Temples of Mahabalipuram.', 'Introduction
 
 Mahabalipuram is a UNESCO World Heritage Site and a masterpiece of Pallava architecture.
@@ -383,24 +383,24 @@ xychart-beta
 ```
 Conclusion
 
-The Shore Temple and Cave Temples showcase the highest achievements of Pallava engineering, sculpture, and temple architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 43),
+The Shore Temple and Cave Temples showcase the highest achievements of Pallava engineering, sculpture, and temple architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 43),
   ('faca0000-0000-0000-0000-000000000044', 'a1000000-0000-0000-0000-000000000006', 'What are the other names for rafters (construction beams)?', 'Rafters are also called:
 
 Roof beams
 Wooden support beams
-Structural timbers', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 44),
+Structural timbers', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 44),
   ('faca0000-0000-0000-0000-000000000045', 'a1000000-0000-0000-0000-000000000006', 'How many types of boats are mentioned in Sangam literature?', 'Sangam literature mentions several types of boats such as:
 
 Kappal
 Navai
 Thoni
 Ambi
-Odam', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 45),
-  ('faca0000-0000-0000-0000-000000000046', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about the Parathavar.', 'The Parathavar were ancient Tamil maritime people engaged in fishing, pearl diving, and overseas trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 46),
-  ('faca0000-0000-0000-0000-000000000047', 'a1000000-0000-0000-0000-000000000006', 'What is bipolar electric discharge?', 'It is a discharge of electricity between two opposite poles, producing heat and light.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 47),
-  ('faca0000-0000-0000-0000-000000000048', 'a1000000-0000-0000-0000-000000000006', 'Write about ancient smelting furnaces.', 'Ancient smelting furnaces were used to extract metals from ores through heating and reduction processes.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 48),
-  ('faca0000-0000-0000-0000-000000000049', 'a1000000-0000-0000-0000-000000000006', 'How is iron mentioned in Sangam literature?', 'Iron is mentioned as an important metal used for weapons, agricultural tools, and daily necessities.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 49),
-  ('faca0000-0000-0000-0000-000000000050', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about ancient coins.', 'Ancient coins were used for trade and administration and often contained symbols of rulers and kingdoms.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 50),
+Odam', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 45),
+  ('faca0000-0000-0000-0000-000000000046', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about the Parathavar.', 'The Parathavar were ancient Tamil maritime people engaged in fishing, pearl diving, and overseas trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 46),
+  ('faca0000-0000-0000-0000-000000000047', 'a1000000-0000-0000-0000-000000000006', 'What is bipolar electric discharge?', 'It is a discharge of electricity between two opposite poles, producing heat and light.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 47),
+  ('faca0000-0000-0000-0000-000000000048', 'a1000000-0000-0000-0000-000000000006', 'Write about ancient smelting furnaces.', 'Ancient smelting furnaces were used to extract metals from ores through heating and reduction processes.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 48),
+  ('faca0000-0000-0000-0000-000000000049', 'a1000000-0000-0000-0000-000000000006', 'How is iron mentioned in Sangam literature?', 'Iron is mentioned as an important metal used for weapons, agricultural tools, and daily necessities.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 49),
+  ('faca0000-0000-0000-0000-000000000050', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about ancient coins.', 'Ancient coins were used for trade and administration and often contained symbols of rulers and kingdoms.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 50),
   ('faca0000-0000-0000-0000-000000000051', 'a1000000-0000-0000-0000-000000000006', 'List the names of the nine gemstones (Navaratnas).', 'Ruby
 Pearl
 Coral
@@ -409,29 +409,29 @@ Yellow Sapphire
 Diamond
 Blue Sapphire
 Hessonite
-Cat''s Eye', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 51),
-  ('faca0000-0000-0000-0000-000000000052', 'a1000000-0000-0000-0000-000000000006', 'Who are the Kammiyar?', 'Kammiyar were skilled metalworkers and blacksmiths who manufactured tools, weapons, and ornaments.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 52),
-  ('faca0000-0000-0000-0000-000000000053', 'a1000000-0000-0000-0000-000000000006', 'Who are the Kuyinar?', 'Kuyinar were artisans associated with pottery and ceramic production.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 53),
+Cat''s Eye', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 51),
+  ('faca0000-0000-0000-0000-000000000052', 'a1000000-0000-0000-0000-000000000006', 'Who are the Kammiyar?', 'Kammiyar were skilled metalworkers and blacksmiths who manufactured tools, weapons, and ornaments.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 52),
+  ('faca0000-0000-0000-0000-000000000053', 'a1000000-0000-0000-0000-000000000006', 'Who are the Kuyinar?', 'Kuyinar were artisans associated with pottery and ceramic production.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 53),
   ('faca0000-0000-0000-0000-000000000054', 'a1000000-0000-0000-0000-000000000006', 'Name the different shapes of beads.', 'Spherical
 Cylindrical
 Barrel-shaped
 Disc-shaped
-Oval', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 54),
-  ('faca0000-0000-0000-0000-000000000055', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about colored glass beads.', 'Colored glass beads were decorative objects used in ornaments and trade and were produced using advanced manufacturing techniques.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 55),
+Oval', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 54),
+  ('faca0000-0000-0000-0000-000000000055', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about colored glass beads.', 'Colored glass beads were decorative objects used in ornaments and trade and were produced using advanced manufacturing techniques.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 55),
   ('faca0000-0000-0000-0000-000000000056', 'a1000000-0000-0000-0000-000000000006', 'How many shapes of beads are there? What are they?', 'Common bead shapes include:
 
 Round
 Oval
 Cylindrical
 Barrel
-Disc', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 56),
-  ('faca0000-0000-0000-0000-000000000057', 'a1000000-0000-0000-0000-000000000006', 'Which beads are mentioned in Silappathikaram?', 'Silappathikaram mentions pearl beads, gemstone beads, coral beads, and gold beads.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 57),
+Disc', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 56),
+  ('faca0000-0000-0000-0000-000000000057', 'a1000000-0000-0000-0000-000000000006', 'Which beads are mentioned in Silappathikaram?', 'Silappathikaram mentions pearl beads, gemstone beads, coral beads, and gold beads.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 57),
   ('faca0000-0000-0000-0000-000000000058', 'a1000000-0000-0000-0000-000000000006', 'What kinds of objects were made from beads?', 'Beads were used to make:
 
 Necklaces
 Bracelets
 Earrings
-Decorative ornaments', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 58),
+Decorative ornaments', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 58),
   ('faca0000-0000-0000-0000-000000000059', 'a1000000-0000-0000-0000-000000000006', 'Explain the Ancient Tamil Shipbuilding Technology', 'Introduction
 
 Ancient Tamils were among the greatest maritime traders of the Indian Ocean. Their shipbuilding technology enabled trade with Southeast Asia, Rome, Egypt, Sri Lanka, and Arabia.
@@ -482,7 +482,7 @@ Promoted cultural exchange
 Demonstrated engineering excellence
 Conclusion
 
-Tamil shipbuilding technology was among the most advanced maritime technologies of the ancient world.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 59),
+Tamil shipbuilding technology was among the most advanced maritime technologies of the ancient world.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 59),
   ('faca0000-0000-0000-0000-000000000060', 'a1000000-0000-0000-0000-000000000006', 'Describe the Metallurgical Skills of Ancient Tamils with Supporting Evidence', 'Introduction
 
 Ancient Tamils possessed remarkable knowledge of metallurgy, including iron extraction, steel production, copper working, and goldsmithing.
@@ -535,7 +535,7 @@ graph TD
 ```
 Conclusion
 
-The metallurgical knowledge of ancient Tamils laid the foundation for advanced manufacturing and international trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 60),
+The metallurgical knowledge of ancient Tamils laid the foundation for advanced manufacturing and international trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 60),
   ('faca0000-0000-0000-0000-000000000061', 'a1000000-0000-0000-0000-000000000006', 'Write a Note on Ancient Coins and Their Historical Significance', 'Introduction
 
 Coins are valuable historical sources that reveal economic, political, and cultural developments.
@@ -570,7 +570,7 @@ Shows political authority
 Reveals economic prosperity
 Conclusion
 
-Ancient coins serve as miniature historical documents preserving valuable information about civilization.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 61),
+Ancient coins serve as miniature historical documents preserving valuable information about civilization.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 61),
   ('faca0000-0000-0000-0000-000000000062', 'a1000000-0000-0000-0000-000000000006', 'Explain the Shapes and Types of Beads with Archaeological Evidence', 'Introduction
 
 Beads are among the earliest manufactured products of human civilization.
@@ -611,7 +611,7 @@ Religious activities
 Social status symbols
 Conclusion
 
-Beads provide important evidence of technological advancement and trade relations.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 62),
+Beads provide important evidence of technological advancement and trade relations.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 62),
   ('faca0000-0000-0000-0000-000000000063', 'a1000000-0000-0000-0000-000000000006', 'Explain the Details About Beads Mentioned by Ilango Adigal in Silappathikaram', 'Introduction
 
 Silappathikaram contains detailed references to precious gems and beads, reflecting the prosperity of ancient Tamil society.
@@ -659,39 +659,39 @@ International commerce
 Craft specialization
 Conclusion
 
-The references to beads in Silappathikaram demonstrate the technological skill, economic prosperity, and artistic excellence of ancient Tamil society.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 63),
-  ('faca0000-0000-0000-0000-000000000064', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Kallanai (Grand Anicut).', 'Kallanai is one of the world''s oldest water-regulating dams built across the Cauvery River by Karikala Chola around the 2nd century CE.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 64),
-  ('faca0000-0000-0000-0000-000000000065', 'a1000000-0000-0000-0000-000000000006', 'Who were the Neer Vettiyar?', 'Neer Vettiyar were officials responsible for distributing irrigation water fairly among farmers.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 65),
-  ('faca0000-0000-0000-0000-000000000066', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Kumizhi Thoombu.', 'Kumizhi Thoombu was an ancient water-lifting device used to draw water from wells and tanks for irrigation.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 66),
-  ('faca0000-0000-0000-0000-000000000067', 'a1000000-0000-0000-0000-000000000006', 'Who constructed the Thiraiyan Eri?', 'Thiraiyan Eri was constructed by King Thiraiyan for irrigation and water storage.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 67),
-  ('faca0000-0000-0000-0000-000000000068', 'a1000000-0000-0000-0000-000000000006', 'Which kings ruled by establishing the Seven Committees (Ezhu Variyams)?', 'The Chola kings established and maintained the Ezhu Variyam administrative system.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 68),
-  ('faca0000-0000-0000-0000-000000000069', 'a1000000-0000-0000-0000-000000000006', 'Who were the Neeranikkararkal?', 'Neeranikkararkal were officials who supervised water storage, distribution, and irrigation management.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 69),
-  ('faca0000-0000-0000-0000-000000000070', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Madai.', 'Madai is a sluice gate used to regulate water flow from tanks and reservoirs to agricultural fields.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 70),
-  ('faca0000-0000-0000-0000-000000000071', 'a1000000-0000-0000-0000-000000000006', 'Write a note about water resources in ancient Tamil society.', 'Water resources included rivers, tanks, ponds, lakes, canals, wells, and reservoirs.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 71),
-  ('faca0000-0000-0000-0000-000000000072', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Muraipanai.', 'Muraipanai was a rotational water-sharing system ensuring fair distribution among farmers.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 72),
+The references to beads in Silappathikaram demonstrate the technological skill, economic prosperity, and artistic excellence of ancient Tamil society.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 63),
+  ('faca0000-0000-0000-0000-000000000064', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Kallanai (Grand Anicut).', 'Kallanai is one of the world''s oldest water-regulating dams built across the Cauvery River by Karikala Chola around the 2nd century CE.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 64),
+  ('faca0000-0000-0000-0000-000000000065', 'a1000000-0000-0000-0000-000000000006', 'Who were the Neer Vettiyar?', 'Neer Vettiyar were officials responsible for distributing irrigation water fairly among farmers.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 65),
+  ('faca0000-0000-0000-0000-000000000066', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Kumizhi Thoombu.', 'Kumizhi Thoombu was an ancient water-lifting device used to draw water from wells and tanks for irrigation.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 66),
+  ('faca0000-0000-0000-0000-000000000067', 'a1000000-0000-0000-0000-000000000006', 'Who constructed the Thiraiyan Eri?', 'Thiraiyan Eri was constructed by King Thiraiyan for irrigation and water storage.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 67),
+  ('faca0000-0000-0000-0000-000000000068', 'a1000000-0000-0000-0000-000000000006', 'Which kings ruled by establishing the Seven Committees (Ezhu Variyams)?', 'The Chola kings established and maintained the Ezhu Variyam administrative system.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 68),
+  ('faca0000-0000-0000-0000-000000000069', 'a1000000-0000-0000-0000-000000000006', 'Who were the Neeranikkararkal?', 'Neeranikkararkal were officials who supervised water storage, distribution, and irrigation management.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 69),
+  ('faca0000-0000-0000-0000-000000000070', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Madai.', 'Madai is a sluice gate used to regulate water flow from tanks and reservoirs to agricultural fields.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 70),
+  ('faca0000-0000-0000-0000-000000000071', 'a1000000-0000-0000-0000-000000000006', 'Write a note about water resources in ancient Tamil society.', 'Water resources included rivers, tanks, ponds, lakes, canals, wells, and reservoirs.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 71),
+  ('faca0000-0000-0000-0000-000000000072', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Muraipanai.', 'Muraipanai was a rotational water-sharing system ensuring fair distribution among farmers.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 72),
   ('faca0000-0000-0000-0000-000000000073', 'a1000000-0000-0000-0000-000000000006', 'Which water bodies are mentioned in Tamil literature?', 'Rivers
 Lakes
 Tanks
 Ponds
 Canals
-Wells', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 73),
-  ('faca0000-0000-0000-0000-000000000074', 'a1000000-0000-0000-0000-000000000006', 'Write a note about pastoral occupations.', 'Pastoral occupations involved cattle rearing, goat herding, sheep farming, and dairy production.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 74),
+Wells', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 73),
+  ('faca0000-0000-0000-0000-000000000074', 'a1000000-0000-0000-0000-000000000006', 'Write a note about pastoral occupations.', 'Pastoral occupations involved cattle rearing, goat herding, sheep farming, and dairy production.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 74),
   ('faca0000-0000-0000-0000-000000000075', 'a1000000-0000-0000-0000-000000000006', 'What were the water sources for cattle?', 'Rivers
 Ponds
 Lakes
 Wells
-Reservoirs', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 75),
+Reservoirs', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 75),
   ('faca0000-0000-0000-0000-000000000076', 'a1000000-0000-0000-0000-000000000006', 'Explain Vanpulam and Menpulam.', 'Vanpulam – Dry, hard land suitable for millets.
-Menpulam – Fertile land suitable for wet cultivation like paddy.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 76),
+Menpulam – Fertile land suitable for wet cultivation like paddy.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 76),
   ('faca0000-0000-0000-0000-000000000077', 'a1000000-0000-0000-0000-000000000006', 'Name some sea birds mentioned in ancient texts.', 'Seagulls
 Pelicans
 Herons
-Cormorants', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 77),
-  ('faca0000-0000-0000-0000-000000000078', 'a1000000-0000-0000-0000-000000000006', 'Write a note about pearl diving.', 'Pearl diving involved collecting pearl oysters from the sea and extracting pearls for trade and ornamentation.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 78),
+Cormorants', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 77),
+  ('faca0000-0000-0000-0000-000000000078', 'a1000000-0000-0000-0000-000000000006', 'Write a note about pearl diving.', 'Pearl diving involved collecting pearl oysters from the sea and extracting pearls for trade and ornamentation.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 78),
   ('faca0000-0000-0000-0000-000000000079', 'a1000000-0000-0000-0000-000000000006', 'List four benefits of ponds.', 'Irrigation
 Drinking water
 Groundwater recharge
-Livestock usage', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 79),
+Livestock usage', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 79),
   ('faca0000-0000-0000-0000-000000000080', 'a1000000-0000-0000-0000-000000000006', 'Write in Detail About Water Management and Irrigation Systems During the Sangam Period', 'Introduction
 
 Water management was the backbone of Sangam-age civilization. Ancient Tamils developed sophisticated systems to collect, store, regulate, and distribute water.
@@ -749,7 +749,7 @@ Key Features
 
 Conclusion
 
-The Sangam-period irrigation system represents one of the earliest examples of scientific water resource management in the world.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 80),
+The Sangam-period irrigation system represents one of the earliest examples of scientific water resource management in the world.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 80),
   ('faca0000-0000-0000-0000-000000000081', 'a1000000-0000-0000-0000-000000000006', 'Explain the Kallanai Dam – Construction, Purpose, and Historical Significance', 'Introduction
 
 Kallanai (Grand Anicut) is one of the oldest functioning dams in the world and a remarkable engineering achievement of ancient Tamil civilization.
@@ -805,7 +805,7 @@ xychart-beta
 ```
 Conclusion
 
-Kallanai stands as a symbol of ancient Tamil engineering brilliance and continues to serve farmers even today.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 81),
+Kallanai stands as a symbol of ancient Tamil engineering brilliance and continues to serve farmers even today.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 81),
   ('faca0000-0000-0000-0000-000000000082', 'a1000000-0000-0000-0000-000000000006', 'Describe the Agricultural Practices of Ancient Tamils During the Sangam Period', 'Introduction
 
 Agriculture was the primary occupation of Sangam-age Tamil society.
@@ -852,7 +852,7 @@ Trade development
 Social stability
 Conclusion
 
-Ancient Tamil agriculture was scientifically planned and supported by effective irrigation systems.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 82),
+Ancient Tamil agriculture was scientifically planned and supported by effective irrigation systems.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 82),
   ('faca0000-0000-0000-0000-000000000083', 'a1000000-0000-0000-0000-000000000006', 'Explain Pearl Harvesting and Pearl Diving in Ancient Times', 'Introduction
 
 Pearl diving was one of the most profitable maritime industries of ancient Tamilakam.
@@ -900,7 +900,7 @@ pie title "Uses of Ancient Pearls"
 ```
 Conclusion
 
-Pearl diving contributed significantly to the wealth and global trade reputation of ancient Tamil kingdoms.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 83),
+Pearl diving contributed significantly to the wealth and global trade reputation of ancient Tamil kingdoms.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 83),
   ('faca0000-0000-0000-0000-000000000084', 'a1000000-0000-0000-0000-000000000006', 'Write About Cattle Rearing, Livestock Management, and Animal Husbandry During the Sangam Period', 'Introduction
 
 Livestock formed an essential component of the Sangam economy and agricultural system.
@@ -967,32 +967,32 @@ graph TD
   "Modern Relevance" --> "Conclusion"
 ```
 
-Using this structure consistently can make long answers more complete, organized, and easier for examiners to evaluate.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 84),
-  ('faca0000-0000-0000-0000-000000000085', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Computational Tamil (Kanithamizh).', 'Kanithamizh refers to the use of Tamil language in computers, digital devices, software, and information technology systems.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 85),
-  ('faca0000-0000-0000-0000-000000000086', 'a1000000-0000-0000-0000-000000000006', 'In which year was the Tamil Virtual Academy established?', 'The Tamil Virtual Academy was established in 2001 by the Government of Tamil Nadu.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 86),
+Using this structure consistently can make long answers more complete, organized, and easier for examiners to evaluate.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 84),
+  ('faca0000-0000-0000-0000-000000000085', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Computational Tamil (Kanithamizh).', 'Kanithamizh refers to the use of Tamil language in computers, digital devices, software, and information technology systems.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 85),
+  ('faca0000-0000-0000-0000-000000000086', 'a1000000-0000-0000-0000-000000000006', 'In which year was the Tamil Virtual Academy established?', 'The Tamil Virtual Academy was established in 2001 by the Government of Tamil Nadu.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 86),
   ('faca0000-0000-0000-0000-000000000087', 'a1000000-0000-0000-0000-000000000006', 'Name three e-learning systems.', 'E-books
 Online Learning Platforms
-Virtual Classrooms', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 87),
+Virtual Classrooms', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 87),
   ('faca0000-0000-0000-0000-000000000088', 'a1000000-0000-0000-0000-000000000006', 'List the institutions where Tamil software is developed.', 'Tamil Virtual Academy
 Anna University
 Tamil University
-Open Source Tamil Computing Communities', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 88),
-  ('faca0000-0000-0000-0000-000000000089', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Digital Libraries.', 'Digital libraries are online repositories that store books, journals, manuscripts, and research materials in electronic form.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 89),
-  ('faca0000-0000-0000-0000-000000000090', 'a1000000-0000-0000-0000-000000000006', 'Write about Online Dictionaries.', 'Online dictionaries provide meanings, pronunciation, synonyms, and translations through internet-based platforms.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 90),
-  ('faca0000-0000-0000-0000-000000000091', 'a1000000-0000-0000-0000-000000000006', 'How many components are there in the Madhuram Online Dictionary?', 'The Madhuram Online Dictionary consists of multiple lexical components including meanings, grammar, synonyms, and usage information.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 91),
-  ('faca0000-0000-0000-0000-000000000092', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Tamil Wiktionary.', 'Tamil Wiktionary is a free online collaborative dictionary containing Tamil words, meanings, pronunciations, and etymologies.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 92),
-  ('faca0000-0000-0000-0000-000000000093', 'a1000000-0000-0000-0000-000000000006', 'What is Sorkuvai Thittam?', 'Sorkuvai Thittam is a project aimed at collecting, organizing, and standardizing Tamil technical and scientific terminology.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 93),
+Open Source Tamil Computing Communities', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 88),
+  ('faca0000-0000-0000-0000-000000000089', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Digital Libraries.', 'Digital libraries are online repositories that store books, journals, manuscripts, and research materials in electronic form.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 89),
+  ('faca0000-0000-0000-0000-000000000090', 'a1000000-0000-0000-0000-000000000006', 'Write about Online Dictionaries.', 'Online dictionaries provide meanings, pronunciation, synonyms, and translations through internet-based platforms.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 90),
+  ('faca0000-0000-0000-0000-000000000091', 'a1000000-0000-0000-0000-000000000006', 'How many components are there in the Madhuram Online Dictionary?', 'The Madhuram Online Dictionary consists of multiple lexical components including meanings, grammar, synonyms, and usage information.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 91),
+  ('faca0000-0000-0000-0000-000000000092', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Tamil Wiktionary.', 'Tamil Wiktionary is a free online collaborative dictionary containing Tamil words, meanings, pronunciations, and etymologies.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 92),
+  ('faca0000-0000-0000-0000-000000000093', 'a1000000-0000-0000-0000-000000000006', 'What is Sorkuvai Thittam?', 'Sorkuvai Thittam is a project aimed at collecting, organizing, and standardizing Tamil technical and scientific terminology.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 93),
   ('faca0000-0000-0000-0000-000000000094', 'a1000000-0000-0000-0000-000000000006', 'What are the primary objectives of a Sorkuvai?', 'Develop Tamil terminology.
 Standardize scientific words.
-Promote Tamil in education and technology.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 94),
-  ('faca0000-0000-0000-0000-000000000095', 'a1000000-0000-0000-0000-000000000006', 'What was the previous name of Tamil Virtual Academy?', 'It was previously known as the Tamil Virtual University (TVU).', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 95),
-  ('faca0000-0000-0000-0000-000000000096', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Blogs.', 'Blogs are websites or online journals where individuals share information, opinions, and articles regularly.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 96),
-  ('faca0000-0000-0000-0000-000000000097', 'a1000000-0000-0000-0000-000000000006', 'Write about the development of Tamil in Blogs.', 'Blogs have increased Tamil content on the internet and promoted digital literacy among Tamil-speaking communities.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 97),
-  ('faca0000-0000-0000-0000-000000000098', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note on Online Tamil Dictionaries.', 'Online Tamil dictionaries provide quick access to vocabulary, meanings, grammar, and translations.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 98),
+Promote Tamil in education and technology.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 94),
+  ('faca0000-0000-0000-0000-000000000095', 'a1000000-0000-0000-0000-000000000006', 'What was the previous name of Tamil Virtual Academy?', 'It was previously known as the Tamil Virtual University (TVU).', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 95),
+  ('faca0000-0000-0000-0000-000000000096', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Blogs.', 'Blogs are websites or online journals where individuals share information, opinions, and articles regularly.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 96),
+  ('faca0000-0000-0000-0000-000000000097', 'a1000000-0000-0000-0000-000000000006', 'Write about the development of Tamil in Blogs.', 'Blogs have increased Tamil content on the internet and promoted digital literacy among Tamil-speaking communities.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 97),
+  ('faca0000-0000-0000-0000-000000000098', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note on Online Tamil Dictionaries.', 'Online Tamil dictionaries provide quick access to vocabulary, meanings, grammar, and translations.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 98),
   ('faca0000-0000-0000-0000-000000000099', 'a1000000-0000-0000-0000-000000000006', 'What are the benefits of Tamil software development?', 'Promotes Tamil computing.
 Enhances accessibility.
 Supports education.
-Preserves language digitally.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 2-Mark', 99),
+Preserves language digitally.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 99),
   ('faca0000-0000-0000-0000-000000000100', 'a1000000-0000-0000-0000-000000000006', 'Explain in Detail the Development of Computer Tamil (Kanithamizh)', 'Introduction
 
 Computer Tamil (Kanithamizh) refers to the integration of Tamil language with modern computing technologies. It enables Tamil users to access computers, mobile devices, software, and internet resources in their native language.
@@ -1052,7 +1052,7 @@ Software localization.
 NLP resource development.
 Conclusion
 
-Computer Tamil has transformed Tamil from a traditional language into a globally accessible digital language.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 16-Mark', 100),
+Computer Tamil has transformed Tamil from a traditional language into a globally accessible digital language.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 100),
   ('faca0000-0000-0000-0000-000000000101', 'a1000000-0000-0000-0000-000000000006', 'Explain About E-Books', 'Introduction
 
 E-books (Electronic Books) are digital versions of printed books that can be read using computers, smartphones, tablets, and e-readers.
@@ -1090,7 +1090,7 @@ Research support.
 Digital classrooms.
 Conclusion
 
-E-books have revolutionized learning by making knowledge accessible anytime and anywhere.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 16-Mark', 101),
+E-books have revolutionized learning by making knowledge accessible anytime and anywhere.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 101),
   ('faca0000-0000-0000-0000-000000000102', 'a1000000-0000-0000-0000-000000000006', 'Explain About Online Dictionaries or E-Dictionaries', 'Introduction
 
 An online dictionary is a digital platform that provides word meanings, pronunciations, grammar, and translations through the internet.
@@ -1136,7 +1136,7 @@ Research
 Content Creation
 Conclusion
 
-Online dictionaries play a crucial role in modern language learning and digital communication.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 16-Mark', 102),
+Online dictionaries play a crucial role in modern language learning and digital communication.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 102),
   ('faca0000-0000-0000-0000-000000000103', 'a1000000-0000-0000-0000-000000000006', 'Describe the Sorkuvai Thittam and Its Objectives', 'Introduction
 
 Sorkuvai Thittam is a language development initiative designed to create and standardize Tamil terminology, especially in science and technology.
@@ -1179,7 +1179,7 @@ Supports higher education.
 Enhances technical communication.
 Conclusion
 
-Sorkuvai Thittam is essential for making Tamil a modern scientific and technological language.', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 16-Mark', 103),
+Sorkuvai Thittam is essential for making Tamil a modern scientific and technological language.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 103),
   ('faca0000-0000-0000-0000-000000000104', 'a1000000-0000-0000-0000-000000000006', 'Write an Essay on Scientific Tamil', 'Introduction
 
 Scientific Tamil refers to the use of Scientific Tamil language for expressing scientific, technological, engineering, and medical concepts accurately.
@@ -1277,5 +1277,5 @@ graph TD
 ```mermaid
 graph TD
   "Unit V" --> "Scientific Tamil & Computing"
-```', NULL, '22GE201 - Tamils and Technology', 'Unit 6 - 16-Mark', 104)
+```', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 104)
 ON CONFLICT (id) DO UPDATE SET question = EXCLUDED.question, answer = EXCLUDED.answer, notes = EXCLUDED.notes, order_index = EXCLUDED.order_index;
