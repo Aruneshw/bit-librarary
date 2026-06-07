@@ -11,7 +11,7 @@ import TutorialModal from '@/components/tutorial/TutorialModal';
 import { createClient } from '@/lib/supabase';
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, isLoading: authLoading, fetchUser, signOut } = useAuthStore();
+  const { user, avatarUrl, isAuthenticated, isLoading: authLoading, fetchUser, signOut } = useAuthStore();
   const { subjects, isLoading: subjectsLoading, fetchSubjects } = useSubjectStore();
   const router = useRouter();
 
@@ -111,22 +111,27 @@ export default function DashboardPage() {
       />
 
       {/* Dashboard Content */}
-      <div className="relative z-10">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center">
         {/* Header */}
-        <header className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1
-              className="font-orbitron text-arc-blue text-lg font-bold tracking-wider"
-              style={{ textShadow: '0 0 12px rgba(0,217,255,0.4)' }}
-            >
-              ARC_OS
-            </h1>
-            <p className="font-mono text-[10px] text-text-white/30 tracking-wider mt-0.5">
-              {user?.email}
-            </p>
+        <header className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-4 pointer-events-none z-50">
+          <div className="flex items-center gap-3 pointer-events-auto">
+            {avatarUrl && (
+              <img src={avatarUrl} alt="Profile" className="w-10 h-10 rounded-full border border-arc-blue/30" />
+            )}
+            <div>
+              <h1
+                className="font-orbitron text-arc-blue text-lg font-bold tracking-wider"
+                style={{ textShadow: '0 0 12px rgba(0,217,255,0.4)' }}
+              >
+                ARC_OS
+              </h1>
+              <p className="font-mono text-[10px] text-text-white/60 tracking-wider mt-0.5">
+                {user?.name || user?.email}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 pointer-events-auto">
             {user?.department && (
               <span className="font-rajdhani text-xs text-arc-blue/60 uppercase tracking-[3px] border border-arc-blue/20 px-3 py-1 rounded-lg">
                 {user.department}
@@ -144,7 +149,7 @@ export default function DashboardPage() {
 
         {/* Subject Display */}
         {!subjectsLoading && introComplete && (
-          <div className="mt-4 md:mt-8 pb-12">
+          <div className="w-full pb-12 pt-24 lg:pt-0">
             {/* Compact reactor + title for mobile */}
             {isMobile && (
               <div className="flex flex-col items-center mb-8">

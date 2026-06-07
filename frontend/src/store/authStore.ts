@@ -4,9 +4,11 @@ import { createClient } from '@/lib/supabase';
 
 interface AuthState {
   user: Profile | null;
+  avatarUrl: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   setUser: (user: Profile | null) => void;
+  setAvatarUrl: (url: string | null) => void;
   setLoading: (loading: boolean) => void;
   updateDepartment: (dept: Department) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
@@ -16,10 +18,12 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
+  avatarUrl: null,
   isLoading: true,
   isAuthenticated: false,
 
   setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setAvatarUrl: (avatarUrl) => set({ avatarUrl }),
   setLoading: (isLoading) => set({ isLoading }),
 
   fetchUser: async () => {
@@ -40,9 +44,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         .single();
 
       if (profile) {
-        set({ user: profile as Profile, isAuthenticated: true, isLoading: false });
+        set({
+          user: profile as Profile,
+          avatarUrl: authUser.user_metadata?.avatar_url || null,
+          isAuthenticated: true,
+          isLoading: false
+        });
       } else {
-        set({ user: null, isAuthenticated: false, isLoading: false });
+        set({ user: null, avatarUrl: null, isAuthenticated: false, isLoading: false });
       }
     } catch {
       set({ user: null, isAuthenticated: false, isLoading: false });
