@@ -169,8 +169,8 @@ The Pallavas ruled South India between the 4th and 9th centuries CE. They were p
 Evolution of Pallava Architecture
 ```mermaid
 graph TD
-  "Rock-cut Caves" --> "Monolithic Rathas"
-  "Monolithic Rathas" --> "Structural Temples"
+  RockcutCaves["Rock-cut Caves"] --> MonolithicRathas["Monolithic Rathas"]
+  MonolithicRathas["Monolithic Rathas"] --> StructuralTemples["Structural Temples"]
 ```
 A. Rock-Cut Cave Temples
 Introduced by Mahendravarman I.
@@ -206,11 +206,11 @@ Hero stones (Nadukkal) were memorial stones erected in honor of warriors who die
 Six Stages Mentioned in Tholkappiyam
 ```mermaid
 graph TD
-  "Katchi" --> "Kalkol"
-  "Kalkol" --> "Neerppadai"
-  "Neerppadai" --> "Naduthal"
-  "Naduthal" --> "Perumpadai"
-  "Perumpadai" --> "Vaazhththal"
+  Katchi["Katchi"] --> Kalkol["Kalkol"]
+  Kalkol["Kalkol"] --> Neerppadai["Neerppadai"]
+  Neerppadai["Neerppadai"] --> Naduthal["Naduthal"]
+  Naduthal["Naduthal"] --> Perumpadai["Perumpadai"]
+  Perumpadai["Perumpadai"] --> Vaazhththal["Vaazhththal"]
 ```
 Explanation', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 38),
   ('faca0000-0000-0000-0000-000000000039', 'a1000000-0000-0000-0000-000000000006', 'Discuss the Stage Construction Methods Mentioned in Silappadikaram.', 'Introduction
@@ -220,10 +220,10 @@ Silappadikaram provides valuable information about ancient Tamil theatre and sta
 Components of a Stage
 ```mermaid
 graph TD
-  "Stage Platform" --> "Pillars"
-  "Pillars" --> "Decorations"
-  "Decorations" --> "Lighting"
-  "Lighting" --> "Audience Area"
+  StagePlatform["Stage Platform"] --> Pillars["Pillars"]
+  Pillars["Pillars"] --> Decorations["Decorations"]
+  Decorations["Decorations"] --> Lighting["Lighting"]
+  Lighting["Lighting"] --> AudienceArea["Audience Area"]
 ```
 Features
 Stage Design
@@ -264,9 +264,9 @@ Known for artistic sculptures.
 Temple Layout
 ```mermaid
 graph TD
-  "Gopuram" --> "Mandapam"
-  "Mandapam" --> "Sanctum"
-  "Sanctum" --> "Prakaram"
+  Gopuram["Gopuram"] --> Mandapam["Mandapam"]
+  Mandapam["Mandapam"] --> Sanctum["Sanctum"]
+  Sanctum["Sanctum"] --> Prakaram["Prakaram"]
 ```
 Functions of Temples
 Religious center.
@@ -287,10 +287,10 @@ Chettinad houses were built by the Nagarathar community and are famous for luxur
 Layout
 ```mermaid
 graph TD
-  "Entrance" --> "Reception Hall"
-  "Reception Hall" --> "Central Courtyard"
-  "Central Courtyard" --> "Living Rooms"
-  "Living Rooms" --> "Kitchen"
+  Entrance["Entrance"] --> ReceptionHall["Reception Hall"]
+  ReceptionHall["Reception Hall"] --> CentralCourtyard["Central Courtyard"]
+  CentralCourtyard["Central Courtyard"] --> LivingRooms["Living Rooms"]
+  LivingRooms["Living Rooms"] --> Kitchen["Kitchen"]
 ```
 Features
 Spacious Courtyards
@@ -320,11 +320,11 @@ Indo-Saracenic architecture emerged during British rule by combining Indian and 
 Architectural Fusion
 ```mermaid
 graph TD
-  "Indian" --> "Indo-Saracenic"
-  "Islamic" --> "Indo-Saracenic"
-  "Mughal" --> "Indo-Saracenic"
-  "Gothic" --> "Indo-Saracenic"
-  "European" --> "Indo-Saracenic"
+  Indian["Indian"] --> IndoSaracenic["Indo-Saracenic"]
+  Islamic["Islamic"] --> IndoSaracenic["Indo-Saracenic"]
+  Mughal["Mughal"] --> IndoSaracenic["Indo-Saracenic"]
+  Gothic["Gothic"] --> IndoSaracenic["Indo-Saracenic"]
+  European["European"] --> IndoSaracenic["Indo-Saracenic"]
 ```
 Features
 Large domes
@@ -439,9 +439,9 @@ Ancient Tamils were among the greatest maritime traders of the Indian Ocean. The
 Evolution of Tamil Maritime Technology
 ```mermaid
 graph TD
-  "Fishing Rafts" --> "Wooden Boats"
-  "Wooden Boats" --> "Large Trading Vessels"
-  "Large Trading Vessels" --> "Ocean-going Ships"
+  FishingRafts["Fishing Rafts"] --> WoodenBoats["Wooden Boats"]
+  WoodenBoats["Wooden Boats"] --> LargeTradingVessels["Large Trading Vessels"]
+  LargeTradingVessels["Large Trading Vessels"] --> OceangoingShips["Ocean-going Ships"]
 ```
 Types of Ships
 Type	Purpose
@@ -453,12 +453,12 @@ Ambi	Fishing and transport
 Ship Construction Process
 ```mermaid
 graph TD
-  "Selection of Timber" --> "Wood Cutting"
-  "Wood Cutting" --> "Hull Construction"
-  "Hull Construction" --> "Mast Installation"
-  "Mast Installation" --> "Sail Attachment"
-  "Sail Attachment" --> "Waterproofing"
-  "Waterproofing" --> "Sea Testing"
+  SelectionofTimber["Selection of Timber"] --> WoodCutting["Wood Cutting"]
+  WoodCutting["Wood Cutting"] --> HullConstruction["Hull Construction"]
+  HullConstruction["Hull Construction"] --> MastInstallation["Mast Installation"]
+  MastInstallation["Mast Installation"] --> SailAttachment["Sail Attachment"]
+  SailAttachment["Sail Attachment"] --> Waterproofing["Waterproofing"]
+  Waterproofing["Waterproofing"] --> SeaTesting["Sea Testing"]
 ```
 Maritime Trade Network
 Ancient Tamil Maritime Connections
@@ -490,11 +490,11 @@ Ancient Tamils possessed remarkable knowledge of metallurgy, including iron extr
 Metallurgical Process
 ```mermaid
 graph TD
-  "Mining" --> "Ore Collection"
-  "Ore Collection" --> "Smelting"
-  "Smelting" --> "Purification"
-  "Purification" --> "Forging"
-  "Forging" --> "Finished Products"
+  Mining["Mining"] --> OreCollection["Ore Collection"]
+  OreCollection["Ore Collection"] --> Smelting["Smelting"]
+  Smelting["Smelting"] --> Purification["Purification"]
+  Purification["Purification"] --> Forging["Forging"]
+  Forging["Forging"] --> FinishedProducts["Finished Products"]
 ```
 Metals Used
 Metal	Usage
@@ -523,15 +523,15 @@ Exported internationally
 Applications
 ```mermaid
 graph TD
-  "Agriculture" --> "Ploughs"
+  Agriculture["Agriculture"] --> Ploughs["Ploughs"]
 ```
 ```mermaid
 graph TD
-  "Weapons" --> "Swords & Spears"
+  Weapons["Weapons"] --> SwordsSpears["Swords & Spears"]
 ```
 ```mermaid
 graph TD
-  "Trade" --> "Metal Goods"
+  Trade["Trade"] --> MetalGoods["Metal Goods"]
 ```
 Conclusion
 
@@ -551,11 +551,11 @@ Greek Coins
 Information Derived from Coins
 ```mermaid
 graph TD
-  "Coins" --> "Rulers"
-  "Rulers" --> "Economy"
-  "Economy" --> "Religion"
-  "Religion" --> "Trade"
-  "Trade" --> "Chronology"
+  Coins["Coins"] --> Rulers["Rulers"]
+  Rulers["Rulers"] --> Economy["Economy"]
+  Economy["Economy"] --> Religion["Religion"]
+  Religion["Religion"] --> Trade["Trade"]
+  Trade["Trade"] --> Chronology["Chronology"]
 ```
 Materials Used
 Material	Purpose
@@ -578,11 +578,11 @@ Beads are among the earliest manufactured products of human civilization.
 Manufacturing Process
 ```mermaid
 graph TD
-  "Raw Material" --> "Cutting"
-  "Cutting" --> "Shaping"
-  "Shaping" --> "Drilling"
-  "Drilling" --> "Polishing"
-  "Polishing" --> "Finished Bead"
+  RawMaterial["Raw Material"] --> Cutting["Cutting"]
+  Cutting["Cutting"] --> Shaping["Shaping"]
+  Shaping["Shaping"] --> Drilling["Drilling"]
+  Drilling["Drilling"] --> Polishing["Polishing"]
+  Polishing["Polishing"] --> FinishedBead["Finished Bead"]
 ```
 Types of Beads
 Type	Material
@@ -626,10 +626,10 @@ Diamond
 Relationship with Trade
 ```mermaid
 graph TD
-  "Gem Mining" --> "Processing"
-  "Processing" --> "Jewellery Production"
-  "Jewellery Production" --> "Domestic Trade"
-  "Domestic Trade" --> "International Trade"
+  GemMining["Gem Mining"] --> Processing["Processing"]
+  Processing["Processing"] --> JewelleryProduction["Jewellery Production"]
+  JewelleryProduction["Jewellery Production"] --> DomesticTrade["Domestic Trade"]
+  DomesticTrade["Domestic Trade"] --> InternationalTrade["International Trade"]
 ```
 Cultural Importance
 Economic Value
@@ -699,11 +699,11 @@ Water management was the backbone of Sangam-age civilization. Ancient Tamils dev
 Water Management Structure
 ```mermaid
 graph TD
-  "Rainfall" --> "Rivers"
-  "Rivers" --> "Reservoirs - Tanks"
-  "Reservoirs - Tanks" --> "Canals"
-  "Canals" --> "Agricultural Fields"
-  "Agricultural Fields" --> "Food Production"
+  Rainfall["Rainfall"] --> Rivers["Rivers"]
+  Rivers["Rivers"] --> ReservoirsTanks["Reservoirs - Tanks"]
+  ReservoirsTanks["Reservoirs - Tanks"] --> Canals["Canals"]
+  Canals["Canals"] --> AgriculturalFields["Agricultural Fields"]
+  AgriculturalFields["Agricultural Fields"] --> FoodProduction["Food Production"]
 ```
 Major Water Sources
 Source	Purpose
@@ -725,10 +725,10 @@ Large-scale water storage.
 Water Administration
 ```mermaid
 graph TD
-  "King" --> "Village Assembly"
-  "Village Assembly" --> "Neeranikkararkal"
-  "Neeranikkararkal" --> "Neer Vettiyar"
-  "Neer Vettiyar" --> "Farmers"
+  King["King"] --> VillageAssembly["Village Assembly"]
+  VillageAssembly["Village Assembly"] --> Neeranikkararkal["Neeranikkararkal"]
+  Neeranikkararkal["Neeranikkararkal"] --> NeerVettiyar["Neer Vettiyar"]
+  NeerVettiyar["Neer Vettiyar"] --> Farmers["Farmers"]
 ```
 Importance
 Increased agricultural production.
@@ -768,10 +768,10 @@ Natural river foundation
 Structure
 ```mermaid
 graph TD
-  "Cauvery River" --> "Stone Dam Kallanai"
-  "Stone Dam Kallanai" --> "Water Diversion"
-  "Water Diversion" --> "Canals"
-  "Canals" --> "Agricultural Fields"
+  CauveryRiver["Cauvery River"] --> StoneDamKallanai["Stone Dam Kallanai"]
+  StoneDamKallanai["Stone Dam Kallanai"] --> WaterDiversion["Water Diversion"]
+  WaterDiversion["Water Diversion"] --> Canals["Canals"]
+  Canals["Canals"] --> AgriculturalFields["Agricultural Fields"]
 ```
 Objectives
 Water conservation
@@ -813,12 +813,12 @@ Agriculture was the primary occupation of Sangam-age Tamil society.
 Agricultural Cycle
 ```mermaid
 graph TD
-  "Land Preparation" --> "Ploughing"
-  "Ploughing" --> "Sowing"
-  "Sowing" --> "Irrigation"
-  "Irrigation" --> "Crop Protection"
-  "Crop Protection" --> "Harvesting"
-  "Harvesting" --> "Storage"
+  LandPreparation["Land Preparation"] --> Ploughing["Ploughing"]
+  Ploughing["Ploughing"] --> Sowing["Sowing"]
+  Sowing["Sowing"] --> Irrigation["Irrigation"]
+  Irrigation["Irrigation"] --> CropProtection["Crop Protection"]
+  CropProtection["Crop Protection"] --> Harvesting["Harvesting"]
+  Harvesting["Harvesting"] --> Storage["Storage"]
 ```
 Major Crops
 Crop	Region
@@ -864,12 +864,12 @@ Coastal Pandya Kingdom
 Pearl Harvesting Process
 ```mermaid
 graph TD
-  "Pearl Oyster Beds" --> "Divers Enter Sea"
-  "Divers Enter Sea" --> "Collection of Oysters"
-  "Collection of Oysters" --> "Sorting"
-  "Sorting" --> "Opening Shells"
-  "Opening Shells" --> "Pearl Extraction"
-  "Pearl Extraction" --> "Trade & Export"
+  PearlOysterBeds["Pearl Oyster Beds"] --> DiversEnterSea["Divers Enter Sea"]
+  DiversEnterSea["Divers Enter Sea"] --> CollectionofOysters["Collection of Oysters"]
+  CollectionofOysters["Collection of Oysters"] --> Sorting["Sorting"]
+  Sorting["Sorting"] --> OpeningShells["Opening Shells"]
+  OpeningShells["Opening Shells"] --> PearlExtraction["Pearl Extraction"]
+  PearlExtraction["Pearl Extraction"] --> TradeExport["Trade & Export"]
 ```
 Divers
 Skills Required
@@ -915,11 +915,11 @@ Horses	Transport
 Livestock Management System
 ```mermaid
 graph TD
-  "Breeding" --> "Feeding"
-  "Feeding" --> "Water Supply"
-  "Water Supply" --> "Health Care"
-  "Health Care" --> "Protection"
-  "Protection" --> "Product Utilization"
+  Breeding["Breeding"] --> Feeding["Feeding"]
+  Feeding["Feeding"] --> WaterSupply["Water Supply"]
+  WaterSupply["Water Supply"] --> HealthCare["Health Care"]
+  HealthCare["Health Care"] --> Protection["Protection"]
+  Protection["Protection"] --> ProductUtilization["Product Utilization"]
 ```
 Uses of Livestock
 Agricultural Use
@@ -957,14 +957,14 @@ For every 16-mark answer:
 
 ```mermaid
 graph TD
-  "Introduction" --> "Definition"
-  "Definition" --> "Historical Background"
-  "Historical Background" --> "Flow Diagram"
-  "Flow Diagram" --> "Classification Table"
-  "Classification Table" --> "Process Explanation"
-  "Process Explanation" --> "Importance"
-  "Importance" --> "Modern Relevance"
-  "Modern Relevance" --> "Conclusion"
+  Introduction["Introduction"] --> Definition["Definition"]
+  Definition["Definition"] --> HistoricalBackground["Historical Background"]
+  HistoricalBackground["Historical Background"] --> FlowDiagram["Flow Diagram"]
+  FlowDiagram["Flow Diagram"] --> ClassificationTable["Classification Table"]
+  ClassificationTable["Classification Table"] --> ProcessExplanation["Process Explanation"]
+  ProcessExplanation["Process Explanation"] --> Importance["Importance"]
+  Importance["Importance"] --> ModernRelevance["Modern Relevance"]
+  ModernRelevance["Modern Relevance"] --> Conclusion["Conclusion"]
 ```
 
 Using this structure consistently can make long answers more complete, organized, and easier for examiners to evaluate.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 84),
@@ -1000,12 +1000,12 @@ Computer Tamil (Kanithamizh) refers to the integration of Tamil language with mo
 Evolution of Tamil Computing
 ```mermaid
 graph TD
-  "Traditional Tamil Writing" --> "Typewriters"
-  "Typewriters" --> "Tamil Fonts"
-  "Tamil Fonts" --> "Unicode Standard"
-  "Unicode Standard" --> "Tamil Software"
-  "Tamil Software" --> "Internet Tamil"
-  "Internet Tamil" --> "AI & Digital Tamil"
+  TraditionalTamilWriting["Traditional Tamil Writing"] --> Typewriters["Typewriters"]
+  Typewriters["Typewriters"] --> TamilFonts["Tamil Fonts"]
+  TamilFonts["Tamil Fonts"] --> UnicodeStandard["Unicode Standard"]
+  UnicodeStandard["Unicode Standard"] --> TamilSoftware["Tamil Software"]
+  TamilSoftware["Tamil Software"] --> InternetTamil["Internet Tamil"]
+  InternetTamil["Internet Tamil"] --> AIDigitalTamil["AI & Digital Tamil"]
 ```
 Major Milestones
 Period	Development
@@ -1060,11 +1060,11 @@ E-books (Electronic Books) are digital versions of printed books that can be rea
 E-Book Lifecycle
 ```mermaid
 graph TD
-  "Author" --> "Digital Creation"
-  "Digital Creation" --> "Editing"
-  "Editing" --> "Publishing"
-  "Publishing" --> "Online Distribution"
-  "Online Distribution" --> "Reader Access"
+  Author["Author"] --> DigitalCreation["Digital Creation"]
+  DigitalCreation["Digital Creation"] --> Editing["Editing"]
+  Editing["Editing"] --> Publishing["Publishing"]
+  Publishing["Publishing"] --> OnlineDistribution["Online Distribution"]
+  OnlineDistribution["Online Distribution"] --> ReaderAccess["Reader Access"]
 ```
 Features of E-Books
 Accessibility
@@ -1098,10 +1098,10 @@ An online dictionary is a digital platform that provides word meanings, pronunci
 Working Process
 ```mermaid
 graph TD
-  "User Query" --> "Database Search"
-  "Database Search" --> "Meaning Retrieval"
-  "Meaning Retrieval" --> "Grammar Information"
-  "Grammar Information" --> "Display Results"
+  UserQuery["User Query"] --> DatabaseSearch["Database Search"]
+  DatabaseSearch["Database Search"] --> MeaningRetrieval["Meaning Retrieval"]
+  MeaningRetrieval["Meaning Retrieval"] --> GrammarInformation["Grammar Information"]
+  GrammarInformation["Grammar Information"] --> DisplayResults["Display Results"]
 ```
 Components
 Vocabulary Database
@@ -1144,11 +1144,11 @@ Sorkuvai Thittam is a language development initiative designed to create and sta
 Process of Sorkuvai Development
 ```mermaid
 graph TD
-  "New Concept" --> "Research"
-  "Research" --> "Tamil Equivalent Creation"
-  "Tamil Equivalent Creation" --> "Expert Review"
-  "Expert Review" --> "Standardization"
-  "Standardization" --> "Public Usage"
+  NewConcept["New Concept"] --> Research["Research"]
+  Research["Research"] --> TamilEquivalentCreation["Tamil Equivalent Creation"]
+  TamilEquivalentCreation["Tamil Equivalent Creation"] --> ExpertReview["Expert Review"]
+  ExpertReview["Expert Review"] --> Standardization["Standardization"]
+  Standardization["Standardization"] --> PublicUsage["Public Usage"]
 ```
 Objectives
 Language Development
@@ -1187,10 +1187,10 @@ Scientific Tamil refers to the use of Scientific Tamil language for expressing s
 Need for Scientific Tamil
 ```mermaid
 graph TD
-  "Science Growth" --> "Need for Native Language"
-  "Need for Native Language" --> "Scientific Tamil"
-  "Scientific Tamil" --> "Education & Research"
-  "Education & Research" --> "Knowledge Dissemination"
+  ScienceGrowth["Science Growth"] --> NeedforNativeLanguage["Need for Native Language"]
+  NeedforNativeLanguage["Need for Native Language"] --> ScientificTamil["Scientific Tamil"]
+  ScientificTamil["Scientific Tamil"] --> EducationResearch["Education & Research"]
+  EducationResearch["Education & Research"] --> KnowledgeDissemination["Knowledge Dissemination"]
 ```
 Characteristics
 Precision
@@ -1231,7 +1231,7 @@ Tamil Software
    +
 ```mermaid
 graph TD
-  "AI Tools" --> "Scientific Tamil Expansion"
+  AITools["AI Tools"] --> ScientificTamilExpansion["Scientific Tamil Expansion"]
 ```
 Impact of Scientific Tamil
 Impact Areas of Scientific Tamil
@@ -1256,26 +1256,26 @@ Scientific Tamil serves as a bridge between modern scientific knowledge and Tami
 FINAL EXAM REVISION MAP (ALL 5 UNITS)
 ```mermaid
 graph TD
-  "Unit I" --> "Weaving & Pottery"
+  UnitI["Unit I"] --> WeavingPottery["Weaving & Pottery"]
 ```
 
 ```mermaid
 graph TD
-  "Unit II" --> "Architecture & Construction"
+  UnitII["Unit II"] --> ArchitectureConstruction["Architecture & Construction"]
 ```
 
 ```mermaid
 graph TD
-  "Unit III" --> "Manufacturing Technology"
+  UnitIII["Unit III"] --> ManufacturingTechnology["Manufacturing Technology"]
 ```
 
 ```mermaid
 graph TD
-  "Unit IV" --> "Agriculture & Irrigation"
+  UnitIV["Unit IV"] --> AgricultureIrrigation["Agriculture & Irrigation"]
 ```
 
 ```mermaid
 graph TD
-  "Unit V" --> "Scientific Tamil & Computing"
+  UnitV["Unit V"] --> ScientificTamilComputing["Scientific Tamil & Computing"]
 ```', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 104)
 ON CONFLICT (id) DO UPDATE SET question = EXCLUDED.question, answer = EXCLUDED.answer, notes = EXCLUDED.notes, order_index = EXCLUDED.order_index;

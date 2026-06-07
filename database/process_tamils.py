@@ -13,11 +13,11 @@ def convert_flow(text):
             # Gather until =
             new_lines.append("```mermaid")
             new_lines.append("graph TD")
-            new_lines.append('  "Indian" --> "Indo-Saracenic"')
-            new_lines.append('  "Islamic" --> "Indo-Saracenic"')
-            new_lines.append('  "Mughal" --> "Indo-Saracenic"')
-            new_lines.append('  "Gothic" --> "Indo-Saracenic"')
-            new_lines.append('  "European" --> "Indo-Saracenic"')
+            new_lines.append('  Indian["Indian"] --> IndoSaracenic["Indo-Saracenic"]')
+            new_lines.append('  Islamic["Islamic"] --> IndoSaracenic["Indo-Saracenic"]')
+            new_lines.append('  Mughal["Mughal"] --> IndoSaracenic["Indo-Saracenic"]')
+            new_lines.append('  Gothic["Gothic"] --> IndoSaracenic["Indo-Saracenic"]')
+            new_lines.append('  European["European"] --> IndoSaracenic["Indo-Saracenic"]')
             new_lines.append("```")
             while i < len(lines) and "Indo-Saracenic" not in lines[i]:
                 i += 1
@@ -44,7 +44,9 @@ def convert_flow(text):
                 for j in range(len(nodes) - 1):
                     a = nodes[j].replace('"', '').replace('(', '').replace(')', '').replace('/', '-')
                     b = nodes[j+1].replace('"', '').replace('(', '').replace(')', '').replace('/', '-')
-                    new_lines.append(f'  "{a}" --> "{b}"')
+                    a_id = ''.join(e for e in a if e.isalnum()) or f'Node{j}'
+                    b_id = ''.join(e for e in b if e.isalnum()) or f'Node{j+1}'
+                    new_lines.append(f'  {a_id}["{a}"] --> {b_id}["{b}"]')
                 new_lines.append("```")
                 continue
                 
@@ -57,7 +59,9 @@ def convert_flow(text):
                 for j in range(len(parts) - 1):
                     a = parts[j].replace('"', '')
                     b = parts[j+1].replace('"', '')
-                    new_lines.append(f'  "{a}" --> "{b}"')
+                    a_id = ''.join(e for e in a if e.isalnum()) or f'Node{j}'
+                    b_id = ''.join(e for e in b if e.isalnum()) or f'Node{j+1}'
+                    new_lines.append(f'  {a_id}["{a}"] --> {b_id}["{b}"]')
                 new_lines.append("```")
                 i += 1
                 continue
