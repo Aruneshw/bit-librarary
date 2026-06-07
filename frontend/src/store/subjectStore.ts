@@ -18,11 +18,13 @@ export const useSubjectStore = create<SubjectState>((set, get) => ({
     set({ isLoading: true });
 
     try {
-      // Fetch subjects that include this department
-      const { data: subjects } = await supabase
-        .from('subjects')
-        .select('*')
-        .contains('department', [department]);
+      let query = supabase.from('subjects').select('*');
+      
+      if (department !== 'ALL') {
+        query = query.contains('department', [department]);
+      }
+
+      const { data: subjects } = await query;
 
       if (!subjects) {
         set({ subjects: [], isLoading: false });
