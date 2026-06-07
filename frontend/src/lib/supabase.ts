@@ -255,7 +255,7 @@ export function createClient() {
               id: mockUser.id,
               email: mockUser.email,
               name: mockUser.raw_user_meta_data.full_name,
-              department: null,
+              department: 'AL', // Default for mock mode to bypass department checks
               created_at: new Date().toISOString(),
             });
             localStorage.setItem('arc_os_profiles', JSON.stringify(profiles));

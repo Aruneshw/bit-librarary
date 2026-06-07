@@ -9,7 +9,7 @@ import { useAuthStore } from '@/store/authStore';
 import { type Department } from '@/types';
 
 export default function LoginPage() {
-  const [phase, setPhase] = useState<'boot' | 'auth' | 'department'>('boot');
+  const [phase, setPhase] = useState<'boot' | 'auth'>('boot');
   const { user, isAuthenticated, fetchUser, isLoading } = useAuthStore();
   const router = useRouter();
 
@@ -27,16 +27,7 @@ export default function LoginPage() {
     setPhase('auth');
   };
 
-  const handleDepartmentSelect = (_dept: Department) => {
-    router.push('/dashboard');
-  };
 
-  // If user is authenticated but no department, show department selector
-  useEffect(() => {
-    if (isAuthenticated && user && !user.department) {
-      setPhase('department');
-    }
-  }, [isAuthenticated, user]);
 
   return (
     <main className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -50,14 +41,6 @@ export default function LoginPage() {
       {phase === 'auth' && (
         <div className="relative z-10 flex flex-col items-center">
           <AuthorizationCard />
-        </div>
-      )}
-
-      {/* Department Selection */}
-      {phase === 'department' && (
-        <div className="relative z-10 flex flex-col items-center">
-          <AuthorizationCard />
-          <DepartmentSelector onSelect={handleDepartmentSelect} />
         </div>
       )}
     </main>
