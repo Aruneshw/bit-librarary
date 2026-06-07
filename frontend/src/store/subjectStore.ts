@@ -37,7 +37,7 @@ export const useSubjectStore = create<SubjectState>((set, get) => ({
       }
 
       const subjectsWithProgress: SubjectWithProgress[] = await Promise.all(
-        subjects.map(async (subject) => {
+        subjects.map(async (subject: any) => {
           // Count total questions
           const { count: totalQuestions } = await supabase
             .from('questions')
