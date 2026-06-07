@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useSubjectStore } from '@/store/subjectStore';
 import SubjectOrbit from '@/components/dashboard/SubjectOrbit';
 import SubjectCardStack from '@/components/dashboard/SubjectCardStack';
+import ArcReactor from '@/components/dashboard/ArcReactor';
 import IntroAnimation from '@/components/animations/IntroAnimation';
 import TutorialModal from '@/components/tutorial/TutorialModal';
 import { createClient } from '@/lib/supabase';
@@ -186,24 +187,8 @@ export default function DashboardPage() {
             {isMobile && (
               <div className="flex flex-col items-center mb-8">
                 {/* Compact ARC Reactor (Triangular Design) */}
-                <div className="relative w-20 h-20 mb-4">
-                  <div className="absolute inset-0 rounded-full border border-arc-blue/20" style={{ animation: 'spin-counter 15s linear infinite' }} />
-                  <div className="absolute inset-2 rounded-full border border-dashed border-arc-blue/60" style={{ animation: 'spin-clockwise 10s linear infinite' }} />
-                  <div className="absolute inset-5 rounded-full border border-arc-blue" style={{ animation: 'spin-counter 5s linear infinite', boxShadow: 'inset 0 0 8px rgba(0,217,255,0.2), 0 0 8px rgba(0,217,255,0.4)' }} />
-                  
-                  {/* Floating particles */}
-                  <div className="absolute inset-0 pointer-events-none" style={{ animation: 'spin-clockwise 12s linear infinite' }}>
-                     <div className="absolute top-1 left-1/2 w-1 h-1 bg-arc-blue rounded-full shadow-[0_0_6px_#00D9FF]" />
-                  </div>
-                  <div className="absolute inset-2 pointer-events-none" style={{ animation: 'spin-counter 8s linear infinite' }}>
-                     <div className="absolute bottom-1 left-1/3 w-1 h-1 bg-arc-blue rounded-full shadow-[0_0_6px_#00D9FF]" />
-                  </div>
-
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <svg className="w-6 h-6 animate-pulse-blue" viewBox="0 0 100 100" style={{ filter: 'drop-shadow(0 0 12px rgba(0,217,255,1))' }}>
-                      <polygon points="50,15 15,80 85,80" fill="rgba(0,217,255,0.9)" stroke="rgba(0,217,255,1)" strokeWidth="2" strokeLinejoin="round" />
-                    </svg>
-                  </div>
+                <div className="relative mb-4">
+                  <ArcReactor size={80} />
                 </div>
 
                 <h2 className="font-orbitron text-sm text-arc-blue/60 uppercase tracking-[4px]">

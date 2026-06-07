@@ -1,0 +1,821 @@
+# 22MA201 – Engineering Mathematics II
+
+## Module Test – I (Questions 1–48)  
+
+### 1.
+
+A robot moves in straight lines described by (y = mx + c) where slope varies with terrain.
+
+**Form differential equation when both m and c are arbitrary and justify order.**
+
+### 2.
+
+A sensor output follows
+
+[
+y=e^{bx}(a\cos x)
+]
+
+**Identify the order of resulting differential equation and justify.**
+
+### 3.
+
+A body is dropped from rest.
+
+**Formulate the differential equation and find velocity.**
+
+### 4.
+
+Apply Newton's law of cooling to formulate the differential equation for an object at (90^\circ C) placed in a surrounding of (25^\circ C).
+
+### 5.
+
+Fluid flow velocity is given by
+
+[
+y=\frac{a}{x}+b
+]
+
+where constants depend on system pressure.
+
+**Form the differential equation and interpret the result.**
+
+### 6.
+
+A sensor output follows
+
+[
+y=e^x(a\cos x+b\sin x)
+]
+
+**Identify the order of resulting differential equation and justify.**
+
+### 7.
+
+A sensor cools from (90^\circ C) to (70^\circ C) in 8 minutes in a (20^\circ C) room.
+
+**Find the cooling constant k.**
+
+### 8.
+
+Apply the concept of free fall to construct the differential equation and determine the velocity of a body dropped from rest.
+
+### 9.
+
+In an electric vehicle battery cooling system, the temperature (T) satisfies
+
+[
+\frac{dT}{dt}=-k(T-T_a)
+]
+
+where (T_a) is ambient temperature.
+
+**Solve using separation of variables and evaluate the time required for the battery to reach a safe temperature given initial conditions.**
+
+### 10.
+
+A vehicle slows down in water where deceleration is proportional to velocity. Initial velocity is 20 m/s. After 5 seconds, velocity becomes 10 m/s.
+
+**Formulate, solve, and interpret velocity after 10 seconds.**
+
+### 11.
+
+In a wireless sensor system, signal strength (S) decays as
+
+[
+\frac{dh}{dt}=-k\sqrt{h}
+]
+
+**Solve the equation using separation of variables and analyze how initial signal strength influences transmission range.**
+
+### 12.
+
+A bacterial culture grows from 500 to 1500 in 4 hours.
+
+**Develop the model and predict population after 6 hours.**
+
+### 13.
+
+A damping system in machinery follows
+
+[
+\frac{dy}{dx}-\frac{2y}{x+1}=(x+1)^3
+]
+
+An engineer incorrectly assumes integrating factor (e^{-2x}), leading to wrong results.
+
+**Identify the mistake, compute correct integrating factor, and solve the equation.**
+
+### 14.
+
+A viral infection spreads in a closed campus of 5000 students. Initially, 5 students are infected and after 4 days, 50 students are infected.
+
+**Formulate the logistic model, determine constants, and evaluate infected population after 10 days.**
+
+### 15.
+
+In an electric vehicle, the battery pack experiences non-uniform heating during fast charging. The temperature rise is influenced by internal resistance and external cooling, leading to the model
+
+[
+\frac{dy}{dx}+3y=2x-1
+]
+
+where (y) represents temperature deviation and (x) represents time.
+
+**Find the temperature distribution using Leibnitz method and analyze whether the system reaches thermal stability.**
+
+### 16.
+
+A chemical reactor produces a substance limited by capacity 1000 units. Initially 50 units exist and after 2 hours it becomes 200 units.
+
+**Formulate the logistic equation and analyze production after 6 hours.**
+
+### 17.
+
+Classify and justify the equation:
+
+[
+\frac{d^2y}{dx^2}+3y=\sin x
+]
+
+### 18.
+
+Interpret the role of particular integral in second order systems in physical and engineering contexts.
+
+### 19.
+
+A mass-spring system satisfies
+
+[
+x''+25x=0
+]
+
+**Analyze and interpret amplitude, frequency, and nature of motion.**
+
+### 20.
+
+A mechanical oscillator completes 50 cycles in 10 seconds.
+
+**Determine its frequency and interpret its engineering significance.**
+
+### 21.
+
+A system follows
+
+[
+\frac{d^2y}{dx^2}+4y=0,\quad y(0)=2,\quad y'(0)=-4
+]
+
+The complementary function is
+
+[
+y=C_1\cos 2x+C_2\sin 2x
+]
+
+**Determine the constants and interpret system behavior.**
+
+### 22.
+
+Explain the role of initial conditions in second order systems.
+
+### 23.
+
+An LC circuit has equation
+
+[
+\frac{d^2q}{dt^2}+\frac{k}{m}q=0
+]
+
+**Evaluate the effect of increasing k on frequency.**
+
+### 24.
+
+A spring-mass system in vibration analysis is modeled by
+
+[
+\frac{d^2x}{dt^2}+\omega^2x=0
+]
+
+**Interpret the type of motion.**
+
+### 25.
+
+An RLC circuit satisfies
+
+[
+\frac{d^2i}{dt^2}+4\frac{di}{dt}+4i=0
+]
+
+**Determine complementary function and evaluate system response.**
+
+### 26.
+
+A vibration system satisfies
+
+[
+\frac{d^2x}{dt^2}+8\frac{dx}{dt}+16x=0
+]
+
+**Analyze the damping condition and evaluate system response.**
+
+### 27.
+
+A spring-mass system is governed by
+
+[
+\frac{d^2y}{dt^2}+5\frac{dy}{dt}+6y=0
+]
+
+**Formulate the auxiliary equation, determine the complementary function, and analyze system behavior.**
+
+### 28.
+
+A vehicle suspension system is modeled by
+
+[
+m\frac{d^2x}{dt^2}+c\frac{dx}{dt}+kx=0
+]
+
+with (m=2) kg, (c=6) Ns/m, (k=5) N/m.
+
+**Formulate the differential equation, determine the nature of damping, and interpret system response.**
+
+### 29.
+
+A vibration system is governed by
+
+[
+\frac{d^2y}{dt^2}+4y=t^2
+]
+
+**Determine particular integral using undetermined coefficients and evaluate complete response.**
+
+### 30.
+
+A structure vibrates under external force
+
+[
+F(t)=8\cos\omega t
+]
+
+**Analyze and determine the condition for resonance and evaluate its effect.**
+
+### 31.
+
+A control system is described by
+
+[
+\frac{d^2y}{dx^2}+y=\cos 2x
+]
+
+**Determine the particular integral using another method.**
+
+### 32.
+
+A spring-mass-damper system is subjected to an external force
+
+[
+F(t)=10\cos 2t
+]
+
+Given (m=1) kg, (c=4) Ns/m, (k=5) N/m.
+
+**Formulate the differential equation, determine steady-state solution, and interpret system behavior.**
+
+### 33.
+
+An engineer models position as a scalar
+
+[
+x(t)=t^2
+]
+
+instead of a vector.
+
+**Identify the error and correct it.**
+
+### 34.
+
+Temperature is given by
+
+[
+T(x,y)=5x+3y
+]
+
+**Identify the type of field.**
+
+### 35.
+
+In a conveyor system, path
+
+[
+\vec r(t)=t\hat i+t^2\hat j
+]
+
+**Identify if motion is straight or curved using tangent direction.**
+
+### 36.
+
+A particle moves in a circle.
+
+**Identify curvature nature.**
+
+### 37.
+
+A fluid velocity field is given by
+
+[
+\vec v(t)=3t\hat i+2t^2\hat j
+]
+
+**Identify whether acceleration is constant.**
+
+### 38.
+
+Given
+
+[
+\vec r(t)=3t\hat i+2t^2\hat j
+]
+
+**Identify the type and justify.**
+
+### 39.
+
+An engineer assumes tangent and normal vectors are parallel.
+
+**Identify and correct the error.**
+
+### 40.
+
+Identify role of unit tangent vector in motion analysis.
+
+### 41.
+
+An electric vehicle follows the trajectory
+
+[
+\vec r(t)=t^2\hat i+3t\hat j
+]
+
+**Compute velocity and acceleration at (t=2). Analyze whether the motion is uniformly accelerated and justify.**
+
+### 42.
+
+A pipe flow system is modeled by
+
+[
+\vec F=yz\hat i+xz\hat j+xy\hat k
+]
+
+**Compute divergence and analyze whether the system satisfies incompressibility.**
+
+### 43.
+
+A drone path is
+
+[
+\vec r(t)=t^3\hat i+2t^2\hat j+t\hat k
+]
+
+**Compute velocity, acceleration, and evaluate tangential component at (t=1).**
+
+### 44.
+
+In an electromagnetic field, the vector field is
+
+[
+\vec F=2x\hat i+3y\hat j
+]
+
+**Compute divergence and evaluate whether the field conserves flux. Interpret physically.**
+
+### 45.
+
+In an electrostatic field, potential
+
+[
+V(x,y,z)=xyz
+]
+
+**Compute gradient and evaluate directional derivative at ((1,1,1)) along (\hat i+\hat j+\hat k). Interpret physical meaning.**
+
+### 46.
+
+In a fluid mixing system, velocity field is
+
+[
+\vec F=y\hat i-x\hat j
+]
+
+**Compute curl and analyze whether the flow is rotational. Interpret its impact on mixing efficiency.**
+
+### 47.
+
+In an electric vehicle battery system, temperature distribution is modeled by
+
+[
+T(x,y,z)=x^2+y^2+z^2
+]
+
+**Compute the gradient and evaluate the direction of maximum temperature rise at point ((1,1,1)). Interpret its physical significance for thermal management and justify.**
+
+### 48.
+
+In an electromagnetic system, field
+
+[
+\vec F=2x\hat i+3y\hat j+4z\hat k
+]
+
+**Compute curl and evaluate whether the field is conservative. Justify.**
+
+### 49.
+
+A robot follows path (r(t)=t\hat{i}+t^2\hat{j}).
+
+**Determine velocity vector and interpret motion.**
+
+### 50.
+
+**Differentiate scalar and vector line integrals.**
+
+### 51.
+
+In a heat flow system,
+
+[
+\vec F=(x+y)\hat i+(x-y)\hat j
+]
+
+**Analyze the integrand in Green's theorem.**
+
+### 52.
+
+In a circulation model, what does a positive value of
+
+[
+\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}
+]
+
+indicate?
+
+### 53.
+
+A force field acts on a particle moving along a curve.
+
+**Analyze and interpret the physical meaning of the line integral.**
+
+### 54.
+
+**Define path independence in engineering systems.**
+
+### 55.
+
+In a fluid flow model,
+
+[
+\vec F=y\hat i+x\hat j
+]
+
+**Use Green's theorem to compute**
+
+[
+\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}
+]
+
+**and interpret its meaning.**
+
+### 56.
+
+In a fluid flow system,
+
+[
+\vec F=(x+y)\hat i+(2x-y)\hat j
+]
+
+**Compute**
+
+[
+\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}
+]
+
+### 57.
+
+Evaluate
+
+[
+\iint_S \vec F\cdot \hat n , ds
+]
+
+for the heat flux field
+
+[
+\vec F=x^2\hat i+yz\hat j+z^2\hat k
+]
+
+where (\hat n=\hat j) and the surface is
+
+[
+y=1,\quad 0\le x\le2,\quad 0\le z\le1.
+]
+
+### 58.
+
+In an electromagnetic field, the vector field is
+
+[
+\vec F=z\hat i+x\hat j+y\hat k.
+]
+
+**Determine the circulation around the boundary of the region in the yz-plane ((x=0)) bounded by (0\le y\le1,;0\le z\le1) using Stokes' theorem.**
+
+### 59.
+
+Evaluate
+
+[
+\iint_S \vec F\cdot \hat n , ds
+]
+
+for the fluid velocity field
+
+[
+\vec F=2xy\hat i+yz\hat j+xz\hat k
+]
+
+where (\hat n=\hat i) and the surface is
+
+[
+x=2,\quad 0\le y\le1,\quad 0\le z\le2.
+]
+
+### 60.
+
+In a heat transfer system, the flux field is
+
+[
+\vec F=xy\hat i+yz\hat j+xz\hat k.
+]
+
+**Compute the circulation of heat flow around the boundary of the region in the xz-plane ((y=0)) bounded by**
+
+[
+0\le x\le1,\quad 0\le z\le1
+]
+
+**using Stokes' theorem.**
+
+### 61.
+
+In an electrical field,
+
+[
+\vec F=(y)\hat i+(x)\hat j.
+]
+
+**Use a line integral to determine the work done along the boundary of the square defined by**
+
+[
+0\le x\le1,\quad 0\le y\le1.
+]
+
+### 62.
+
+Evaluate and interpret the total outward heat flux using divergence theorem for
+
+[
+\vec F=(x^2-yz)\hat i+(y^2-xz)\hat j+(z^2-xy)\hat k
+]
+
+over a rectangular domain
+
+[
+0\le x\le a,\quad 0\le y\le b,\quad 0\le z\le c.
+]
+
+### 63.
+
+In a fluid transport system, the velocity field is
+
+[
+\vec F=(2x)\hat i+(y)\hat j+(z)\hat k.
+]
+
+**Use a surface integral to compute the total flux through the surface**
+
+[
+x=1
+]
+
+bounded by
+
+[
+0\le y\le2,\quad 0\le z\le1.
+]
+
+### 64.
+
+Evaluate and interpret the total outward heat flux using divergence theorem for
+
+[
+\vec F=4xz\hat i-y^2\hat j+yz\hat k
+]
+
+over a unit cubic control volume
+
+[
+0\le x,y,z\le1.
+]
+
+### 65.
+
+A control response is modeled by
+
+[
+f(z)=z^2.
+]
+
+**Analyze whether the function is differentiable at**
+
+[
+z=1+i.
+]
+
+### 66.
+
+A signal transformation is defined by
+
+[
+w=z^2.
+]
+
+**Identify whether the function is single-valued or multi-valued and justify.**
+
+### 67.
+
+In a fluid transport system, the stream function is given by
+
+[
+v(x,y)=2xy.
+]
+
+**Determine the harmonic conjugate using the Milne–Thomson method.**
+
+### 68.
+
+In an electrical field application, the real part of an analytic function is
+
+[
+u(x,y)=x^2+2xy.
+]
+
+**Find (f'(z)) using Milne–Thomson method.**
+
+Hint:
+
+[
+f'(z)=u_x(z,0)-iu_y(z,0)
+]
+
+### 69.
+
+A communication signal is represented by a complex function (f(z)).
+
+**Evaluate the relationship between differentiability and continuity in complex systems.**
+
+### 70.
+
+An impedance transformation is represented by
+
+[
+w=\sqrt z.
+]
+
+**Analyze whether the function is single-valued or multi-valued.**
+
+### 71.
+
+An electric field potential is represented by
+
+[
+u(x,y)=e^x\cos y.
+]
+
+**Construct the analytic function using the Milne–Thomson method.**
+
+### 72.
+
+In a fluid flow model, the imaginary part of an analytic function is
+
+[
+v(x,y)=x^2-y^2.
+]
+
+Using Milne–Thomson method,
+
+**find (f'(z)).**
+
+Hint:
+
+[
+f'(z)=v_y(z,0)+iv_x(z,0)
+]
+
+### 73.
+
+A communication signal is modeled by
+
+[
+f(z)=e^z.
+]
+
+**Analyze whether the function is analytic and interpret its significance in signal amplification.**
+
+### 74.
+
+A signal transformation system uses the mapping
+
+[
+w=(1+i)z.
+]
+
+**Determine the image of the region (y>2) in the w-plane and analyze the transformation characteristics.**
+
+### 75.
+
+In a thermal distribution model, the temperature potential is represented by
+
+[
+f(z)=(x^2-y^2+2x)+i(2xy+2y).
+]
+
+**Verify whether the function is analytic using the Cauchy–Riemann equations and interpret the physical meaning.**
+
+### 76.
+
+An electrostatic field boundary represented by
+
+[
+|z|=2
+]
+
+is transformed under
+
+[
+w=z+1+4i.
+]
+
+**Determine the image of the boundary and interpret the transformation.**
+
+### 77.
+
+In an electrical field system, the imaginary part is
+
+[
+v(x,y)=2xy.
+]
+
+**Construct the analytic function (f(z)).**
+
+### 78.
+
+A control transformation maps the points
+
+[
+z_1=1,\quad z_2=i,\quad z_3=-1
+]
+
+onto
+
+[
+w_1=0,\quad w_2=1,\quad w_3=-1.
+]
+
+**Determine the bilinear transformation.**
+
+### 79.
+
+In a heat transfer application, determine whether
+
+[
+u(x,y)=x^2-y^2
+]
+
+is harmonic and construct its harmonic conjugate.
+
+### 80.
+
+A signal transformation system maps the points
+
+[
+z_1=0,\quad z_2=i,\quad z_3=-i
+]
+
+onto
+
+[
+w_1=1,\quad w_2=-1,\quad w_3=0.
+]
+
+**Determine the bilinear transformation and interpret the engineering significance.**

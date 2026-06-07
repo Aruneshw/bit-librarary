@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { type SubjectWithProgress } from '@/types';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import ArcReactor from './ArcReactor';
 
 interface SubjectOrbitProps {
   subjects: SubjectWithProgress[];
@@ -20,55 +21,9 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
       {/* Subtle ambient glow behind the orbit */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-arc-blue/5 rounded-full blur-[100px] pointer-events-none" />
       
-      {/* Center ARC Reactor (CSS version) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="relative w-32 h-32">
-          {/* Outer faint ring */}
-          <div
-            className="absolute inset-0 rounded-full border border-arc-blue/20"
-            style={{ animation: 'spin-counter 15s linear infinite' }}
-          />
-          {/* Middle dashed ring */}
-          <div
-            className="absolute inset-3 rounded-full border-[1.5px] border-dashed border-arc-blue/60"
-            style={{ animation: 'spin-clockwise 10s linear infinite' }}
-          />
-          {/* Inner solid glowing ring */}
-          <div
-            className="absolute inset-7 rounded-full border-[1.5px] border-arc-blue"
-            style={{ animation: 'spin-counter 5s linear infinite', boxShadow: 'inset 0 0 10px rgba(0,217,255,0.2), 0 0 10px rgba(0,217,255,0.4)' }}
-          />
-
-          {/* Floating particles (Orbit 1) */}
-          <div className="absolute inset-0 pointer-events-none" style={{ animation: 'spin-clockwise 12s linear infinite' }}>
-             <div className="absolute top-1 left-1/2 w-1.5 h-1.5 bg-arc-blue rounded-full shadow-[0_0_8px_#00D9FF]" />
-             <div className="absolute bottom-4 right-4 w-1 h-1 bg-arc-blue rounded-full shadow-[0_0_8px_#00D9FF]" />
-          </div>
-          
-          {/* Floating particles (Orbit 2) */}
-          <div className="absolute inset-2 pointer-events-none" style={{ animation: 'spin-counter 8s linear infinite' }}>
-             <div className="absolute bottom-1 left-1/3 w-1.5 h-1.5 bg-arc-blue rounded-full shadow-[0_0_8px_#00D9FF]" />
-             <div className="absolute top-5 right-2 w-1 h-1 bg-arc-blue rounded-full shadow-[0_0_8px_#00D9FF]" />
-          </div>
-
-          {/* Triangular Core */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <svg
-              className="w-10 h-10 animate-pulse-blue"
-              viewBox="0 0 100 100"
-              style={{ filter: 'drop-shadow(0 0 16px rgba(0,217,255,1))' }}
-            >
-              {/* Solid bright glowing triangle */}
-              <polygon
-                points="50,15 15,80 85,80"
-                fill="rgba(0,217,255,0.9)"
-                stroke="rgba(0,217,255,1)"
-                strokeWidth="2"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        </div>
+      {/* Center ARC Reactor */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+        <ArcReactor size={150} />
       </div>
 
       {/* SVG Energy Lines */}

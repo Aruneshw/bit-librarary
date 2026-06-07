@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   keywords: "BIT Sathy, academic, study, BIT Library, knowledge system",
 };
 
+import MatrixBackground from "@/components/animations/MatrixBackground";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -15,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <MatrixBackground />
         <div className="app-container flex-1 flex flex-col">
           {children}
         </div>
