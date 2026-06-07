@@ -172,6 +172,14 @@ export default function DashboardPage() {
                 {user.department}
               </span>
             )}
+            {isAdmin && (
+              <button
+                onClick={() => router.push('/admin')}
+                className="font-rajdhani text-[10px] sm:text-xs text-arc-blue uppercase tracking-wider hover:text-white transition-colors border border-arc-blue/30 px-2 py-0.5 rounded bg-arc-blue/10"
+              >
+                Admin
+              </button>
+            )}
             <button
               onClick={handleLogout}
               className="font-rajdhani text-[10px] sm:text-xs text-text-white/40 uppercase tracking-wider hover:text-warning-red transition-colors"

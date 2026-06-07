@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase';
 
 const ALLOWED_EMAIL_DOMAIN = '@bitsathy.ac.in';
 const ALLOWED_DEPARTMENTS: Department[] = ['CS', 'IT', 'AL', 'AD', 'EEE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
+const ADMIN_EMAIL = 'aruneshownsty1@gmail.com';
 
 type AuthUser = User & {
   raw_user_meta_data?: Record<string, unknown>;
@@ -46,6 +47,7 @@ interface AuthState {
   avatarUrl: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   setUser: (user: Profile | null) => void;
   setAvatarUrl: (url: string | null) => void;
   setLoading: (loading: boolean) => void;
@@ -60,8 +62,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   avatarUrl: null,
   isLoading: true,
   isAuthenticated: false,
+  isAdmin: false,
 
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setUser: (user) => set({ user, isAuthenticated: !!user, isAdmin: user?.email === ADMIN_EMAIL }),
   setAvatarUrl: (avatarUrl) => set({ avatarUrl }),
   setLoading: (isLoading) => set({ isLoading }),
 
@@ -76,9 +79,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
-      if (!authUser.email || !authUser.email.endsWith(ALLOWED_EMAIL_DOMAIN)) {
+      if (!authUser.email || (!authUser.email.endsWith(ALLOWED_EMAIL_DOMAIN) && authUser.email !== ADMIN_EMAIL)) {
         await supabase.auth.signOut();
-        set({ user: null, avatarUrl: null, isAuthenticated: false, isLoading: false });
+        set({ user: null, avatarUrl: null, isAuthenticated: false, isAdmin: false, isLoading: false });
         return;
       }
 
@@ -136,13 +139,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           user: userProfile as Profile,
           avatarUrl: getAvatarUrl(authUser),
           isAuthenticated: true,
+          isAdmin: userProfile.email === ADMIN_EMAIL,
           isLoading: false
         });
       } else {
-        set({ user: null, avatarUrl: null, isAuthenticated: false, isLoading: false });
+        set({ user: null, avatarUrl: null, isAuthenticated: false, isAdmin: false, isLoading: false });
       }
     } catch {
-      set({ user: null, avatarUrl: null, isAuthenticated: false, isLoading: false });
+      set({ user: null, avatarUrl: null, isAuthenticated: false, isAdmin: false, isLoading: false });
     }
   },
 
@@ -184,6 +188,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   signOut: async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    set({ user: null, isAuthenticated: false });
+    set({ user: null, isAuthenticated: false, isAdmin: false });
   },
 }));

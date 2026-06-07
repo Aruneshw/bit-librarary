@@ -10,6 +10,7 @@ import QuestionList from '@/components/questions/QuestionList';
 import QuestionModal from '@/components/questions/QuestionModal';
 import CompletionCelebration from '@/components/animations/CompletionCelebration';
 import TranslatorPopup from '@/components/dashboard/TranslatorPopup';
+import AddQuestionModal from '@/components/questions/AddQuestionModal';
 import { type QuestionWithStatus } from '@/types';
 import { createClient } from '@/lib/supabase';
 
@@ -18,7 +19,7 @@ export default function SubjectPage() {
   const router = useRouter();
   const subjectId = params.subject_id as string;
 
-  const { user, isAuthenticated, isLoading: authLoading, fetchUser } = useAuthStore();
+  const { user, isAuthenticated, isAdmin, isLoading: authLoading, fetchUser } = useAuthStore();
   const {
     questions,
     isLoading,
@@ -34,6 +35,7 @@ export default function SubjectPage() {
   const [subjectName, setSubjectName] = useState('');
   const [showCelebration, setShowCelebration] = useState(false);
   const [prevCompletion, setPrevCompletion] = useState(0);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Fetch user
   useEffect(() => {
@@ -90,6 +92,18 @@ export default function SubjectPage() {
     setSelectedQuestion(null);
   }, [selectedQuestion, subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
 
+  const handleDeleteQuestion = async (questionId: string) => {
+    if (!confirm("Are you sure you want to permanently delete this question?")) return;
+    
+    const supabase = createClient();
+    const { error } = await supabase.from('questions').delete().eq('id', questionId);
+    if (!error) {
+      fetchQuestions(subjectId);
+    } else {
+      alert("Failed to delete question");
+    }
+  };
+
   return (
     <main className="relative min-h-screen">
       {/* Background */}
@@ -100,6 +114,14 @@ export default function SubjectPage() {
         subjectName={subjectName}
         isVisible={showCelebration}
         onDismiss={() => setShowCelebration(false)}
+      />
+
+      {/* Add Question Modal (Admin Only) */}
+      <AddQuestionModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        subjectId={subjectId as string} 
+        onSuccess={fetchQuestions} 
       />
 
       {/* Question Modal */}
@@ -141,7 +163,7 @@ export default function SubjectPage() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-8"
+          className="mb-8 flex justify-between items-center"
         >
           <h1
             className="font-orbitron text-xl md:text-2xl text-arc-blue font-bold uppercase tracking-wider"
@@ -149,6 +171,16 @@ export default function SubjectPage() {
           >
             {subjectName || 'Loading...'}
           </h1>
+          
+          {isAdmin && (
+            <button
+              onClick={() => setIsAddModalOpen(true)}
+              className="px-4 py-2 bg-terminal-green/10 border border-terminal-green/50 text-terminal-green font-orbitron text-xs tracking-widest uppercase rounded-lg hover:bg-terminal-green/20 hover:shadow-[0_0_15px_rgba(0,255,65,0.3)] transition-all flex items-center gap-2"
+            >
+              <span>+</span>
+              <span className="hidden sm:inline">Add Node</span>
+            </button>
+          )}
         </motion.div>
 
         {/* Progress Section */}
@@ -210,6 +242,7 @@ export default function SubjectPage() {
           <QuestionList
             questions={questions}
             onSelect={handleSelectQuestion}
+            onDelete={isAdmin ? handleDeleteQuestion : undefined}
           />
         ) : (
           <div className="flex items-center justify-center py-12">

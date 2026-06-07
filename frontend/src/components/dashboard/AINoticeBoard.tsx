@@ -2,17 +2,35 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNoticeStore } from '@/store/noticeStore';
+import { useAuthStore } from '@/store/authStore';
 
 export default function AINoticeBoard() {
   const [isVisible, setIsVisible] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState('');
+  
+  const { notice, fetchNotice, updateNotice, isLoading } = useNoticeStore();
+  const { isAdmin } = useAuthStore();
 
   useEffect(() => {
+    fetchNotice();
+    // Only auto-hide if not admin, or wait longer. Admins might want to edit it.
     const timer = setTimeout(() => {
-      setIsVisible(false);
-    }, 10000); // 10 seconds
+      if (!isEditing && !isAdmin) setIsVisible(false);
+    }, 12000); 
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [fetchNotice, isEditing, isAdmin]);
+
+  const handleSave = async (e: React.MouseEvent | React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (editText.trim()) {
+      await updateNotice(editText.trim());
+      setIsEditing(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -26,7 +44,7 @@ export default function AINoticeBoard() {
         >
           <div 
             className="relative overflow-hidden group border border-arc-blue/30 bg-black/60 backdrop-blur-xl rounded-xl shadow-[0_0_30px_rgba(0,217,255,0.15)] px-5 py-4 flex items-center gap-4 cursor-pointer" 
-            onClick={() => setIsVisible(false)}
+            onClick={() => !isEditing && setIsVisible(false)}
           >
             {/* Animated Gradient Border Overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-arc-blue/0 via-arc-blue/10 to-arc-blue/0 translate-x-[-100%] animate-[shimmer_2s_infinite]" />
@@ -39,18 +57,63 @@ export default function AINoticeBoard() {
             </div>
 
             <div className="flex flex-col flex-1">
-              <span className="font-orbitron text-[10px] text-arc-blue tracking-widest uppercase mb-1 drop-shadow-[0_0_5px_rgba(0,217,255,0.8)]">
-                System Notice
-              </span>
-              <p className="font-exo2 text-xs sm:text-sm text-text-white/90 leading-tight">
-                Here you will get AI based questions soon same as college question
-              </p>
+              <div className="flex justify-between items-center mb-1">
+                <span className="font-orbitron text-[10px] text-arc-blue tracking-widest uppercase drop-shadow-[0_0_5px_rgba(0,217,255,0.8)]">
+                  System Notice
+                </span>
+                
+                {isAdmin && !isEditing && (
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditText(notice || '');
+                      setIsEditing(true);
+                    }}
+                    className="text-[10px] font-orbitron text-arc-blue/70 hover:text-arc-blue border border-arc-blue/30 px-2 py-0.5 rounded bg-arc-blue/10 z-10 relative"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+              
+              {isEditing ? (
+                <form onSubmit={handleSave} className="flex flex-col gap-2 relative z-10" onClick={e => e.stopPropagation()}>
+                  <textarea 
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    className="w-full bg-black/50 border border-arc-blue/50 rounded p-2 text-xs text-text-white font-exo2 focus:outline-none focus:border-arc-blue"
+                    rows={2}
+                    autoFocus
+                  />
+                  <div className="flex justify-end gap-2">
+                    <button 
+                      type="button" 
+                      onClick={() => setIsEditing(false)}
+                      className="text-xs text-white/50 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit"
+                      className="text-xs bg-arc-blue/20 text-arc-blue px-3 py-1 rounded hover:bg-arc-blue/40"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <p className="font-exo2 text-xs sm:text-sm text-text-white/90 leading-tight min-h-[20px]">
+                  {isLoading ? 'Loading system communications...' : (notice || 'Welcome to ARC_OS Academic Nexus')}
+                </p>
+              )}
             </div>
 
             {/* Close hint */}
-            <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
-              <span className="text-text-white/40 hover:text-text-white text-sm px-1">×</span>
-            </div>
+            {!isEditing && (
+              <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                <span className="text-text-white/40 hover:text-text-white text-sm px-1 z-10 relative">×</span>
+              </div>
+            )}
           </div>
         </motion.div>
       )}
