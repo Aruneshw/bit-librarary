@@ -12,12 +12,10 @@ interface SubjectOrbitProps {
 
 export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
   const count = subjects.length;
-  // Use an elliptical orbit to make distances look visually equal since cards are wide
-  const xRadius = 380;
-  const yRadius = 280;
+  const radius = 280;
 
   return (
-    <div className="relative w-full flex items-center justify-center" style={{ height: `${yRadius * 2 + 200}px` }}>
+    <div className="relative w-full flex items-center justify-center" style={{ height: `${radius * 2 + 200}px` }}>
       {/* Subtle ambient glow behind the orbit */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-arc-blue/5 rounded-full blur-[100px] pointer-events-none" />
       
@@ -33,8 +31,8 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
       >
         {subjects.map((subject, index) => {
           const angle = (2 * Math.PI * index) / count - Math.PI / 2;
-          const x = xRadius * Math.cos(angle);
-          const y = yRadius * Math.sin(angle);
+          const x = radius * Math.cos(angle);
+          const y = radius * Math.sin(angle);
           const isMastered = subject.mastered;
 
           return (
@@ -45,7 +43,7 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
               x2={x}
               y2={y}
               stroke={isMastered ? 'rgba(0,255,65,0.25)' : 'rgba(0,217,255,0.25)'}
-              strokeWidth="2"
+              strokeWidth="1.5"
               strokeDasharray="4 4"
               className="animate-energy-flow"
             />
@@ -56,8 +54,8 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
       {/* Subject Nodes */}
       {subjects.map((subject, index) => {
         const angle = (2 * Math.PI * index) / count - Math.PI / 2;
-        const x = xRadius * Math.cos(angle);
-        const y = yRadius * Math.sin(angle);
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
         const isMastered = subject.mastered;
         const completionColor = isMastered ? 'var(--terminal-green)' : 'var(--arc-blue)';
 
