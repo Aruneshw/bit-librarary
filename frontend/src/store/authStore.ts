@@ -43,9 +43,37 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         .eq('id', authUser.id)
         .single();
 
-      if (profile) {
+      let userProfile = profile;
+      
+      // Auto-extract department if missing
+      if (profile && !profile.department && authUser.email) {
+        try {
+          const emailPrefix = authUser.email.split('@')[0];
+          const parts = emailPrefix.split('.');
+          const lastPart = parts[parts.length - 1]; // e.g. "al25"
+          const deptMatch = lastPart.match(/^[a-zA-Z]+/); // matches "al"
+          
+          if (deptMatch) {
+            const extractedDept = deptMatch[0].toUpperCase();
+            const allowedDepts = ['CS','IT','AL','AD','EEE','EIE','ME','MZ','AG','BT'];
+            
+            if (allowedDepts.includes(extractedDept)) {
+              await supabase
+                .from('profiles')
+                .update({ department: extractedDept })
+                .eq('id', authUser.id);
+                
+              userProfile = { ...profile, department: extractedDept };
+            }
+          }
+        } catch (e) {
+          console.error("Failed to extract department", e);
+        }
+      }
+
+      if (userProfile) {
         set({
-          user: profile as Profile,
+          user: userProfile as Profile,
           avatarUrl: authUser.user_metadata?.avatar_url || null,
           isAuthenticated: true,
           isLoading: false
