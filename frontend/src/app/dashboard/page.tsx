@@ -103,8 +103,7 @@ export default function DashboardPage() {
 
   if (authLoading || (isAuthenticated && user && !user.department)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <div className="arc-bg" />
+      <div className="min-h-screen flex items-center justify-center">
         <div className="relative z-10 w-12 h-12">
           <div className="absolute inset-0 rounded-full border-2 border-arc-blue/40"
             style={{ animation: 'spin-clockwise 2s linear infinite' }} />
@@ -117,8 +116,6 @@ export default function DashboardPage() {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden">
-      {/* Background */}
-      <div className="arc-bg" />
 
       {/* Intro Animation */}
       {showIntro && (

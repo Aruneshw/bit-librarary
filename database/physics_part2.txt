@@ -1,0 +1,257 @@
+# 22PH202 – Electromagnetism and Modern Physics
+
+## Module Test – II (Questions 1–32)  
+
+### 1.
+
+A basic physics program calculates positions of objects in different frames but fails when objects move close to light speed. The program must be updated to correctly transform coordinates between frames.
+
+**Construct the logical steps required to update the transformation process for high-speed conditions.**
+
+---
+
+### 2.
+
+A simulation tool must choose between using simple classical equations or more complex relativistic equations when modeling motion. The system is limited in processing power.
+
+**Analyze the trade-off and determine when relativistic equations should be used.**
+
+---
+
+### 3.
+
+An engineering team evaluates two models for predicting particle energy: one uses invariant mass while another uses relativistic mass. The system must scale for extremely high velocities. Computational efficiency is critical. The invariant mass model simplifies equations but requires additional transformations. The relativistic mass model directly incorporates velocity but increases complexity. The team must choose the optimal model.
+
+**Assess the trade-offs between invariant mass and relativistic mass approaches and determine which model is more efficient for high-velocity scalability.**
+
+---
+
+### 4.
+
+A nuclear scientist evaluates energy released during a nuclear reaction. The measured mass before and after reaction differs slightly. The system records significant energy output. The scientist must interpret the relationship between mass loss and energy produced. The assessment must align with modern physics principles.
+
+**Interpret the observed mass difference and justify its relation to energy release using appropriate physical reasoning.**
+
+---
+
+### 5.
+
+A classroom demonstration shows two lightning strikes occurring at equal distances from a stationary observer but appearing at different times to a moving observer. Students must interpret how motion affects the perception of simultaneity.
+
+**Integrate the concept of spacetime with observer motion to infer why simultaneity differs between observers.**
+
+---
+
+### 6.
+
+An engineering instructor evaluates whether introductory physics courses should include topics beyond Newtonian mechanics when discussing fast-moving systems like satellites.
+
+**Assess the need for including relativistic concepts and recommend a teaching approach.**
+
+---
+
+### 7.
+
+A student calculates kinetic energy of a fast-moving particle using classical formula and obtains a lower value than expected. The particle is moving near light speed. Experimental instruments indicate significantly higher energy. The student suspects an error in calculation. The system parameters are correct. The discrepancy persists across multiple trials.
+
+**Analyze the calculation approach and infer the source of error by evaluating the applicability of classical and relativistic energy relations.**
+
+---
+
+### 8.
+
+A simulation program calculates total energy of a particle by combining rest mass and velocity inputs. The program must follow a logical sequence to ensure correct output. Inputs include rest mass and velocity close to light speed. The system must compute relativistic energy. The output should reflect total energy accurately.
+
+**Formulate the logical sequence required to compute total relativistic energy from given inputs.**
+
+---
+
+### 9.
+
+Two observers are analyzing lightning strikes occurring at two distant points along a railway track. One observer is standing on the platform, while the other is moving at high speed on a train passing through the station. Both observers attempt to determine whether the two lightning strikes occurred simultaneously, but their observations differ due to their relative motion and signal reception.
+
+**Analyze how differing frames of reference influence the determination of simultaneity and integrate this reasoning to infer whether simultaneity is an absolute or relative concept under relativistic conditions.**
+
+---
+
+### 10.
+
+A research team is attempting to design an experiment to observe wave behavior in microscopic particles using an electron beam setup. They initially tried using classical particle assumptions but failed to detect any interference patterns. The team now considers incorporating wave-based principles into their design. They must determine whether treating particles as waves will improve experimental success and how momentum influences the design parameters.
+
+**Determine the design modifications required to successfully observe wave behavior in particles and justify how the de-Broglie hypothesis guides these decisions in the experimental setup.**
+
+---
+
+### 11.
+
+A spacecraft carries a light clock where a photon bounces vertically between two mirrors. The spacecraft moves at a significant fraction of the speed of light relative to an external observer who sees the light follow a diagonal path instead of a vertical one.
+
+**Formulate the mathematical relationship between proper time and dilated time using the observed light path and determine how velocity influences time measurement.**
+
+---
+
+### 12.
+
+A physics student compares the behavior of a moving tennis ball and an electron traveling at similar speeds. While both have momentum, only the electron shows diffraction in experiments. The student attempts to link classical and quantum descriptions using theoretical models and known constants.
+
+**Integrate the concepts of wavelength, momentum, and observability to reconcile why only microscopic particles exhibit wave characteristics in practical scenarios.**
+
+---
+
+### 13.
+
+A spacecraft moves at a significant fraction of light speed relative to an observer on Earth, carrying a rigid rod aligned along its direction of motion. The astronaut measures the rod's length at rest inside the spacecraft, while the Earth observer measures it as the spacecraft passes by. The relative velocity is known and relativistic effects are expected to be noticeable.
+
+**Determine how the observed length differs between the two frames and formulate the relationship connecting proper length and contracted length using relativistic principles, while justifying the dependence on velocity.**
+
+---
+
+### 14.
+
+A physicist is analyzing electrons accelerated through a known potential difference and wants to determine their associated wavelength for experimental validation. The momentum of electrons is inferred using kinetic energy relations. The physicist uses fundamental constants and seeks a relationship connecting measurable quantities.
+
+**Formulate and derive the mathematical expression connecting wavelength and momentum for the electron system and infer how measurable quantities can be substituted into the relation.**
+
+---
+
+### 15.
+
+A research team is designing an experiment to measure relativistic effects using fast-moving particles in a linear accelerator. They must decide how to orient measurement instruments relative to particle motion. Instruments can be aligned either parallel or perpendicular to motion. The design must ensure that relativistic contraction is detectable and not masked by experimental noise.
+
+**Recommend an optimal experimental configuration to detect length contraction and justify the orientation choice using relativistic reasoning.**
+
+---
+
+### 16.
+
+A research team is evaluating why classical particle theory fails when applied to electrons moving inside a crystal lattice under controlled laboratory conditions. They observe diffraction-like patterns even when particles are fired individually. The team compares predictions from classical mechanics and experimental outcomes.
+
+**Determine and justify the most appropriate theoretical framework the research team should adopt by analyzing inconsistencies between classical predictions and observed electron behavior, and recommend how this shift resolves the experimental contradictions.**
+
+---
+
+### 17.
+
+A student incorrectly concludes that all solids conduct electricity because they contain electrons. Upon further observation, it is noted that some solids do not allow electron movement despite having many electrons. The instructor asks the student to reconcile the role of energy levels and accessibility of states.
+
+**Analyze the reasoning flaw and infer why electron presence alone does not guarantee electrical conduction in solids.**
+
+---
+
+### 18.
+
+An industry evaluator assesses whether a newly synthesized material can be classified as a semiconductor based on its electronic structure observations. The material shows partial occupancy in lower energy levels and requires small energy input for electron excitation.
+
+**Formulate a justified classification of the material based on its band structure characteristics.**
+
+---
+
+### 19.
+
+A fabricated semiconductor device unexpectedly shows higher conductivity than expected under equilibrium conditions. The engineer suspects unintended impurity incorporation during manufacturing. Measurements indicate imbalance between electron and hole concentration. The device was originally designed to behave as an intrinsic material.
+
+**Analyze the scenario and infer the likely cause of increased conductivity by evaluating carrier imbalance and impurity effects.**
+
+---
+
+### 20.
+
+A semiconductor designer evaluates whether increasing dopant concentration improves device performance but notices that excessive doping may introduce unwanted effects. The system requires efficient conductivity without degrading material properties.
+
+**Assess the trade-off involved in increasing dopant concentration and determine its impact on semiconductor efficiency.**
+
+---
+
+### 21.
+
+A physicist models the distribution of electronic states in a solid using a function that varies with energy. It is observed that the number of available states increases in certain energy ranges while remaining zero in others.
+
+**Interpret how the density of states function influences electron occupancy and infer its role in determining material properties.**
+
+---
+
+### 22.
+
+A teaching assistant explains the stepwise formation of energy bands starting from isolated atoms to a fully formed crystal lattice. The explanation includes orbital overlap, splitting of levels, and formation of continuous bands.
+
+**Infer the logical sequence of steps leading to energy band formation in solids.**
+
+---
+
+### 23.
+
+A student is tasked with determining carrier concentration in a semiconductor under equilibrium conditions using known relationships between electrons and holes. The system maintains thermal equilibrium with no external excitation.
+
+**Formulate the logical steps required to determine electron and hole concentrations at equilibrium and infer their interdependence.**
+
+---
+
+### 24.
+
+An engineer compares n-type and p-type semiconductors for use in a circuit requiring majority carriers to dominate conduction. The system must maintain predictable current flow direction and magnitude.
+
+**Evaluate and determine how the choice between n-type and p-type materials influences current conduction behavior.**
+
+---
+
+### 25.
+
+An engineer must select a theoretical model to predict electrical behavior of a new crystalline material with moderate electron mobility. Experimental data shows partial localization and slight deviations from free electron predictions.
+
+**Recommend an appropriate theoretical framework for analyzing the material and justify the selection based on electron behavior and band formation characteristics.**
+
+---
+
+### 26.
+
+An engineering team is designing a light-emitting device for high-speed optical communication systems. They must select a semiconductor material that maximizes light emission efficiency while minimizing energy loss. The team is comparing two materials: one with a direct band gap and another with an indirect band gap.
+
+**Determine and justify which semiconductor type should be selected for the device by analyzing transition mechanisms, recombination efficiency, and momentum considerations.**
+
+---
+
+### 27.
+
+A solid material is analyzed using both tight-binding and nearly free electron approaches to understand electron motion. In one case electrons are strongly localized around atoms, while in the other they move almost freely through the lattice.
+
+**Integrate the principles of tight-binding and nearly free electron models to infer how band formation differs and justify which model better explains localized versus delocalized electron behavior.**
+
+---
+
+### 28.
+
+A researcher studies transition rates in two semiconductors under identical excitation conditions. In one material, electron transitions occur directly between conduction and valence bands, while in the other, transitions require phonon interaction.
+
+**Formulate and analyze the relationship between transition mechanism and emission probability to infer which material exhibits higher radiative efficiency.**
+
+---
+
+### 29.
+
+A device initially designed with a narrow band gap semiconductor begins to malfunction at elevated temperatures. The conductivity increases uncontrollably, leading to leakage currents. The Fermi level appears to shift due to temperature influence.
+
+**Analyze the root cause of the malfunction by interpreting energy band behavior and infer how temperature affects carrier distribution and Fermi level positioning.**
+
+---
+
+### 30.
+
+A semiconductor sample is doped lightly with donor atoms, resulting in an electron concentration of (10^{16},\text{cm}^{-3}) while hole concentration is negligible. The mobility of electrons is measured as (1400,\text{cm}^2/\text{V·s}).
+
+**Determine the electrical conductivity of the semiconductor by formulating the appropriate relation and integrating the given parameters while justifying the dominance of the contributing charge carriers.**
+
+---
+
+### 31.
+
+A materials engineer is selecting materials for three components in an electronic system: a wire for current flow, a switching element, and an insulating cover. The engineer evaluates band gap values and electron mobility characteristics.
+
+**Determine and justify the appropriate classification of materials for each component by analyzing their energy band structures and recommend suitable choices based on operational requirements.**
+
+---
+
+### 32.
+
+A semiconductor device shows reduced conductivity at low temperatures despite being doped with acceptor impurities. Experimental observation reveals limited carrier movement and increased resistivity.
+
+**Analyze the underlying cause for reduced conductivity by interpreting the temperature dependence and infer the dominant limiting mechanism affecting carrier transport.**
