@@ -9,6 +9,7 @@ import { useSubjectStore } from '@/store/subjectStore';
 import QuestionList from '@/components/questions/QuestionList';
 import QuestionModal from '@/components/questions/QuestionModal';
 import CompletionCelebration from '@/components/animations/CompletionCelebration';
+import TranslatorPopup from '@/components/dashboard/TranslatorPopup';
 import { type QuestionWithStatus } from '@/types';
 import { createClient } from '@/lib/supabase';
 
@@ -103,13 +104,25 @@ export default function SubjectPage() {
         onClose={handleCloseModal}
       />
 
+      {/* Conditionally Render Translator for Tamils Subject */}
+      {subjectId === 'a1000000-0000-0000-0000-000000000006' && (
+        <TranslatorPopup />
+      )}
+
       {/* Content */}
       <div className="relative z-10 max-w-2xl mx-auto px-4 py-6">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          onClick={() => router.push('/dashboard')}
+          onClick={() => {
+            if (subjectId === 'a1000000-0000-0000-0000-000000000006') {
+              // Force reload to clear Google Translate DOM mutations
+              window.location.href = '/dashboard';
+            } else {
+              router.push('/dashboard');
+            }
+          }}
           className="flex items-center gap-2 text-text-white/40 hover:text-arc-blue transition-colors mb-6"
           id="back-to-dashboard"
         >

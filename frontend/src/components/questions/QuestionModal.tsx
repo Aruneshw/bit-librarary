@@ -106,7 +106,7 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                 Question
               </h3>
               <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
-              <div className="font-exo2 text-sm text-text-white/90 leading-relaxed prose prose-invert prose-p:my-1 max-w-none">
+              <div className="font-exo2 text-sm text-text-white/90 leading-relaxed prose prose-invert prose-p:my-1 max-w-none translate">
                 <ReactMarkdown
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}
@@ -133,7 +133,7 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                 Answer
               </h3>
               <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
-              <div className="font-exo2 text-sm text-text-white/80 leading-relaxed prose prose-invert prose-p:my-1 max-w-none">
+              <div className="font-exo2 text-sm text-text-white/80 leading-relaxed prose prose-invert prose-p:my-1 max-w-none translate">
                 <ReactMarkdown
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}

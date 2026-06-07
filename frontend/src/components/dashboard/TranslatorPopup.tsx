@@ -23,6 +23,11 @@ export default function TranslatorPopup() {
         );
       };
     }
+
+    return () => {
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=' + window.location.hostname + '; path=/;';
+    };
   }, []);
 
   return (

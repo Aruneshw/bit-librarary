@@ -174,23 +174,71 @@ xychart-beta
     bar [100, 90, 85, 75, 65]
 ```''')
 
-    res = res.replace('''Impact Areas of Scientific Tamil
+    res = res.replace('''The main types of weaving are:
 
-Major sectors benefited by scientific Tamil development.
-
-Education
-Government
-Publishing
-Research
-Technology''', '''```mermaid
-pie title "Impact Areas of Scientific Tamil"
-    "Education" : 25
-    "Research" : 25
-    "Technology" : 20
-    "Publishing" : 15
-    "Government" : 15
+Plain weaving
+Twill weaving
+Satin weaving''', '''The main types of weaving are:
+```mermaid
+mindmap
+  root((Weaving))
+    Plain weaving
+    Twill weaving
+    Satin weaving
 ```''')
 
+    res = res.replace('''Common Symbols:
+Swastika
+Fish
+Sun
+Moon
+Star
+Geometric designs''', '''Common Symbols:
+```mermaid
+mindmap
+  root((Ancient Symbols))
+    Nature
+      Sun
+      Moon
+      Star
+    Animals
+      Fish
+    Patterns
+      Swastika
+      Geometric
+```''')
+
+    res = res.replace('''Components of Tamil Computing
+Input Systems
+Tamil Keyboard
+Transliteration Tools
+Speech Input
+Processing Systems
+Spell Checkers
+Grammar Tools
+Translation Software
+Output Systems
+Websites
+Mobile Apps
+Digital Documents''', '''Components of Tamil Computing
+```mermaid
+mindmap
+  root((Tamil Computing))
+    Input Systems
+      Tamil Keyboard
+      Transliteration Tools
+      Speech Input
+    Processing Systems
+      Spell Checkers
+      Grammar Tools
+      Translation Software
+    Output Systems
+      Websites
+      Mobile Apps
+      Digital Documents
+```''')
+
+    # Re-run the regex to avoid interference
     return res
 
 def parse_text(text):

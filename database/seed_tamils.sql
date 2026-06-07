@@ -2,10 +2,13 @@ INSERT INTO questions (id, subject_id, question, answer, image_url, "references"
   ('faca0000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000006', 'Who is Paruthi Pendir?', 'Paruthi Pendir were women engaged in cotton processing and spinning during the Sangam age. They played an important role in the textile industry.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 1),
   ('faca0000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000006', 'What is "Paa" or "Paavottuthal"?', 'Paavottuthal is the process of arranging warp threads before weaving. It is an important preparatory stage in textile production.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 2),
   ('faca0000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000006', 'What are the types of weaving?', 'The main types of weaving are:
-
-Plain weaving
-Twill weaving
-Satin weaving', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 3),
+```mermaid
+mindmap
+  root((Weaving))
+    Plain weaving
+    Twill weaving
+    Satin weaving
+```', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 3),
   ('faca0000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000006', 'Write the names of any two parts of a loom.', 'Any two parts of a loom are:
 
 Shuttle
@@ -95,12 +98,19 @@ Found in many Sangam-age sites.', NULL, '22GE201 - Tamils and Technology', 'Unit
   ('faca0000-0000-0000-0000-000000000020', 'a1000000-0000-0000-0000-000000000006', 'Write in detail about the incised marks and symbols engraved on ancient Indian pottery.', 'Ancient pottery contains many symbols and incised marks.
 
 Common Symbols:
-Swastika
-Fish
-Sun
-Moon
-Star
-Geometric designs
+```mermaid
+mindmap
+  root((Ancient Symbols))
+    Nature
+      Sun
+      Moon
+      Star
+    Animals
+      Fish
+    Patterns
+      Swastika
+      Geometric
+```
 Purpose:
 Identification of owners.
 Indication of clans.
@@ -1005,18 +1015,22 @@ Period	Development
 2010s	Mobile Tamil applications
 Present	AI-based Tamil computing
 Components of Tamil Computing
-Input Systems
-Tamil Keyboard
-Transliteration Tools
-Speech Input
-Processing Systems
-Spell Checkers
-Grammar Tools
-Translation Software
-Output Systems
-Websites
-Mobile Apps
-Digital Documents
+```mermaid
+mindmap
+  root((Tamil Computing))
+    Input Systems
+      Tamil Keyboard
+      Transliteration Tools
+      Speech Input
+    Processing Systems
+      Spell Checkers
+      Grammar Tools
+      Translation Software
+    Output Systems
+      Websites
+      Mobile Apps
+      Digital Documents
+```
 Benefits
 Preserves Tamil language.
 Promotes digital inclusion.
@@ -1220,14 +1234,15 @@ graph TD
   "AI Tools" --> "Scientific Tamil Expansion"
 ```
 Impact of Scientific Tamil
-```mermaid
-pie title "Impact Areas of Scientific Tamil"
-    "Education" : 25
-    "Research" : 25
-    "Technology" : 20
-    "Publishing" : 15
-    "Government" : 15
-```
+Impact Areas of Scientific Tamil
+
+Major sectors benefited by scientific Tamil development.
+
+Education
+Government
+Publishing
+Research
+Technology
 Future Scope
 Artificial Intelligence in Tamil
 Natural Language Processing (NLP)

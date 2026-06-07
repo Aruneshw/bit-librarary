@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 import MatrixBackground from "@/components/animations/MatrixBackground";
-import TranslatorPopup from "@/components/dashboard/TranslatorPopup";
 
 export default function RootLayout({
   children,
@@ -18,12 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col notranslate">
         <MatrixBackground />
         <div className="app-container flex-1 flex flex-col">
           {children}
         </div>
-        <TranslatorPopup />
       </body>
     </html>
   );
