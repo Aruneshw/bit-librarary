@@ -26,8 +26,8 @@ function SystemClock() {
   if (!time) return <div className="w-20 h-4" />;
 
   return (
-    <div className="hidden md:block font-mono text-[10px] text-arc-blue/80 tracking-widest tabular-nums bg-arc-blue/5 border border-arc-blue/20 px-3 py-1 rounded-lg">
-      {time}
+    <div className="font-mono text-[8px] sm:text-[10px] text-arc-blue/80 tracking-widest tabular-nums bg-arc-blue/5 border border-arc-blue/20 px-2 sm:px-3 py-1 rounded-lg">
+      <span className="inline">{time.split(' ')[0]}</span> <span className="hidden sm:inline">UTC</span>
     </div>
   );
 }
@@ -137,12 +137,12 @@ export default function DashboardPage() {
       {/* Dashboard Content */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center">
         {/* Header */}
-        <header className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-4 pointer-events-none z-50">
+        <header className="absolute top-0 left-0 right-0 flex items-start sm:items-center justify-between px-4 sm:px-6 py-4 pointer-events-none z-50">
           <div className="flex items-center gap-3 pointer-events-auto">
             {avatarUrl ? (
-              <img src={avatarUrl} alt="Profile" className="w-10 h-10 rounded-full border border-arc-blue/30" />
+              <img src={avatarUrl} alt="Profile" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30" />
             ) : (
-              <div className="w-10 h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
                 <span className="font-orbitron text-arc-blue font-bold text-sm">
                   {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
                 </span>
@@ -150,31 +150,31 @@ export default function DashboardPage() {
             )}
             <div>
               <h1
-                className="font-orbitron text-arc-blue text-lg font-bold tracking-wider"
+                className="font-orbitron text-arc-blue text-base sm:text-lg font-bold tracking-wider"
                 style={{ textShadow: '0 0 12px rgba(0,217,255,0.4)' }}
               >
                 BIT LIBRARY
               </h1>
-              <p className="font-mono text-[10px] text-text-white/60 tracking-wider mt-0.5">
+              <p className="font-mono text-[8px] sm:text-[10px] text-text-white/60 tracking-wider mt-0.5 truncate max-w-[100px] sm:max-w-none">
                 {user?.name || user?.email}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4 pointer-events-auto">
+          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 pointer-events-auto max-w-[55%] sm:max-w-none">
             <SystemClock />
-            <div className="hidden md:flex items-center gap-2 px-3 py-1 border border-terminal-green/30 bg-terminal-green/10 rounded-lg">
-              <div className="w-2 h-2 rounded-full bg-terminal-green animate-pulse" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.8))' }} />
-              <span className="font-mono text-[10px] text-terminal-green uppercase tracking-wider">Secure Channel</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 border border-terminal-green/30 bg-terminal-green/10 rounded-lg">
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-terminal-green animate-pulse" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.8))' }} />
+              <span className="hidden sm:inline font-mono text-[10px] text-terminal-green uppercase tracking-wider">Secure Channel</span>
             </div>
             {user?.department && (
-              <span className="font-rajdhani text-xs text-arc-blue/60 uppercase tracking-[3px] border border-arc-blue/20 px-3 py-1 rounded-lg">
+              <span className="font-rajdhani text-[10px] sm:text-xs text-arc-blue/60 uppercase tracking-[2px] sm:tracking-[3px] border border-arc-blue/20 px-1.5 sm:px-3 py-1 rounded-lg">
                 {user.department}
               </span>
             )}
             <button
               onClick={handleLogout}
-              className="font-rajdhani text-xs text-text-white/40 uppercase tracking-wider hover:text-warning-red transition-colors"
+              className="font-rajdhani text-[10px] sm:text-xs text-text-white/40 uppercase tracking-wider hover:text-warning-red transition-colors"
               id="logout-btn"
             >
               Logout
