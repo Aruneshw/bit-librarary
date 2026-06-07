@@ -1,0 +1,122 @@
+import { create } from 'zustand';
+import { type QuestionWithStatus } from '@/types';
+import { createClient } from '@/lib/supabase';
+
+interface ProgressState {
+  questions: QuestionWithStatus[];
+  isLoading: boolean;
+  totalQuestions: number;
+  viewedCount: number;
+  completionPercent: number;
+
+  fetchQuestions: (subjectId: string) => Promise<void>;
+  markViewed: (questionId: string, subjectId: string) => Promise<void>;
+}
+
+export const useProgressStore = create<ProgressState>((set, get) => ({
+  questions: [],
+  isLoading: false,
+  totalQuestions: 0,
+  viewedCount: 0,
+  completionPercent: 0,
+
+  fetchQuestions: async (subjectId: string) => {
+    const supabase = createClient();
+    set({ isLoading: true });
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Fetch questions
+      const { data: questions } = await supabase
+        .from('questions')
+        .select('*')
+        .eq('subject_id', subjectId)
+        .order('order_index', { ascending: true });
+
+      if (!questions) {
+        set({ questions: [], isLoading: false, totalQuestions: 0, viewedCount: 0, completionPercent: 0 });
+        return;
+      }
+
+      // Fetch views
+      const { data: views } = await supabase
+        .from('question_views')
+        .select('*')
+        .eq('subject_id', subjectId)
+        .eq('user_id', user.id);
+
+      const viewMap = new Map(
+        (views || []).map((v) => [v.question_id, v])
+      );
+
+      const questionsWithStatus: QuestionWithStatus[] = questions.map((q) => {
+        const view = viewMap.get(q.id);
+        return {
+          ...q,
+          viewed: view?.viewed ?? false,
+          viewed_at: view?.viewed_at ?? null,
+        };
+      });
+
+      const total = questionsWithStatus.length;
+      const viewed = questionsWithStatus.filter((q) => q.viewed).length;
+      const completion = total > 0 ? Math.round((viewed / total) * 100 * 10) / 10 : 0;
+
+      set({
+        questions: questionsWithStatus,
+        isLoading: false,
+        totalQuestions: total,
+        viewedCount: viewed,
+        completionPercent: completion,
+      });
+    } catch {
+      set({ questions: [], isLoading: false });
+    }
+  },
+
+  markViewed: async (questionId: string, subjectId: string) => {
+    const supabase = createClient();
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Optimistic update
+      const questions = get().questions.map((q) => {
+        if (q.id === questionId && !q.viewed) {
+          return { ...q, viewed: true, viewed_at: new Date().toISOString() };
+        }
+        return q;
+      });
+
+      const total = questions.length;
+      const viewed = questions.filter((q) => q.viewed).length;
+      const completion = total > 0 ? Math.round((viewed / total) * 100 * 10) / 10 : 0;
+
+      set({
+        questions,
+        viewedCount: viewed,
+        completionPercent: completion,
+      });
+
+      // Sync to Supabase
+      await supabase
+        .from('question_views')
+        .upsert(
+          {
+            user_id: user.id,
+            subject_id: subjectId,
+            question_id: questionId,
+            viewed: true,
+            viewed_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id,question_id' }
+        );
+    } catch {
+      // Revert on error
+      get().fetchQuestions(subjectId);
+    }
+  },
+}));

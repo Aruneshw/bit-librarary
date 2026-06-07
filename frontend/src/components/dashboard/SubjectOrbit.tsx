@@ -1,0 +1,165 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { type SubjectWithProgress } from '@/types';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+
+interface SubjectOrbitProps {
+  subjects: SubjectWithProgress[];
+}
+
+export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
+  const count = subjects.length;
+  const orbitRadius = 280; // px from center
+
+  return (
+    <div className="relative w-full" style={{ height: `${orbitRadius * 2 + 200}px` }}>
+      {/* Center ARC Reactor (CSS version) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="relative w-36 h-36">
+          {/* Outer ring */}
+          <div
+            className="absolute inset-0 rounded-full border-2 border-arc-blue/30"
+            style={{ animation: 'spin-counter 10s linear infinite' }}
+          />
+          {/* Middle ring */}
+          <div
+            className="absolute inset-3 rounded-full border border-arc-blue/50"
+            style={{ animation: 'spin-clockwise 7s linear infinite' }}
+          />
+          {/* Inner ring */}
+          <div
+            className="absolute inset-6 rounded-full border border-arc-blue/70"
+            style={{ animation: 'spin-counter 5s linear infinite' }}
+          />
+          {/* Core */}
+          <div
+            className="absolute inset-10 rounded-full bg-arc-blue/15"
+            style={{
+              boxShadow: '0 0 40px rgba(0,217,255,0.4), 0 0 80px rgba(0,217,255,0.15)',
+              animation: 'pulse-glow-blue 3s ease-in-out infinite',
+            }}
+          />
+          {/* Center dot */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-arc-blue"
+            style={{ boxShadow: '0 0 12px rgba(0,217,255,0.8)' }}
+          />
+          {/* Radial lines */}
+          {[0, 60, 120, 180, 240, 300].map((deg) => (
+            <div
+              key={deg}
+              className="absolute top-1/2 left-1/2 w-px h-14 bg-gradient-to-b from-arc-blue/40 to-transparent origin-top"
+              style={{ transform: `translate(-50%, 0) rotate(${deg}deg)` }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* SVG Energy Lines */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: 1 }}
+      >
+        {subjects.map((subject, index) => {
+          const angle = (2 * Math.PI * index) / count - Math.PI / 2;
+          const centerX = 50; // % of container
+          const centerY = 50;
+          const endX = centerX + (orbitRadius / 7.6) * Math.cos(angle);
+          const endY = centerY + (orbitRadius / 4) * Math.sin(angle);
+          const isMastered = subject.mastered;
+
+          return (
+            <line
+              key={`line-${subject.id}`}
+              x1={`${centerX}%`}
+              y1={`${centerY}%`}
+              x2={`${endX}%`}
+              y2={`${endY}%`}
+              stroke={isMastered ? 'rgba(0,255,65,0.2)' : 'rgba(0,217,255,0.15)'}
+              strokeWidth="1"
+              strokeDasharray="4 4"
+            />
+          );
+        })}
+      </svg>
+
+      {/* Subject Nodes */}
+      {subjects.map((subject, index) => {
+        const angle = (2 * Math.PI * index) / count - Math.PI / 2;
+        const x = orbitRadius * Math.cos(angle);
+        const y = orbitRadius * Math.sin(angle);
+        const isMastered = subject.mastered;
+        const completionColor = isMastered ? 'var(--terminal-green)' : 'var(--arc-blue)';
+
+        const radius = 28;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (subject.completion_percent / 100) * circumference;
+
+        return (
+          <motion.div
+            key={subject.id}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.5,
+              delay: 0.3 + index * 0.08,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+            className="absolute z-10"
+            style={{
+              top: `calc(50% + ${y}px)`,
+              left: `calc(50% + ${x}px)`,
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <Link href={`/subject/${subject.id}`} id={`orbit-subject-${index}`}>
+              <div
+                className={cn(
+                  'group relative flex flex-col items-center gap-2 p-4 rounded-xl cursor-pointer w-36',
+                  'transition-all duration-300 backdrop-blur-xl bg-glass-surface',
+                  'hover:scale-105',
+                  isMastered
+                    ? 'border border-terminal-green/50 shadow-[0_0_16px_rgba(0,255,65,0.2)]'
+                    : 'border border-glass-border hover:border-arc-blue/50 hover:shadow-[0_0_20px_rgba(0,217,255,0.3)]'
+                )}
+              >
+                {/* Completion Ring with Icon */}
+                <div className="relative w-14 h-14 flex items-center justify-center">
+                  <svg className="absolute inset-0 w-14 h-14 -rotate-90" viewBox="0 0 64 64">
+                    <circle cx="32" cy="32" r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+                    <circle
+                      cx="32" cy="32" r={radius} fill="none"
+                      stroke={completionColor} strokeWidth="3" strokeLinecap="round"
+                      strokeDasharray={circumference} strokeDashoffset={offset}
+                      className="transition-all duration-700"
+                      style={{ filter: `drop-shadow(0 0 4px ${completionColor})` }}
+                    />
+                  </svg>
+                  <span className="text-xl z-10">{subject.icon}</span>
+                </div>
+
+                {/* Name */}
+                <p className="font-rajdhani text-xs text-center text-text-white/80 uppercase tracking-wider leading-tight group-hover:text-arc-blue transition-colors">
+                  {subject.subject_name}
+                </p>
+
+                {/* Percentage */}
+                <span className="font-mono text-[10px] tracking-wider" style={{ color: completionColor }}>
+                  {subject.completion_percent}%
+                </span>
+
+                {isMastered && (
+                  <span className="font-rajdhani text-[9px] uppercase tracking-[2px] text-terminal-green px-1.5 py-0.5 rounded border border-terminal-green/30 bg-terminal-green/10">
+                    Mastered
+                  </span>
+                )}
+              </div>
+            </Link>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}

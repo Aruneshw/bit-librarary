@@ -1,0 +1,250 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&family=Share+Tech+Mono&display=swap');
+
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════
+   ARC_OS Design Tokens
+   ═══════════════════════════════════════════ */
+:root {
+  --bg-void: #000000;
+  --arc-blue: #00D9FF;
+  --terminal-green: #00FF41;
+  --text-white: #FFFFFF;
+  --warning-red: #FF3D3D;
+  --glass-surface: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(0, 217, 255, 0.18);
+  --glow-blue: 0 0 24px rgba(0, 217, 255, 0.5);
+  --glow-green: 0 0 24px rgba(0, 255, 65, 0.5);
+  --radius-card: 12px;
+  --radius-modal: 16px;
+  --transition-fast: 150ms ease;
+  --transition-med: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme inline {
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-rajdhani: 'Rajdhani', sans-serif;
+  --font-exo2: 'Exo 2', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+
+  --color-arc-blue: #00D9FF;
+  --color-terminal-green: #00FF41;
+  --color-warning-red: #FF3D3D;
+  --color-void: #000000;
+  --color-text-white: #FFFFFF;
+  --color-glass-surface: rgba(255, 255, 255, 0.04);
+  --color-glass-border: rgba(0, 217, 255, 0.18);
+}
+
+/* ═══════════════════════════════════════════
+   Global Reset & Base
+   ═══════════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-void);
+  color: var(--text-white);
+  font-family: 'Exo 2', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   Dot Grid Background System
+   ═══════════════════════════════════════════ */
+.arc-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: #000000;
+  background-image: radial-gradient(
+    rgba(0, 217, 255, 0.15) 1px,
+    transparent 1px
+  );
+  background-size: 28px 28px;
+}
+
+.arc-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    #000000 100%
+  );
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   Glassmorphism Panels
+   ═══════════════════════════════════════════ */
+.glass-panel {
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: var(--glass-surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+}
+
+.glass-panel-green {
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: var(--glass-surface);
+  border: 1px solid var(--terminal-green);
+  box-shadow: var(--glow-green);
+  border-radius: var(--radius-card);
+}
+
+.glass-panel-blue {
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: var(--glass-surface);
+  border: 1px solid var(--arc-blue);
+  box-shadow: var(--glow-blue);
+  border-radius: var(--radius-card);
+}
+
+/* ═══════════════════════════════════════════
+   Glow Effects
+   ═══════════════════════════════════════════ */
+.glow-blue {
+  box-shadow: var(--glow-blue);
+}
+
+.glow-green {
+  box-shadow: var(--glow-green);
+}
+
+.text-glow-blue {
+  text-shadow: 0 0 12px rgba(0, 217, 255, 0.6),
+               0 0 24px rgba(0, 217, 255, 0.3);
+}
+
+.text-glow-green {
+  text-shadow: 0 0 12px rgba(0, 255, 65, 0.6),
+               0 0 24px rgba(0, 255, 65, 0.3);
+}
+
+/* ═══════════════════════════════════════════
+   Animations
+   ═══════════════════════════════════════════ */
+@keyframes pulse-glow-blue {
+  0%, 100% { box-shadow: 0 0 12px rgba(0, 217, 255, 0.3); }
+  50% { box-shadow: 0 0 32px rgba(0, 217, 255, 0.6); }
+}
+
+@keyframes pulse-glow-green {
+  0%, 100% { box-shadow: 0 0 12px rgba(0, 255, 65, 0.3); }
+  50% { box-shadow: 0 0 32px rgba(0, 255, 65, 0.6); }
+}
+
+@keyframes energy-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes spin-clockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-counter {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes typewriter-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes ring-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ═══════════════════════════════════════════
+   Utility Classes
+   ═══════════════════════════════════════════ */
+.animate-pulse-blue {
+  animation: pulse-glow-blue 2s ease-in-out infinite;
+}
+
+.animate-pulse-green {
+  animation: pulse-glow-green 2s ease-in-out infinite;
+}
+
+.animate-energy-pulse {
+  animation: energy-pulse 1.5s ease-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════
+   Scrollbar Styling
+   ═══════════════════════════════════════════ */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 217, 255, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 217, 255, 0.5);
+}
+
+/* ═══════════════════════════════════════════
+   Selection Colors
+   ═══════════════════════════════════════════ */
+::selection {
+  background: rgba(0, 217, 255, 0.3);
+  color: var(--text-white);
+}

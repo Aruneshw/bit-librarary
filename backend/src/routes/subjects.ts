@@ -1,0 +1,72 @@
+import { Router, Response } from 'express';
+import { authMiddleware, AuthRequest } from '../middleware/auth';
+import { supabaseAdmin } from '../config/supabase';
+
+export const subjectsRouter = Router();
+
+// GET /subjects
+subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    // Get user's department
+    const department = req.query.department as string;
+    let userDept = department;
+
+    if (!userDept) {
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('department')
+        .eq('id', req.userId!)
+        .single();
+
+      userDept = profile?.department;
+    }
+
+    if (!userDept) {
+      res.status(400).json({
+        error: { code: 'BAD_REQUEST', message: 'Department not set. Please select a department first.', status: 400 },
+      });
+      return;
+    }
+
+    // Fetch subjects for department
+    const { data: subjects, error } = await supabaseAdmin
+      .from('subjects')
+      .select('*')
+      .contains('department', [userDept]);
+
+    if (error) {
+      res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Failed to fetch subjects', status: 500 } });
+      return;
+    }
+
+    // Get completion for each subject
+    const subjectsWithCompletion = await Promise.all(
+      (subjects || []).map(async (subject) => {
+        const { count: total } = await supabaseAdmin
+          .from('questions')
+          .select('*', { count: 'exact', head: true })
+          .eq('subject_id', subject.id);
+
+        const { count: viewed } = await supabaseAdmin
+          .from('question_views')
+          .select('*', { count: 'exact', head: true })
+          .eq('subject_id', subject.id)
+          .eq('user_id', req.userId!)
+          .eq('viewed', true);
+
+        const totalCount = total || 0;
+        const viewedCount = viewed || 0;
+        const completion = totalCount > 0 ? Math.round((viewedCount / totalCount) * 1000) / 10 : 0;
+
+        return {
+          ...subject,
+          completion,
+        };
+      })
+    );
+
+    res.json({ subjects: subjectsWithCompletion });
+  } catch {
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Server error', status: 500 } });
+  }
+});
