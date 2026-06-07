@@ -14,7 +14,10 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
   const orbitRadius = 280; // px from center
 
   return (
-    <div className="relative w-full" style={{ height: `${orbitRadius * 2 + 200}px` }}>
+    <div className="relative w-full flex items-center justify-center" style={{ height: `${orbitRadius * 2 + 200}px` }}>
+      {/* Subtle ambient glow behind the orbit */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-arc-blue/5 rounded-full blur-[100px] pointer-events-none" />
+      
       {/* Center ARC Reactor (CSS version) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="relative w-32 h-32">
@@ -86,7 +89,7 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
               y1={`${centerY}%`}
               x2={`${endX}%`}
               y2={`${endY}%`}
-              stroke={isMastered ? 'rgba(0,255,65,0.2)' : 'rgba(0,217,255,0.15)'}
+              stroke={isMastered ? 'rgba(0,255,65,0.25)' : 'rgba(0,217,255,0.25)'}
               strokeWidth="2"
               strokeDasharray="4 4"
               className="animate-energy-flow"

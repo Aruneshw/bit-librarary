@@ -16,7 +16,7 @@ function SystemClock() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setTime(now.toISOString().split('T')[1].split('.')[0] + ' UTC');
+      setTime(now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false }) + ' IST');
     };
     updateTime();
     const interval = setInterval(updateTime, 1000);
@@ -27,7 +27,7 @@ function SystemClock() {
 
   return (
     <div className="font-mono text-[8px] sm:text-[10px] text-arc-blue/80 tracking-widest tabular-nums bg-arc-blue/5 border border-arc-blue/20 px-2 sm:px-3 py-1 rounded-lg">
-      <span className="inline">{time.split(' ')[0]}</span> <span className="hidden sm:inline">UTC</span>
+      <span className="inline">{time.split(' ')[0]}</span> <span className="hidden sm:inline">IST</span>
     </div>
   );
 }
@@ -184,20 +184,29 @@ export default function DashboardPage() {
 
         {/* Subject Display */}
         {!subjectsLoading && introComplete && (
-          <div className="w-full pb-12 pt-24 lg:pt-0">
+          <div className="w-full flex-1 flex flex-col items-center justify-center pb-12 pt-24 lg:pt-0">
             {/* Compact reactor + title for mobile */}
             {isMobile && (
               <div className="flex flex-col items-center mb-8">
-                {/* Compact ARC Reactor */}
-                <div className="relative w-24 h-24 mb-4">
-                  <div className="absolute inset-0 rounded-full border border-arc-blue/30"
-                    style={{ animation: 'spin-counter 8s linear infinite' }} />
-                  <div className="absolute inset-2 rounded-full border border-arc-blue/50"
-                    style={{ animation: 'spin-clockwise 6s linear infinite' }} />
-                  <div className="absolute inset-4 rounded-full bg-arc-blue/10"
-                    style={{ boxShadow: '0 0 20px rgba(0,217,255,0.3)', animation: 'pulse-glow-blue 3s ease-in-out infinite' }} />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-arc-blue"
-                    style={{ boxShadow: '0 0 8px rgba(0,217,255,0.8)' }} />
+                {/* Compact ARC Reactor (Triangular Design) */}
+                <div className="relative w-20 h-20 mb-4">
+                  <div className="absolute inset-0 rounded-full border border-arc-blue/20" style={{ animation: 'spin-counter 15s linear infinite' }} />
+                  <div className="absolute inset-2 rounded-full border border-dashed border-arc-blue/60" style={{ animation: 'spin-clockwise 10s linear infinite' }} />
+                  <div className="absolute inset-5 rounded-full border border-arc-blue" style={{ animation: 'spin-counter 5s linear infinite', boxShadow: 'inset 0 0 8px rgba(0,217,255,0.2), 0 0 8px rgba(0,217,255,0.4)' }} />
+                  
+                  {/* Floating particles */}
+                  <div className="absolute inset-0 pointer-events-none" style={{ animation: 'spin-clockwise 12s linear infinite' }}>
+                     <div className="absolute top-1 left-1/2 w-1 h-1 bg-arc-blue rounded-full shadow-[0_0_6px_#00D9FF]" />
+                  </div>
+                  <div className="absolute inset-2 pointer-events-none" style={{ animation: 'spin-counter 8s linear infinite' }}>
+                     <div className="absolute bottom-1 left-1/3 w-1 h-1 bg-arc-blue rounded-full shadow-[0_0_6px_#00D9FF]" />
+                  </div>
+
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <svg className="w-6 h-6 animate-pulse-blue" viewBox="0 0 100 100" style={{ filter: 'drop-shadow(0 0 12px rgba(0,217,255,1))' }}>
+                      <polygon points="50,15 15,80 85,80" fill="rgba(0,217,255,0.9)" stroke="rgba(0,217,255,1)" strokeWidth="2" strokeLinejoin="round" />
+                    </svg>
+                  </div>
                 </div>
 
                 <h2 className="font-orbitron text-sm text-arc-blue/60 uppercase tracking-[4px]">
