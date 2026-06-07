@@ -7,6 +7,7 @@ import { useSubjectStore } from '@/store/subjectStore';
 import SubjectOrbit from '@/components/dashboard/SubjectOrbit';
 import SubjectCardStack from '@/components/dashboard/SubjectCardStack';
 import ArcReactor from '@/components/dashboard/ArcReactor';
+import AINoticeBoard from '@/components/dashboard/AINoticeBoard';
 import IntroAnimation from '@/components/animations/IntroAnimation';
 import TutorialModal from '@/components/tutorial/TutorialModal';
 import { createClient } from '@/lib/supabase';
@@ -117,6 +118,7 @@ export default function DashboardPage() {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden">
+      <AINoticeBoard />
 
       {/* Intro Animation */}
       {showIntro && (
