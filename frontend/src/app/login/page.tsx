@@ -9,19 +9,19 @@ import { useAuthStore } from '@/store/authStore';
 
 export default function LoginPage() {
   const [phase, setPhase] = useState<'boot' | 'auth'>('boot');
-  const { user, isAuthenticated, fetchUser, isLoading } = useAuthStore();
+  const { user, isAuthenticated, isAdmin, fetchUser, isLoading } = useAuthStore();
   const router = useRouter();
-  const needsDepartment = !isLoading && isAuthenticated && Boolean(user && !user.department);
+  const needsDepartment = !isLoading && isAuthenticated && !isAdmin && Boolean(user && !user.department);
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated && user?.department) {
+    if (!isLoading && isAuthenticated && (user?.department || isAdmin)) {
       router.replace('/dashboard');
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [isLoading, isAuthenticated, isAdmin, user, router]);
 
   const handleBootComplete = () => {
     setPhase('auth');

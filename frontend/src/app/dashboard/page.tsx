@@ -59,21 +59,24 @@ export default function DashboardPage() {
     }
   }, [isAuthenticated, fetchUser]);
 
-  // Redirect if not authenticated
+  // Redirect if not authenticated or missing department (unless admin)
   useEffect(() => {
     if (authLoading) return;
 
-    if (!isAuthenticated || (user && !user.department)) {
+    if (!isAuthenticated || (user && !user.department && !isAdmin)) {
       router.replace('/login');
     }
-  }, [authLoading, isAuthenticated, user, router]);
+  }, [authLoading, isAuthenticated, isAdmin, user, router]);
 
   // Fetch subjects when user is ready
   useEffect(() => {
     if (user?.department) {
       fetchSubjects(user.department);
+    } else if (isAdmin) {
+      // Admins bypass department check, so load default subjects (e.g. CS)
+      fetchSubjects('CS');
     }
-  }, [user?.department, fetchSubjects]);
+  }, [user?.department, isAdmin, fetchSubjects]);
 
   // Check tutorial status
   useEffect(() => {
