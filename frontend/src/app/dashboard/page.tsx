@@ -115,8 +115,14 @@ export default function DashboardPage() {
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 flex items-center justify-between px-6 py-4 pointer-events-none z-50">
           <div className="flex items-center gap-3 pointer-events-auto">
-            {avatarUrl && (
+            {avatarUrl ? (
               <img src={avatarUrl} alt="Profile" className="w-10 h-10 rounded-full border border-arc-blue/30" />
+            ) : (
+              <div className="w-10 h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
+                <span className="font-orbitron text-arc-blue font-bold text-sm">
+                  {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                </span>
+              </div>
             )}
             <div>
               <h1
