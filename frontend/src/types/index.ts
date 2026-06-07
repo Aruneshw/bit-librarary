@@ -9,6 +9,7 @@ export interface Profile {
   email: string;
   name: string | null;
   department: Department | null;
+  login_count: number;
   created_at: string;
 }
 

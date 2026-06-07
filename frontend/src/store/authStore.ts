@@ -99,6 +99,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           email: authUser.email,
           name: getDisplayName(authUser),
           department: null,
+          login_count: 1,
           created_at: new Date().toISOString(),
         };
 
@@ -109,6 +110,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             email: userProfile.email,
             name: userProfile.name,
             department: userProfile.department,
+            login_count: 1
           });
 
         await supabase

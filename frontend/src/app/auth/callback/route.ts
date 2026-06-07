@@ -30,11 +30,14 @@ export async function GET(request: Request) {
       }
     );
     
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
+    const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error && sessionData?.session?.user?.id) {
+      // Safely increment the login count using the new RPC function
+      await supabase.rpc('increment_login_count', { target_user_id: sessionData.session.user.id });
+      
       return NextResponse.redirect(`${origin}${next}`);
     } else {
-      console.error('Exchange code error:', error.message);
+      console.error('Exchange code error:', error?.message);
     }
   }
 

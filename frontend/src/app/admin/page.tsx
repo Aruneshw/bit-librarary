@@ -11,6 +11,7 @@ interface UserProfile {
   email: string;
   name: string;
   department: string;
+  login_count: number;
   created_at: string;
 }
 
@@ -92,17 +93,18 @@ export default function AdminDashboard() {
                   <th className="p-4 pl-6">Name</th>
                   <th className="p-4">Email</th>
                   <th className="p-4">Department</th>
+                  <th className="p-4">Logins</th>
                   <th className="p-4">Joined Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-arc-blue/10">
                 {loadingUsers ? (
                   <tr>
-                    <td colSpan={4} className="p-8 text-center text-white/50 font-mono animate-pulse">Loading personnel data...</td>
+                    <td colSpan={5} className="p-8 text-center text-white/50 font-mono animate-pulse">Loading personnel data...</td>
                   </tr>
                 ) : users.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="p-8 text-center text-white/50 font-mono">No personnel records found.</td>
+                    <td colSpan={5} className="p-8 text-center text-white/50 font-mono">No personnel records found.</td>
                   </tr>
                 ) : (
                   users.map((u, i) => (
@@ -119,6 +121,9 @@ export default function AdminDashboard() {
                         <span className="px-2 py-1 text-xs font-mono border border-arc-blue/30 rounded bg-arc-blue/10 text-arc-blue">
                           {u.department || 'N/A'}
                         </span>
+                      </td>
+                      <td className="p-4 text-white/70 font-mono text-sm">
+                        {u.login_count || 0}
                       </td>
                       <td className="p-4 text-white/50 font-mono text-xs">
                         {new Date(u.created_at).toLocaleDateString()} {new Date(u.created_at).toLocaleTimeString()}
