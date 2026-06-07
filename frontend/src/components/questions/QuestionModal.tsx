@@ -23,7 +23,7 @@ const Mermaid = ({ chart }: { chart: string }) => {
         try {
           // Dynamically import mermaid to prevent huge bundle sizes and UI freezes
           const mermaidModule = await import('mermaid');
-          const mermaid = mermaidModule.default;
+          const mermaid = mermaidModule.default || mermaidModule;
           
           mermaid.initialize({ 
             startOnLoad: false,
@@ -130,12 +130,19 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}
                   components={{
+                    pre({ children, ...props }: any) {
+                      const child = Array.isArray(children) ? children[0] : children;
+                      if (child?.props?.['data-mermaid']) {
+                        return <div className="w-full my-6">{children}</div>;
+                      }
+                      return <pre {...props}>{children}</pre>;
+                    },
                     code({ node, inline, className, children, ...props }: any) {
                       const match = /language-(\w+)/.exec(className || '');
                       const language = match ? match[1] : '';
 
                       if (!inline && language === 'mermaid') {
-                        return <Mermaid chart={String(children).replace(/\n$/, '')} />;
+                        return <Mermaid chart={String(children).replace(/\n$/, '')} data-mermaid />;
                       }
                       return <code className={className} {...props}>{children}</code>;
                     }
@@ -157,12 +164,19 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}
                   components={{
+                    pre({ children, ...props }: any) {
+                      const child = Array.isArray(children) ? children[0] : children;
+                      if (child?.props?.['data-mermaid']) {
+                        return <div className="w-full my-6">{children}</div>;
+                      }
+                      return <pre {...props}>{children}</pre>;
+                    },
                     code({ node, inline, className, children, ...props }: any) {
                       const match = /language-(\w+)/.exec(className || '');
                       const language = match ? match[1] : '';
 
                       if (!inline && language === 'mermaid') {
-                        return <Mermaid chart={String(children).replace(/\n$/, '')} />;
+                        return <Mermaid chart={String(children).replace(/\n$/, '')} data-mermaid />;
                       }
                       return <code className={className} {...props}>{children}</code>;
                     }
