@@ -37,10 +37,12 @@ export default function DashboardPage() {
 
   // Redirect if not authenticated
   useEffect(() => {
-    if (!authLoading && !isAuthenticated) {
-      router.push('/login');
+    if (authLoading) return;
+
+    if (!isAuthenticated || (user && !user.department)) {
+      router.replace('/login');
     }
-  }, [authLoading, isAuthenticated, router]);
+  }, [authLoading, isAuthenticated, user, router]);
 
   // Fetch subjects when user is ready
   useEffect(() => {
@@ -77,7 +79,7 @@ export default function DashboardPage() {
     router.push('/login');
   };
 
-  if (authLoading) {
+  if (authLoading || (isAuthenticated && user && !user.department)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="arc-bg" />
