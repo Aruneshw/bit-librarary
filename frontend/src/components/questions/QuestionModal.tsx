@@ -33,9 +33,16 @@ const Mermaid = ({ chart }: { chart: string }) => {
             fontFamily: 'Rajdhani, sans-serif'
           });
 
+          // Auto-fix legacy mermaid syntax from database ("A" --> "B" to NodeA["A"] --> NodeB["B"])
+          const sanitizedChart = chart.replace(/"([^"]+)"\s*-->\s*"([^"]+)"/g, (match, p1, p2) => {
+            const id1 = p1.replace(/[^a-zA-Z0-9]/g, '') || 'NodeA';
+            const id2 = p2.replace(/[^a-zA-Z0-9]/g, '') || 'NodeB';
+            return `${id1}["${p1}"] --> ${id2}["${p2}"]`;
+          });
+
           // Generate a unique ID that starts with a letter (required by Mermaid)
           const id = `mermaid_${Math.random().toString(36).substr(2, 9)}`;
-          const { svg } = await mermaid.render(id, chart);
+          const { svg } = await mermaid.render(id, sanitizedChart);
           if (isMounted && ref.current) {
             ref.current.innerHTML = svg;
             setError(null);
