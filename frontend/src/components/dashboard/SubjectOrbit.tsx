@@ -11,10 +11,12 @@ interface SubjectOrbitProps {
 
 export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
   const count = subjects.length;
-  const orbitRadius = 280; // px from center
+  // Use an elliptical orbit to make distances look visually equal since cards are wide
+  const xRadius = 380;
+  const yRadius = 280;
 
   return (
-    <div className="relative w-full flex items-center justify-center" style={{ height: `${orbitRadius * 2 + 200}px` }}>
+    <div className="relative w-full flex items-center justify-center" style={{ height: `${yRadius * 2 + 200}px` }}>
       {/* Subtle ambient glow behind the orbit */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-arc-blue/5 rounded-full blur-[100px] pointer-events-none" />
       
@@ -71,24 +73,22 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
 
       {/* SVG Energy Lines */}
       <svg
-        className="absolute inset-0 w-full h-full pointer-events-none"
+        className="absolute top-1/2 left-1/2 overflow-visible pointer-events-none"
         style={{ zIndex: 1 }}
       >
         {subjects.map((subject, index) => {
           const angle = (2 * Math.PI * index) / count - Math.PI / 2;
-          const centerX = 50; // % of container
-          const centerY = 50;
-          const endX = centerX + (orbitRadius / 7.6) * Math.cos(angle);
-          const endY = centerY + (orbitRadius / 4) * Math.sin(angle);
+          const x = xRadius * Math.cos(angle);
+          const y = yRadius * Math.sin(angle);
           const isMastered = subject.mastered;
 
           return (
             <line
               key={`line-${subject.id}`}
-              x1={`${centerX}%`}
-              y1={`${centerY}%`}
-              x2={`${endX}%`}
-              y2={`${endY}%`}
+              x1="0"
+              y1="0"
+              x2={x}
+              y2={y}
               stroke={isMastered ? 'rgba(0,255,65,0.25)' : 'rgba(0,217,255,0.25)'}
               strokeWidth="2"
               strokeDasharray="4 4"
@@ -101,8 +101,8 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
       {/* Subject Nodes */}
       {subjects.map((subject, index) => {
         const angle = (2 * Math.PI * index) / count - Math.PI / 2;
-        const x = orbitRadius * Math.cos(angle);
-        const y = orbitRadius * Math.sin(angle);
+        const x = xRadius * Math.cos(angle);
+        const y = yRadius * Math.sin(angle);
         const isMastered = subject.mastered;
         const completionColor = isMastered ? 'var(--terminal-green)' : 'var(--arc-blue)';
 

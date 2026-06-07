@@ -232,6 +232,13 @@ export default function DashboardPage() {
             </div>
           </div>
         )}
+
+        {/* Footer */}
+        <footer className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none z-50">
+          <p className="font-mono text-[9px] sm:text-[10px] text-arc-blue/40 uppercase tracking-[4px]">
+            Developed by <span className="text-arc-blue/80 font-bold">Stark</span> & <span className="text-arc-blue/80 font-bold">Ruder</span>
+          </p>
+        </footer>
       </div>
     </main>
   );
