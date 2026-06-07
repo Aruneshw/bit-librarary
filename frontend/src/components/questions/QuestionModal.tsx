@@ -5,22 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import mermaid from 'mermaid';
 import { type QuestionWithStatus } from '@/types';
 
 interface QuestionModalProps {
   question: QuestionWithStatus | null;
   onClose: () => void;
-}
-
-// Initialize mermaid once outside the component to prevent repeated heavy initialization calls
-if (typeof window !== 'undefined') {
-  mermaid.initialize({ 
-    startOnLoad: false,
-    theme: 'dark',
-    securityLevel: 'loose',
-    fontFamily: 'Rajdhani, sans-serif'
-  });
 }
 
 const Mermaid = ({ chart }: { chart: string }) => {
@@ -32,6 +21,17 @@ const Mermaid = ({ chart }: { chart: string }) => {
     const renderChart = async () => {
       if (ref.current && chart) {
         try {
+          // Dynamically import mermaid to prevent huge bundle sizes and UI freezes
+          const mermaidModule = await import('mermaid');
+          const mermaid = mermaidModule.default;
+          
+          mermaid.initialize({ 
+            startOnLoad: false,
+            theme: 'dark',
+            securityLevel: 'loose',
+            fontFamily: 'Rajdhani, sans-serif'
+          });
+
           // Generate a unique ID that starts with a letter (required by Mermaid)
           const id = `mermaid_${Math.random().toString(36).substr(2, 9)}`;
           const { svg } = await mermaid.render(id, chart);
