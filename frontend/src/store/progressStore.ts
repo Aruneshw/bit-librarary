@@ -48,7 +48,7 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         .eq('user_id', user.id);
 
       const viewMap = new Map(
-        (views || []).map((v) => [v.question_id, v])
+        (views || []).map((v: any) => [v.question_id, v])
       );
 
       const questionsWithStatus: QuestionWithStatus[] = questions.map((q) => {
