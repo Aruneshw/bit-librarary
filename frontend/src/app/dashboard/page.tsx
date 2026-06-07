@@ -106,7 +106,7 @@ export default function DashboardPage() {
     router.push('/login');
   };
 
-  if (authLoading || (isAuthenticated && user && !user.department)) {
+  if (authLoading || (isAuthenticated && user && !user.department && !isAdmin)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative z-10 w-12 h-12">
