@@ -17,58 +17,52 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
     <div className="relative w-full" style={{ height: `${orbitRadius * 2 + 200}px` }}>
       {/* Center ARC Reactor (CSS version) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="relative w-36 h-36">
-          {/* Outer ring */}
+        <div className="relative w-32 h-32">
+          {/* Outer faint ring */}
           <div
-            className="absolute inset-0 rounded-full border-2 border-arc-blue/30"
-            style={{ animation: 'spin-counter 10s linear infinite' }}
+            className="absolute inset-0 rounded-full border border-arc-blue/20"
+            style={{ animation: 'spin-counter 15s linear infinite' }}
           />
-          {/* Middle ring */}
+          {/* Middle dashed ring */}
           <div
-            className="absolute inset-3 rounded-full border border-arc-blue/50"
-            style={{ animation: 'spin-clockwise 7s linear infinite' }}
+            className="absolute inset-3 rounded-full border-[1.5px] border-dashed border-arc-blue/60"
+            style={{ animation: 'spin-clockwise 10s linear infinite' }}
           />
-          {/* Inner ring */}
+          {/* Inner solid glowing ring */}
           <div
-            className="absolute inset-6 rounded-full border border-arc-blue/70"
-            style={{ animation: 'spin-counter 5s linear infinite' }}
+            className="absolute inset-7 rounded-full border-[1.5px] border-arc-blue"
+            style={{ animation: 'spin-counter 5s linear infinite', boxShadow: 'inset 0 0 10px rgba(0,217,255,0.2), 0 0 10px rgba(0,217,255,0.4)' }}
           />
+
+          {/* Floating particles (Orbit 1) */}
+          <div className="absolute inset-0 pointer-events-none" style={{ animation: 'spin-clockwise 12s linear infinite' }}>
+             <div className="absolute top-1 left-1/2 w-1.5 h-1.5 bg-arc-blue rounded-full shadow-[0_0_8px_#00D9FF]" />
+             <div className="absolute bottom-4 right-4 w-1 h-1 bg-arc-blue rounded-full shadow-[0_0_8px_#00D9FF]" />
+          </div>
+          
+          {/* Floating particles (Orbit 2) */}
+          <div className="absolute inset-2 pointer-events-none" style={{ animation: 'spin-counter 8s linear infinite' }}>
+             <div className="absolute bottom-1 left-1/3 w-1.5 h-1.5 bg-arc-blue rounded-full shadow-[0_0_8px_#00D9FF]" />
+             <div className="absolute top-5 right-2 w-1 h-1 bg-arc-blue rounded-full shadow-[0_0_8px_#00D9FF]" />
+          </div>
+
           {/* Triangular Core */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <svg
-              className="w-[70px] h-[70px] animate-pulse-blue"
+              className="w-10 h-10 animate-pulse-blue"
               viewBox="0 0 100 100"
-              style={{ filter: 'drop-shadow(0 0 12px rgba(0,217,255,0.8))' }}
+              style={{ filter: 'drop-shadow(0 0 16px rgba(0,217,255,1))' }}
             >
-              {/* Outer triangle */}
+              {/* Solid bright glowing triangle */}
               <polygon
-                points="50,15 10,85 90,85"
-                fill="rgba(0,217,255,0.1)"
-                stroke="rgba(0,217,255,0.8)"
-                strokeWidth="4"
-                strokeLinejoin="round"
-              />
-              {/* Inner glowing core */}
-              <polygon
-                points="50,35 25,75 75,75"
-                fill="rgba(0,217,255,0.6)"
+                points="50,15 15,80 85,80"
+                fill="rgba(0,217,255,0.9)"
+                stroke="rgba(0,217,255,1)"
+                strokeWidth="2"
                 strokeLinejoin="round"
               />
             </svg>
           </div>
-          {/* Center dot */}
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-arc-blue"
-            style={{ boxShadow: '0 0 12px rgba(0,217,255,0.8)' }}
-          />
-          {/* Radial lines */}
-          {[0, 60, 120, 180, 240, 300].map((deg) => (
-            <div
-              key={deg}
-              className="absolute top-1/2 left-1/2 w-px h-14 bg-gradient-to-b from-arc-blue/40 to-transparent origin-top"
-              style={{ transform: `translate(-50%, 0) rotate(${deg}deg)` }}
-            />
-          ))}
         </div>
       </div>
 
