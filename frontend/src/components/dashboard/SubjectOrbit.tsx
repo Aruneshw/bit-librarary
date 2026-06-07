@@ -59,8 +59,8 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
         const isMastered = subject.mastered;
         const completionColor = isMastered ? 'var(--terminal-green)' : 'var(--arc-blue)';
 
-        const radius = 28;
-        const circumference = 2 * Math.PI * radius;
+        const ringRadius = 28;
+        const circumference = 2 * Math.PI * ringRadius;
         const offset = circumference - (subject.completion_percent / 100) * circumference;
 
         return (
@@ -94,9 +94,9 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
                 {/* Completion Ring with Icon */}
                 <div className="relative w-14 h-14 flex items-center justify-center">
                   <svg className="absolute inset-0 w-14 h-14 -rotate-90" viewBox="0 0 64 64">
-                    <circle cx="32" cy="32" r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+                    <circle cx="32" cy="32" r={ringRadius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
                     <circle
-                      cx="32" cy="32" r={radius} fill="none"
+                      cx="32" cy="32" r={ringRadius} fill="none"
                       stroke={completionColor} strokeWidth="3" strokeLinecap="round"
                       strokeDasharray={circumference} strokeDashoffset={offset}
                       className="transition-all duration-700"
