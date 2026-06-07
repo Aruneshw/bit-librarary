@@ -10,6 +10,7 @@ import ArcReactor from '@/components/dashboard/ArcReactor';
 import AINoticeBoard from '@/components/dashboard/AINoticeBoard';
 import IntroAnimation from '@/components/animations/IntroAnimation';
 import TutorialModal from '@/components/tutorial/TutorialModal';
+import FeedbackForm from '@/components/dashboard/FeedbackForm';
 import { createClient } from '@/lib/supabase';
 
 function SystemClock() {
@@ -234,6 +235,9 @@ export default function DashboardPage() {
             Developed by <span className="text-arc-blue/80 font-bold">Stark</span> & <span className="text-arc-blue/80 font-bold">Ruder</span>
           </p>
         </footer>
+
+        {/* Feedback Form */}
+        {isAuthenticated && introComplete && <FeedbackForm />}
       </div>
     </main>
   );

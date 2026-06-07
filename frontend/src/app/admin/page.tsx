@@ -15,11 +15,24 @@ interface UserProfile {
   created_at: string;
 }
 
+interface UserFeedback {
+  id: string;
+  user_id: string;
+  message: string;
+  created_at: string;
+  profiles?: {
+    name: string | null;
+    email: string;
+  };
+}
+
 export default function AdminDashboard() {
   const router = useRouter();
   const { user, isAdmin, isLoading } = useAuthStore();
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [feedbacks, setFeedbacks] = useState<UserFeedback[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
 
   useEffect(() => {
     if (!isLoading) {
@@ -27,6 +40,7 @@ export default function AdminDashboard() {
         router.replace('/dashboard');
       } else {
         fetchUsers();
+        fetchFeedbacks();
       }
     }
   }, [isAdmin, isLoading, router]);
@@ -42,6 +56,25 @@ export default function AdminDashboard() {
       setUsers(data as UserProfile[]);
     }
     setLoadingUsers(false);
+  };
+
+  const fetchFeedbacks = async () => {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('user_feedbacks')
+      .select('*, profiles(name, email)')
+      .order('created_at', { ascending: false });
+
+    if (data && !error) {
+      setFeedbacks(data as unknown as UserFeedback[]);
+    }
+    setLoadingFeedbacks(false);
+  };
+
+  const handleDeleteFeedback = async (id: string) => {
+    const supabase = createClient();
+    await supabase.from('user_feedbacks').delete().eq('id', id);
+    setFeedbacks(feedbacks.filter(f => f.id !== id));
   };
 
   if (isLoading || !isAdmin) {
@@ -133,6 +166,61 @@ export default function AdminDashboard() {
                 )}
               </tbody>
             </table>
+          </div>
+        </motion.div>
+
+        {/* Feedback Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-8 bg-black/40 border border-arc-blue/20 rounded-xl backdrop-blur-md overflow-hidden shadow-[0_0_30px_rgba(0,217,255,0.05)]"
+        >
+          <div className="p-6 border-b border-arc-blue/20 bg-arc-blue/5">
+            <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-arc-blue shadow-[0_0_8px_rgba(0,217,255,1)]" />
+              User Feedback Transmissions
+            </h2>
+          </div>
+          
+          <div className="p-6">
+            {loadingFeedbacks ? (
+              <p className="text-center text-white/50 font-mono animate-pulse py-8">Decrypting incoming transmissions...</p>
+            ) : feedbacks.length === 0 ? (
+              <p className="text-center text-white/50 font-mono py-8">No active transmissions.</p>
+            ) : (
+              <div className="grid gap-4">
+                {feedbacks.map((f, i) => (
+                  <motion.div 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 * i }}
+                    key={f.id}
+                    className="p-4 border border-arc-blue/20 bg-arc-blue/5 rounded-lg relative group"
+                  >
+                    <button 
+                      onClick={() => handleDeleteFeedback(f.id)}
+                      className="absolute top-4 right-4 text-white/30 hover:text-warning-red transition-colors"
+                      title="Delete Feedback"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                    </button>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-orbitron text-arc-blue text-sm">
+                        {f.profiles?.name || 'Unknown User'}
+                      </span>
+                      <span className="font-mono text-white/40 text-xs">
+                        ({f.profiles?.email})
+                      </span>
+                    </div>
+                    <p className="font-mono text-white/80 text-sm whitespace-pre-wrap">{f.message}</p>
+                    <div className="mt-3 font-mono text-white/30 text-[10px] uppercase">
+                      Transmitted: {new Date(f.created_at).toLocaleString()}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
