@@ -33,14 +33,29 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
             className="absolute inset-6 rounded-full border border-arc-blue/70"
             style={{ animation: 'spin-counter 5s linear infinite' }}
           />
-          {/* Core */}
-          <div
-            className="absolute inset-10 rounded-full bg-arc-blue/15"
-            style={{
-              boxShadow: '0 0 40px rgba(0,217,255,0.4), 0 0 80px rgba(0,217,255,0.15)',
-              animation: 'pulse-glow-blue 3s ease-in-out infinite',
-            }}
-          />
+          {/* Triangular Core */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg
+              className="w-[70px] h-[70px] animate-pulse-blue"
+              viewBox="0 0 100 100"
+              style={{ filter: 'drop-shadow(0 0 12px rgba(0,217,255,0.8))' }}
+            >
+              {/* Outer triangle */}
+              <polygon
+                points="50,15 10,85 90,85"
+                fill="rgba(0,217,255,0.1)"
+                stroke="rgba(0,217,255,0.8)"
+                strokeWidth="4"
+                strokeLinejoin="round"
+              />
+              {/* Inner glowing core */}
+              <polygon
+                points="50,35 25,75 75,75"
+                fill="rgba(0,217,255,0.6)"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
           {/* Center dot */}
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-arc-blue"
@@ -78,8 +93,9 @@ export default function SubjectOrbit({ subjects }: SubjectOrbitProps) {
               x2={`${endX}%`}
               y2={`${endY}%`}
               stroke={isMastered ? 'rgba(0,255,65,0.2)' : 'rgba(0,217,255,0.15)'}
-              strokeWidth="1"
+              strokeWidth="2"
               strokeDasharray="4 4"
+              className="animate-energy-flow"
             />
           );
         })}

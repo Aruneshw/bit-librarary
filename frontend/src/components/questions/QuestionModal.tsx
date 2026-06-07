@@ -80,9 +80,9 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                 Question
               </h3>
               <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
-              <p className="font-exo2 text-sm text-text-white/90 leading-relaxed">
+              <div className="font-exo2 text-sm text-text-white/90 leading-relaxed whitespace-pre-wrap">
                 {question.question}
-              </p>
+              </div>
             </div>
 
             {/* ANSWER */}

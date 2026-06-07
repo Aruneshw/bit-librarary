@@ -10,6 +10,28 @@ import IntroAnimation from '@/components/animations/IntroAnimation';
 import TutorialModal from '@/components/tutorial/TutorialModal';
 import { createClient } from '@/lib/supabase';
 
+function SystemClock() {
+  const [time, setTime] = useState<string>('');
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTime(now.toISOString().split('T')[1].split('.')[0] + ' UTC');
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!time) return <div className="w-20 h-4" />;
+
+  return (
+    <div className="hidden md:block font-mono text-[10px] text-arc-blue/80 tracking-widest tabular-nums bg-arc-blue/5 border border-arc-blue/20 px-3 py-1 rounded-lg">
+      {time}
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { user, avatarUrl, isAuthenticated, isLoading: authLoading, fetchUser, signOut } = useAuthStore();
   const { subjects, isLoading: subjectsLoading, fetchSubjects } = useSubjectStore();
@@ -140,6 +162,11 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-4 pointer-events-auto">
+            <SystemClock />
+            <div className="hidden md:flex items-center gap-2 px-3 py-1 border border-terminal-green/30 bg-terminal-green/10 rounded-lg">
+              <div className="w-2 h-2 rounded-full bg-terminal-green animate-pulse" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.8))' }} />
+              <span className="font-mono text-[10px] text-terminal-green uppercase tracking-wider">Secure Channel</span>
+            </div>
             {user?.department && (
               <span className="font-rajdhani text-xs text-arc-blue/60 uppercase tracking-[3px] border border-arc-blue/20 px-3 py-1 rounded-lg">
                 {user.department}
