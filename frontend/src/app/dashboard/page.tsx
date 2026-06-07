@@ -30,10 +30,10 @@ export default function DashboardPage() {
 
   // Fetch user if not loaded
   useEffect(() => {
-    if (!isAuthenticated && !authLoading) {
+    if (!isAuthenticated) {
       fetchUser();
     }
-  }, [isAuthenticated, authLoading, fetchUser]);
+  }, [isAuthenticated, fetchUser]);
 
   // Redirect if not authenticated
   useEffect(() => {
