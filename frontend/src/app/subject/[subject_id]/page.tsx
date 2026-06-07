@@ -121,7 +121,7 @@ export default function SubjectPage() {
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
         subjectId={subjectId as string} 
-        onSuccess={fetchQuestions} 
+        onSuccess={() => fetchQuestions(subjectId as string)} 
       />
 
       {/* Question Modal */}

@@ -35,7 +35,7 @@ function SystemClock() {
 }
 
 export default function DashboardPage() {
-  const { user, avatarUrl, isAuthenticated, isLoading: authLoading, fetchUser, signOut } = useAuthStore();
+  const { user, avatarUrl, isAuthenticated, isAdmin, isLoading: authLoading, fetchUser, signOut } = useAuthStore();
   const { subjects, isLoading: subjectsLoading, fetchSubjects } = useSubjectStore();
   const router = useRouter();
 
