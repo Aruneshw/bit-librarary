@@ -5,12 +5,35 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import mermaid from 'mermaid';
 import { type QuestionWithStatus } from '@/types';
 
 interface QuestionModalProps {
   question: QuestionWithStatus | null;
   onClose: () => void;
 }
+
+const Mermaid = ({ chart }: { chart: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    if (ref.current && chart) {
+      try {
+        mermaid.initialize({ theme: 'dark', startOnLoad: false });
+        const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
+        mermaid.render(id, chart).then(({ svg }) => {
+          if (ref.current) {
+            ref.current.innerHTML = svg;
+          }
+        }).catch(err => console.error("Mermaid render error", err));
+      } catch (err) {
+        console.error("Mermaid parse error", err);
+      }
+    }
+  }, [chart]);
+
+  return <div ref={ref} className="flex justify-center w-full my-6 overflow-x-auto overflow-y-hidden" />;
+};
 
 export default function QuestionModal({ question, onClose }: QuestionModalProps) {
   const doubleClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,6 +110,17 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                 <ReactMarkdown
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}
+                  components={{
+                    code({ node, inline, className, children, ...props }: any) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      const language = match ? match[1] : '';
+
+                      if (!inline && language === 'mermaid') {
+                        return <Mermaid chart={String(children).replace(/\n$/, '')} />;
+                      }
+                      return <code className={className} {...props}>{children}</code>;
+                    }
+                  }}
                 >
                   {question.question}
                 </ReactMarkdown>
@@ -103,6 +137,17 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                 <ReactMarkdown
                   remarkPlugins={[remarkMath]}
                   rehypePlugins={[rehypeKatex]}
+                  components={{
+                    code({ node, inline, className, children, ...props }: any) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      const language = match ? match[1] : '';
+
+                      if (!inline && language === 'mermaid') {
+                        return <Mermaid chart={String(children).replace(/\n$/, '')} />;
+                      }
+                      return <code className={className} {...props}>{children}</code>;
+                    }
+                  }}
                 >
                   {question.answer}
                 </ReactMarkdown>
