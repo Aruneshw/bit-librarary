@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
@@ -14,6 +14,7 @@ interface QuestionModalProps {
 
 const Mermaid = ({ chart }: { chart: string }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     let isMounted = true;
@@ -37,9 +38,13 @@ const Mermaid = ({ chart }: { chart: string }) => {
           const { svg } = await mermaid.render(id, chart);
           if (isMounted && ref.current) {
             ref.current.innerHTML = svg;
+            setError(null);
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error("Mermaid render error", err);
+          if (isMounted) {
+            setError(err?.message || String(err));
+          }
         }
       }
     };
@@ -50,6 +55,17 @@ const Mermaid = ({ chart }: { chart: string }) => {
       isMounted = false;
     };
   }, [chart]);
+
+  if (error) {
+    return (
+      <div className="w-full my-6 p-4 bg-red-900/20 border border-red-500/50 rounded-lg text-red-200 font-mono text-xs overflow-auto">
+        <p className="font-bold mb-2">Mermaid Render Error:</p>
+        <pre className="whitespace-pre-wrap bg-transparent p-0">{error}</pre>
+        <p className="font-bold mt-4 mb-2">Chart Source:</p>
+        <pre className="whitespace-pre-wrap text-white/50 bg-transparent p-0">{chart}</pre>
+      </div>
+    );
+  }
 
   return <div ref={ref} className="flex justify-center w-full my-6 overflow-x-auto overflow-y-hidden" />;
 };
