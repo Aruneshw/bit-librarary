@@ -5,7 +5,7 @@ INSERT INTO questions (id, subject_id, question, answer, image_url, "references"
   ('e1000000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000001', 'A sensor output follows
 
 $$
-y=e^{bx}$a\cos x$
+y=e^{bx}(a\cos x)
 $$
 **Identify the order of resulting differential equation and justify.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q2', 2),
   ('e1000000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000001', 'A body is dropped from rest.
@@ -23,7 +23,7 @@ where constants depend on system pressure.
   ('e1000000-0000-0000-0000-000000000006', 'a1000000-0000-0000-0000-000000000001', 'A sensor output follows
 
 $$
-y=e^x$a\cos x+b\sin x$
+y=e^x(a\cos x+b\sin x)
 $$
 **Identify the order of resulting differential equation and justify.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q6', 6),
   ('e1000000-0000-0000-0000-000000000007', 'a1000000-0000-0000-0000-000000000001', 'A sensor cools from $90^\circ C$ to $70^\circ C$ in 8 minutes in a $20^\circ C$ room.
@@ -33,7 +33,7 @@ $$
   ('e1000000-0000-0000-0000-000000000009', 'a1000000-0000-0000-0000-000000000001', 'In an electric vehicle battery cooling system, the temperature $T$ satisfies
 
 $$
-\frac{dT}{dt}=-k$T-T_a$
+\frac{dT}{dt}=-k(T-T_a)
 $$
 where $T_a$ is ambient temperature.
 
@@ -53,7 +53,7 @@ $$
   ('e1000000-0000-0000-0000-000000000013', 'a1000000-0000-0000-0000-000000000001', 'A damping system in machinery follows
 
 $$
-\frac{dy}{dx}-\frac{2y}{x+1}=$x+1$^3
+\frac{dy}{dx}-\frac{2y}{x+1}=(x+1)^3
 $$
 An engineer incorrectly assumes integrating factor $e^{-2x}$, leading to wrong results.
 
@@ -90,7 +90,7 @@ $$
   ('e1000000-0000-0000-0000-000000000021', 'a1000000-0000-0000-0000-000000000001', 'A system follows
 
 $$
-\frac{d^2y}{dx^2}+4y=0,\quad y$0$=2,\quad y''$0$=-4
+\frac{d^2y}{dx^2}+4y=0,\quad y(0)=2,\quad y''(0)=-4
 $$
 The complementary function is
 
@@ -146,7 +146,7 @@ $$
   ('e1000000-0000-0000-0000-000000000030', 'a1000000-0000-0000-0000-000000000001', 'A structure vibrates under external force
 
 $$
-F$t$=8\cos\omega t
+F(t)=8\cos\omega t
 $$
 **Analyze and determine the condition for resonance and evaluate its effect.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q30', 30),
   ('e1000000-0000-0000-0000-000000000031', 'a1000000-0000-0000-0000-000000000001', 'A control system is described by
@@ -158,7 +158,7 @@ $$
   ('e1000000-0000-0000-0000-000000000032', 'a1000000-0000-0000-0000-000000000001', 'A spring-mass-damper system is subjected to an external force
 
 $$
-F$t$=10\cos 2t
+F(t)=10\cos 2t
 $$
 Given $m=1$ kg, $c=4$ Ns/m, $k=5$ N/m.
 
@@ -166,7 +166,7 @@ Given $m=1$ kg, $c=4$ Ns/m, $k=5$ N/m.
   ('e1000000-0000-0000-0000-000000000033', 'a1000000-0000-0000-0000-000000000001', 'An engineer models position as a scalar
 
 $$
-x$t$=t^2
+x(t)=t^2
 $$
 instead of a vector.
 
@@ -174,13 +174,13 @@ instead of a vector.
   ('e1000000-0000-0000-0000-000000000034', 'a1000000-0000-0000-0000-000000000001', 'Temperature is given by
 
 $$
-T$x,y$=5x+3y
+T(x,y)=5x+3y
 $$
 **Identify the type of field.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q34', 34),
   ('e1000000-0000-0000-0000-000000000035', 'a1000000-0000-0000-0000-000000000001', 'In a conveyor system, path
 
 $$
-\vec r$t$=t\hat i+t^2\hat j
+\vec r(t)=t\hat i+t^2\hat j
 $$
 **Identify if motion is straight or curved using tangent direction.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q35', 35),
   ('e1000000-0000-0000-0000-000000000036', 'a1000000-0000-0000-0000-000000000001', 'A particle moves in a circle.
@@ -189,13 +189,13 @@ $$
   ('e1000000-0000-0000-0000-000000000037', 'a1000000-0000-0000-0000-000000000001', 'A fluid velocity field is given by
 
 $$
-\vec v$t$=3t\hat i+2t^2\hat j
+\vec v(t)=3t\hat i+2t^2\hat j
 $$
 **Identify whether acceleration is constant.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q37', 37),
   ('e1000000-0000-0000-0000-000000000038', 'a1000000-0000-0000-0000-000000000001', 'Given
 
 $$
-\vec r$t$=3t\hat i+2t^2\hat j
+\vec r(t)=3t\hat i+2t^2\hat j
 $$
 **Identify the type and justify.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q38', 38),
   ('e1000000-0000-0000-0000-000000000039', 'a1000000-0000-0000-0000-000000000001', 'An engineer assumes tangent and normal vectors are parallel.
@@ -205,7 +205,7 @@ $$
   ('e1000000-0000-0000-0000-000000000041', 'a1000000-0000-0000-0000-000000000001', 'An electric vehicle follows the trajectory
 
 $$
-\vec r$t$=t^2\hat i+3t\hat j
+\vec r(t)=t^2\hat i+3t\hat j
 $$
 **Compute velocity and acceleration at $t=2$. Analyze whether the motion is uniformly accelerated and justify.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q41', 41),
   ('e1000000-0000-0000-0000-000000000042', 'a1000000-0000-0000-0000-000000000001', 'A pipe flow system is modeled by
@@ -217,7 +217,7 @@ $$
   ('e1000000-0000-0000-0000-000000000043', 'a1000000-0000-0000-0000-000000000001', 'A drone path is
 
 $$
-\vec r$t$=t^3\hat i+2t^2\hat j+t\hat k
+\vec r(t)=t^3\hat i+2t^2\hat j+t\hat k
 $$
 **Compute velocity, acceleration, and evaluate tangential component at $t=1$.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q43', 43),
   ('e1000000-0000-0000-0000-000000000044', 'a1000000-0000-0000-0000-000000000001', 'In an electromagnetic field, the vector field is
@@ -229,7 +229,7 @@ $$
   ('e1000000-0000-0000-0000-000000000045', 'a1000000-0000-0000-0000-000000000001', 'In an electrostatic field, potential
 
 $$
-V$x,y,z$=xyz
+V(x,y,z)=xyz
 $$
 **Compute gradient and evaluate directional derivative at ($1,1,1$) along $\hat i+\hat j+\hat k$. Interpret physical meaning.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q45', 45),
   ('e1000000-0000-0000-0000-000000000046', 'a1000000-0000-0000-0000-000000000001', 'In a fluid mixing system, velocity field is
@@ -241,7 +241,7 @@ $$
   ('e1000000-0000-0000-0000-000000000047', 'a1000000-0000-0000-0000-000000000001', 'In an electric vehicle battery system, temperature distribution is modeled by
 
 $$
-T$x,y,z$=x^2+y^2+z^2
+T(x,y,z)=x^2+y^2+z^2
 $$
 **Compute the gradient and evaluate the direction of maximum temperature rise at point ($1,1,1$). Interpret its physical significance for thermal management and justify.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q47', 47),
   ('e1000000-0000-0000-0000-000000000048', 'a1000000-0000-0000-0000-000000000001', 'In an electromagnetic system, field
@@ -250,14 +250,14 @@ $$
 \vec F=2x\hat i+3y\hat j+4z\hat k
 $$
 **Compute curl and evaluate whether the field is conservative. Justify.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-I Q48', 48),
-  ('e1000000-0000-0000-0000-000000000049', 'a1000000-0000-0000-0000-000000000001', 'A robot follows path (r$t$=t\hat{i}+t^2\hat{j}).
+  ('e1000000-0000-0000-0000-000000000049', 'a1000000-0000-0000-0000-000000000001', 'A robot follows path $r$t$=t\hat{i}+t^2\hat{j}$.
 
 **Determine velocity vector and interpret motion.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q1', 49),
   ('e1000000-0000-0000-0000-000000000050', 'a1000000-0000-0000-0000-000000000001', '**Differentiate scalar and vector line integrals.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q2', 50),
   ('e1000000-0000-0000-0000-000000000051', 'a1000000-0000-0000-0000-000000000001', 'In a heat flow system,
 
 $$
-\vec F=$x+y$\hat i+$x-y$\hat j
+\vec F=(x+y)\hat i+(x-y)\hat j
 $$
 **Analyze the integrand in Green''s theorem.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q3', 51),
   ('e1000000-0000-0000-0000-000000000052', 'a1000000-0000-0000-0000-000000000001', 'In a circulation model, what does a positive value of
@@ -284,7 +284,7 @@ $$
   ('e1000000-0000-0000-0000-000000000056', 'a1000000-0000-0000-0000-000000000001', 'In a fluid flow system,
 
 $$
-\vec F=$x+y$\hat i+$2x-y$\hat j
+\vec F=(x+y)\hat i+(2x-y)\hat j
 $$
 **Compute**
 
@@ -311,7 +311,7 @@ $$', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathema
 $$
 \vec F=z\hat i+x\hat j+y\hat k.
 $$
-**Determine the circulation around the boundary of the region in the yz-plane ($x=0$) bounded by $0\le y\le1,;0\le z\le1$ using Stokes'' theorem.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q10', 58),
+**Determine the circulation around the boundary of the region in the yz-plane $$x=0$$ bounded by $0\le y\le1,;0\le z\le1$ using Stokes'' theorem.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q10', 58),
   ('e1000000-0000-0000-0000-000000000059', 'a1000000-0000-0000-0000-000000000001', 'Evaluate
 
 $$
@@ -332,7 +332,7 @@ $$', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathema
 $$
 \vec F=xy\hat i+yz\hat j+xz\hat k.
 $$
-**Compute the circulation of heat flow around the boundary of the region in the xz-plane ($y=0$) bounded by**
+**Compute the circulation of heat flow around the boundary of the region in the xz-plane $$y=0$$ bounded by**
 
 $$
 0\le x\le1,\quad 0\le z\le1
@@ -341,7 +341,7 @@ $$
   ('e1000000-0000-0000-0000-000000000061', 'a1000000-0000-0000-0000-000000000001', 'In an electrical field,
 
 $$
-\vec F=$y$\hat i+$x$\hat j.
+\vec F=(y)\hat i+(x)\hat j.
 $$
 **Use a line integral to determine the work done along the boundary of the square defined by**
 
@@ -351,7 +351,7 @@ $$', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathema
   ('e1000000-0000-0000-0000-000000000062', 'a1000000-0000-0000-0000-000000000001', 'Evaluate and interpret the total outward heat flux using divergence theorem for
 
 $$
-\vec F=$x^2-yz$\hat i+$y^2-xz$\hat j+$z^2-xy$\hat k
+\vec F=(x^2-yz)\hat i+(y^2-xz)\hat j+(z^2-xy)\hat k
 $$
 over a rectangular domain
 
@@ -361,7 +361,7 @@ $$', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathema
   ('e1000000-0000-0000-0000-000000000063', 'a1000000-0000-0000-0000-000000000001', 'In a fluid transport system, the velocity field is
 
 $$
-\vec F=$2x$\hat i+$y$\hat j+$z$\hat k.
+\vec F=(2x)\hat i+(y)\hat j+(z)\hat k.
 $$
 **Use a surface integral to compute the total flux through the surface**
 
@@ -386,7 +386,7 @@ $$', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathema
   ('e1000000-0000-0000-0000-000000000065', 'a1000000-0000-0000-0000-000000000001', 'A control response is modeled by
 
 $$
-f$z$=z^2.
+f(z)=z^2.
 $$
 **Analyze whether the function is differentiable at**
 
@@ -402,22 +402,22 @@ $$
   ('e1000000-0000-0000-0000-000000000067', 'a1000000-0000-0000-0000-000000000001', 'In a fluid transport system, the stream function is given by
 
 $$
-v$x,y$=2xy.
+v(x,y)=2xy.
 $$
 **Determine the harmonic conjugate using the Milne–Thomson method.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q19', 67),
   ('e1000000-0000-0000-0000-000000000068', 'a1000000-0000-0000-0000-000000000001', 'In an electrical field application, the real part of an analytic function is
 
 $$
-u$x,y$=x^2+2xy.
+u(x,y)=x^2+2xy.
 $$
-**Find (f''$z$) using Milne–Thomson method.**
+**Find $f''$z$$ using Milne–Thomson method.**
 
 Hint:
 
 $$
-f''$z$=u_x$z,0$-iu_y$z,0$
+f''(z)=u_x(z,0)-iu_y(z,0)
 $$', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q20', 68),
-  ('e1000000-0000-0000-0000-000000000069', 'a1000000-0000-0000-0000-000000000001', 'A communication signal is represented by a complex function (f$z$).
+  ('e1000000-0000-0000-0000-000000000069', 'a1000000-0000-0000-0000-000000000001', 'A communication signal is represented by a complex function $f$z$$.
 
 **Evaluate the relationship between differentiability and continuity in complex systems.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q21', 69),
   ('e1000000-0000-0000-0000-000000000070', 'a1000000-0000-0000-0000-000000000001', 'An impedance transformation is represented by
@@ -429,39 +429,39 @@ $$
   ('e1000000-0000-0000-0000-000000000071', 'a1000000-0000-0000-0000-000000000001', 'An electric field potential is represented by
 
 $$
-u$x,y$=e^x\cos y.
+u(x,y)=e^x\cos y.
 $$
 **Construct the analytic function using the Milne–Thomson method.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q23', 71),
   ('e1000000-0000-0000-0000-000000000072', 'a1000000-0000-0000-0000-000000000001', 'In a fluid flow model, the imaginary part of an analytic function is
 
 $$
-v$x,y$=x^2-y^2.
+v(x,y)=x^2-y^2.
 $$
 Using Milne–Thomson method,
 
-**find (f''$z$).**
+**find $f''$z$$.**
 
 Hint:
 
 $$
-f''$z$=v_y$z,0$+iv_x$z,0$
+f''(z)=v_y(z,0)+iv_x(z,0)
 $$', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q24', 72),
   ('e1000000-0000-0000-0000-000000000073', 'a1000000-0000-0000-0000-000000000001', 'A communication signal is modeled by
 
 $$
-f$z$=e^z.
+f(z)=e^z.
 $$
 **Analyze whether the function is analytic and interpret its significance in signal amplification.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q25', 73),
   ('e1000000-0000-0000-0000-000000000074', 'a1000000-0000-0000-0000-000000000001', 'A signal transformation system uses the mapping
 
 $$
-w=$1+i$z.
+w=(1+i)z.
 $$
 **Determine the image of the region $y>2$ in the w-plane and analyze the transformation characteristics.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q26', 74),
   ('e1000000-0000-0000-0000-000000000075', 'a1000000-0000-0000-0000-000000000001', 'In a thermal distribution model, the temperature potential is represented by
 
 $$
-f$z$=$x^2-y^2+2x$+i$2xy+2y$.
+f(z)=(x^2-y^2+2x)+i(2xy+2y).
 $$
 **Verify whether the function is analytic using the Cauchy–Riemann equations and interpret the physical meaning.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q27', 75),
   ('e1000000-0000-0000-0000-000000000076', 'a1000000-0000-0000-0000-000000000001', 'An electrostatic field boundary represented by
@@ -478,9 +478,9 @@ $$
   ('e1000000-0000-0000-0000-000000000077', 'a1000000-0000-0000-0000-000000000001', 'In an electrical field system, the imaginary part is
 
 $$
-v$x,y$=2xy.
+v(x,y)=2xy.
 $$
-**Construct the analytic function (f$z$).**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q29', 77),
+**Construct the analytic function $f$z$$.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q29', 77),
   ('e1000000-0000-0000-0000-000000000078', 'a1000000-0000-0000-0000-000000000001', 'A control transformation maps the points
 
 $$
@@ -495,7 +495,7 @@ $$
   ('e1000000-0000-0000-0000-000000000079', 'a1000000-0000-0000-0000-000000000001', 'In a heat transfer application, determine whether
 
 $$
-u$x,y$=x^2-y^2
+u(x,y)=x^2-y^2
 $$
 is harmonic and construct its harmonic conjugate.', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q31', 79),
   ('e1000000-0000-0000-0000-000000000080', 'a1000000-0000-0000-0000-000000000001', 'A signal transformation system maps the points
@@ -508,4 +508,5 @@ onto
 $$
 w_1=1,\quad w_2=-1,\quad w_3=0.
 $$
-**Determine the bilinear transformation and interpret the engineering significance.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q32', 80);
+**Determine the bilinear transformation and interpret the engineering significance.**', 'Answer not provided in source text.', NULL, '22MA201 - Engineering Mathematics II', 'Module Test-II Q32', 80)
+ON CONFLICT (id) DO UPDATE SET question = EXCLUDED.question, answer = EXCLUDED.answer, notes = EXCLUDED.notes, order_index = EXCLUDED.order_index;

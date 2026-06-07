@@ -2,6 +2,9 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { type QuestionWithStatus } from '@/types';
 
 interface QuestionModalProps {
@@ -80,8 +83,13 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                 Question
               </h3>
               <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
-              <div className="font-exo2 text-sm text-text-white/90 leading-relaxed whitespace-pre-wrap">
-                {question.question}
+              <div className="font-exo2 text-sm text-text-white/90 leading-relaxed prose prose-invert prose-p:my-1 max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                >
+                  {question.question}
+                </ReactMarkdown>
               </div>
             </div>
 
@@ -91,8 +99,13 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                 Answer
               </h3>
               <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
-              <div className="font-exo2 text-sm text-text-white/80 leading-relaxed whitespace-pre-wrap">
-                {question.answer}
+              <div className="font-exo2 text-sm text-text-white/80 leading-relaxed prose prose-invert prose-p:my-1 max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                >
+                  {question.answer}
+                </ReactMarkdown>
               </div>
             </div>
 
