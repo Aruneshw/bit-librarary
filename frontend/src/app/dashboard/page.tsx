@@ -129,7 +129,7 @@ export default function DashboardPage() {
                 className="font-orbitron text-arc-blue text-lg font-bold tracking-wider"
                 style={{ textShadow: '0 0 12px rgba(0,217,255,0.4)' }}
               >
-                ARC_OS
+                BIT LIBRARY
               </h1>
               <p className="font-mono text-[10px] text-text-white/60 tracking-wider mt-0.5">
                 {user?.name || user?.email}

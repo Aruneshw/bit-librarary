@@ -44,7 +44,7 @@ export default function AuthorizationCard() {
           className="font-orbitron text-arc-blue text-2xl md:text-[28px] font-bold tracking-wider"
           style={{ textShadow: '0 0 12px rgba(0,217,255,0.5)' }}
         >
-          ARC_OS
+          BIT LIBRARY
         </h1>
 
         {/* Subtitle */}

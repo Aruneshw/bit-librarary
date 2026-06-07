@@ -77,7 +77,7 @@ export interface BootLine {
 
 export const BOOT_LINES: BootLine[] = [
   { text: '> SYSTEM INITIALIZING...', pauseMs: 400 },
-  { text: '> LOADING ARC_OS...', pauseMs: 300 },
+  { text: '> LOADING BIT LIBRARY...', pauseMs: 300 },
   { text: '> CONNECTING KNOWLEDGE NODES...', pauseMs: 300 },
   { text: '> AUTHENTICATING DATABASE...', pauseMs: 300 },
   { text: '> ESTABLISHING SECURE CHANNEL...', pauseMs: 300 },
