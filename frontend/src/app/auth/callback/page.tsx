@@ -27,11 +27,39 @@ export default function AuthCallbackPage() {
       }
 
       // Check if user has department set
-      const { data: profile } = await supabase
+      let { data: profile } = await supabase
         .from('profiles')
         .select('department')
         .eq('id', session.user.id)
         .single();
+
+      if (!profile?.department) {
+        // Auto-extract department from email
+        // Example: aruneshwarank.al25@bitsathy.ac.in -> "al" -> "AL"
+        try {
+          const emailPrefix = email.split('@')[0];
+          const parts = emailPrefix.split('.');
+          const lastPart = parts[parts.length - 1]; // e.g. "al25" or "cs"
+          const deptMatch = lastPart.match(/^[a-zA-Z]+/); // matches "al"
+          
+          if (deptMatch) {
+            const extractedDept = deptMatch[0].toUpperCase();
+            const allowedDepts = ['CS','IT','AL','AD','EEE','EIE','ME','MZ','AG','BT'];
+            
+            if (allowedDepts.includes(extractedDept)) {
+              // Update profile with extracted department
+              await supabase
+                .from('profiles')
+                .update({ department: extractedDept })
+                .eq('id', session.user.id);
+                
+              profile = { department: extractedDept };
+            }
+          }
+        } catch (e) {
+          console.error("Failed to extract department", e);
+        }
+      }
 
       if (profile?.department) {
         router.push('/dashboard');
