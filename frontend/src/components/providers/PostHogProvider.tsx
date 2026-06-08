@@ -10,7 +10,10 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') {
       posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
         api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-        capture_pageview: false // Disable automatic pageview capture, as we capture manually in Next.js
+        capture_pageview: false, // Disable automatic pageview capture, as we capture manually in Next.js
+        disable_session_recording: true, // CRITICAL: Disables screen recording which causes massive lag with your Matrix animations
+        autocapture: false, // Disables automatic click tracking to save main thread performance
+        capture_performance: false // Disables performance monitoring that hooks into paint events
       })
     }
   }, [])

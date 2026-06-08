@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import rehypeSanitize from 'rehype-sanitize';
 import { type QuestionWithStatus } from '@/types';
 
 interface QuestionModalProps {
@@ -152,7 +151,7 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
               <div className="font-exo2 text-sm text-text-white/90 leading-relaxed prose prose-invert prose-p:my-1 max-w-none translate">
                 <ReactMarkdown
                   remarkPlugins={[remarkMath]}
-                  rehypePlugins={[rehypeKatex, rehypeSanitize]}
+                  rehypePlugins={[rehypeKatex]}
                   components={{
                     pre({ children, ...props }: any) {
                       const child = Array.isArray(children) ? children[0] : children;
@@ -186,7 +185,7 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
               <div className="font-exo2 text-sm text-text-white/80 leading-relaxed prose prose-invert prose-p:my-1 max-w-none translate">
                 <ReactMarkdown
                   remarkPlugins={[remarkMath]}
-                  rehypePlugins={[rehypeKatex, rehypeSanitize]}
+                  rehypePlugins={[rehypeKatex]}
                   components={{
                     pre({ children, ...props }: any) {
                       const child = Array.isArray(children) ? children[0] : children;
