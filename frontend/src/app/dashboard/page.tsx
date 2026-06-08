@@ -11,6 +11,7 @@ import AINoticeBoard from '@/components/dashboard/AINoticeBoard';
 import IntroAnimation from '@/components/animations/IntroAnimation';
 import TutorialModal from '@/components/tutorial/TutorialModal';
 import FeedbackForm from '@/components/dashboard/FeedbackForm';
+import NotificationCenter from '@/components/dashboard/NotificationCenter';
 import { createClient } from '@/lib/supabase';
 
 function SystemClock() {
@@ -342,8 +343,13 @@ export default function DashboardPage() {
           </p>
         </footer>
 
-        {/* Feedback Form */}
-        {isAuthenticated && introComplete && <FeedbackForm />}
+        {/* Feedback Form & Notification Center */}
+        {isAuthenticated && introComplete && (
+          <>
+            <FeedbackForm />
+            <NotificationCenter />
+          </>
+        )}
       </div>
     </main>
   );
