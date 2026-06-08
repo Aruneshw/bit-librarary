@@ -28,12 +28,16 @@ interface UserFeedback {
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { user, isAdmin, isLoading } = useAuthStore();
+  const { user, isAdmin, isLoading, fetchUser } = useAuthStore();
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [feedbacks, setFeedbacks] = useState<UserFeedback[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
   const [onlineUserIds, setOnlineUserIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   useEffect(() => {
     if (!isLoading) {
