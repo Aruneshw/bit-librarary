@@ -35,6 +35,78 @@ function SystemClock() {
   );
 }
 
+function VisitorCount() {
+  const [metrics, setMetrics] = useState<{ totalUsers: number; totalVisits: number } | null>(null);
+
+  const fetchCount = useCallback(async () => {
+    const supabase = createClient();
+    // Try calling RPC first (highly efficient, secure definer, bypasses RLS)
+    const { data, error } = await supabase.rpc('get_system_metrics');
+    if (!error && data) {
+      setMetrics({
+        totalUsers: Number(data.total_users) || 0,
+        totalVisits: Number(data.total_visits) || 0
+      });
+      return;
+    }
+
+    // Fallback: If RPC is not created yet, query profiles table directly.
+    // Note: This will only return the current user's record due to RLS,
+    // but ensures the UI doesn't crash.
+    const { data: profiles } = await supabase.from('profiles').select('login_count');
+    if (profiles) {
+      const total = profiles.reduce((acc: number, p: any) => acc + (p.login_count || 0), 0);
+      setMetrics({
+        totalUsers: profiles.length,
+        totalVisits: total
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCount();
+
+    const supabase = createClient();
+    const channel = supabase
+      .channel('system-metrics-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        () => {
+          fetchCount();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchCount]);
+
+  if (!metrics) {
+    return (
+      <div className="font-mono text-[8px] sm:text-[10px] text-arc-blue/40 tracking-widest bg-arc-blue/5 border border-arc-blue/20 px-2 sm:px-3 py-1 rounded-lg animate-pulse">
+        CONNECTING...
+      </div>
+    );
+  }
+
+  return (
+    <div className="font-mono text-[8px] sm:text-[10px] text-arc-blue/80 tracking-widest bg-arc-blue/5 border border-arc-blue/20 px-2 sm:px-3 py-1 rounded-lg flex items-center gap-1">
+      <span className="hidden sm:inline text-arc-blue/40">SYS_ACCESS:</span>
+      <span className="font-bold text-arc-blue" style={{ textShadow: '0 0 8px rgba(0,217,255,0.4)' }}>
+        {metrics.totalVisits}
+      </span>
+      <span className="text-arc-blue/30">|</span>
+      <span className="hidden sm:inline text-arc-blue/40">USERS:</span>
+      <span className="font-bold text-arc-blue" style={{ textShadow: '0 0 8px rgba(0,217,255,0.4)' }}>
+        {metrics.totalUsers}
+      </span>
+    </div>
+  );
+}
+
+
 export default function DashboardPage() {
   const { user, avatarUrl, isAuthenticated, isAdmin, isLoading: authLoading, fetchUser, signOut } = useAuthStore();
   const { subjects, isLoading: subjectsLoading, fetchSubjects } = useSubjectStore();
@@ -166,6 +238,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 pointer-events-auto max-w-[55%] sm:max-w-none">
+            <VisitorCount />
             <SystemClock />
             <div className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 border border-terminal-green/30 bg-terminal-green/10 rounded-lg">
               <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-terminal-green animate-pulse" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.8))' }} />
