@@ -96,7 +96,7 @@ function VisitorCount() {
         const count = Object.keys(state).length;
         setOnlineCount(count > 0 ? count : 1);
       })
-      .subscribe(async (status) => {
+      .subscribe(async (status: string) => {
         if (status === 'SUBSCRIBED' && user) {
           await presenceChannel.track({
             online_at: new Date().toISOString(),
