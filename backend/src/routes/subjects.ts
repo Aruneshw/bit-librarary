@@ -28,16 +28,25 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
       return;
     }
 
-    // Fetch subjects for department
-    const { data: subjects, error } = await supabaseAdmin
+    // Fetch all subjects
+    const { data: allSubjects, error } = await supabaseAdmin
       .from('subjects')
-      .select('*')
-      .contains('department', [userDept]);
+      .select('*');
 
     if (error) {
       res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Failed to fetch subjects', status: 500 } });
       return;
     }
+
+    // Filter subjects: show all subjects to everyone, EXCEPT hide "Electronics" for CS, AL, AD, IT
+    const restrictedDepts = ['CS', 'IT', 'AL', 'AD'];
+    const subjects = (allSubjects || []).filter(subject => {
+      const isElectronics = subject.subject_name.toLowerCase().includes('electronics');
+      if (isElectronics && restrictedDepts.includes(userDept.toUpperCase())) {
+        return false;
+      }
+      return true;
+    });
 
     // Get completion for each subject
     const subjectsWithCompletion = await Promise.all(
