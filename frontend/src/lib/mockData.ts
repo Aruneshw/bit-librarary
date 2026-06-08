@@ -33,7 +33,7 @@ export const MOCK_SUBJECTS: Subject[] = [
   },
   {
     id: 'a1000000-0000-0000-0000-000000000006',
-    department: ['CS', 'IT', 'AL', 'AD', 'AG', 'BT'],
+    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
     subject_name: 'Tamils and Technology',
     icon: '🏛',
   },

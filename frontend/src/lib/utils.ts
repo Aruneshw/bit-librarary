@@ -9,6 +9,7 @@ export function getSubjectsForDepartment(department: Department): string[] {
     'Electromagnetism and Modern Physics',
     'Engineering Chemistry II',
     'Computational Problem Solving',
+    'Tamils and Technology',
   ];
 
   switch (department) {
@@ -16,7 +17,7 @@ export function getSubjectsForDepartment(department: Department): string[] {
     case 'IT':
     case 'AL':
     case 'AD':
-      return [...common, 'Digital Computer Electronics', 'Tamils and Technology'];
+      return [...common, 'Digital Computer Electronics'];
 
     case 'EEE':
     case 'EIE':
@@ -30,7 +31,7 @@ export function getSubjectsForDepartment(department: Department): string[] {
 
     case 'AG':
     case 'BT':
-      return [...common, 'Basics of Electronics Engineering', 'Tamils and Technology'];
+      return [...common, 'Basics of Electronics Engineering'];
 
     default:
       return common;
