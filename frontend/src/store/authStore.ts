@@ -57,6 +57,8 @@ interface AuthState {
   fetchUser: () => Promise<void>;
 }
 
+let profileSubscription: any = null;
+
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   avatarUrl: null,
@@ -144,6 +146,32 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           isAdmin: userProfile.email === ADMIN_EMAIL,
           isLoading: false
         });
+
+        // Setup real-time listener for self-healing when admin manually updates DB
+        if (profileSubscription) {
+          supabase.removeChannel(profileSubscription);
+        }
+
+        profileSubscription = supabase
+          .channel(`public:profiles:${authUser.id}`)
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'profiles',
+              filter: `id=eq.${authUser.id}`,
+            },
+            (payload) => {
+              const updatedProfile = payload.new as Profile;
+              set({
+                user: updatedProfile,
+                isAdmin: updatedProfile.email === ADMIN_EMAIL,
+              });
+            }
+          )
+          .subscribe();
+
       } else {
         set({ user: null, avatarUrl: null, isAuthenticated: false, isAdmin: false, isLoading: false });
       }
@@ -189,6 +217,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     const supabase = createClient();
+    if (profileSubscription) {
+      await supabase.removeChannel(profileSubscription);
+      profileSubscription = null;
+    }
     await supabase.auth.signOut();
     set({ user: null, isAuthenticated: false, isAdmin: false });
   },
