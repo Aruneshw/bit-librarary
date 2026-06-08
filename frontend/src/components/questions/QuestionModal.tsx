@@ -11,6 +11,7 @@ import { type QuestionWithStatus } from '@/types';
 interface QuestionModalProps {
   question: QuestionWithStatus | null;
   onClose: () => void;
+  theme?: 'blue' | 'green';
 }
 
 const Mermaid = ({ chart }: { chart: string }) => {
@@ -78,10 +79,16 @@ const Mermaid = ({ chart }: { chart: string }) => {
   return <div ref={ref} className="flex justify-center w-full my-6 overflow-x-auto overflow-y-hidden" />;
 };
 
-export default function QuestionModal({ question, onClose }: QuestionModalProps) {
+export default function QuestionModal({ question, onClose, theme = 'blue' }: QuestionModalProps) {
   const doubleClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clickCountRef = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const isGreen = theme === 'green';
+  const panelClass = isGreen ? 'glass-panel-green' : 'glass-panel-blue';
+  const textClass = isGreen ? 'text-terminal-green/60' : 'text-arc-blue/60';
+  const borderClass = isGreen ? 'border-terminal-green/30' : 'border-glass-border';
+  const gradientClass = isGreen ? 'from-terminal-green/30' : 'from-arc-blue/30';
 
   // ESC key to close
   useEffect(() => {
@@ -121,12 +128,12 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
           onClick={handleOverlayClick}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black" />
 
           {/* Modal */}
           <motion.div
             ref={contentRef}
-            className="relative glass-panel-blue p-6 md:p-8 w-full max-w-[600px] max-h-[80vh] overflow-y-auto"
+            className={`relative ${panelClass} p-6 md:p-8 w-full max-w-[600px] max-h-[80vh] overflow-y-auto`}
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.85, opacity: 0 }}
@@ -145,10 +152,10 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
 
             {/* QUESTION */}
             <div className="mb-6">
-              <h3 className="font-rajdhani text-xs text-arc-blue/60 uppercase tracking-[3px] mb-3">
+              <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
                 Question
               </h3>
-              <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
+              <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
               <div className="font-exo2 text-sm text-text-white/90 leading-relaxed prose prose-invert prose-p:my-1 max-w-none translate">
                 <ReactMarkdown
                   remarkPlugins={[remarkMath, remarkGfm]}
@@ -179,10 +186,10 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
 
             {/* ANSWER */}
             <div className="mb-6">
-              <h3 className="font-rajdhani text-xs text-arc-blue/60 uppercase tracking-[3px] mb-3">
+              <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
                 Answer
               </h3>
-              <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
+              <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
               <div className="font-exo2 text-sm text-text-white/80 leading-relaxed prose prose-invert prose-p:my-1 max-w-none translate">
                 <ReactMarkdown
                   remarkPlugins={[remarkMath, remarkGfm]}
@@ -217,7 +224,7 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
                 <img
                   src={question.image_url}
                   alt="Question illustration"
-                  className="w-full rounded-lg border border-glass-border"
+                  className={`w-full rounded-lg border ${borderClass}`}
                 />
               </div>
             )}
@@ -225,10 +232,10 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
             {/* REFERENCES */}
             {question.references && (
               <div className="mb-6">
-                <h3 className="font-rajdhani text-xs text-arc-blue/60 uppercase tracking-[3px] mb-3">
+                <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
                   References
                 </h3>
-                <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
+                <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
                 <p className="font-mono text-xs text-text-white/60 leading-relaxed">
                   {question.references}
                 </p>
@@ -238,10 +245,10 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
             {/* NOTES */}
             {question.notes && (
               <div>
-                <h3 className="font-rajdhani text-xs text-arc-blue/60 uppercase tracking-[3px] mb-3">
+                <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
                   Notes
                 </h3>
-                <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
+                <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
                 <p className="font-exo2 text-xs text-text-white/50 leading-relaxed italic">
                   {question.notes}
                 </p>

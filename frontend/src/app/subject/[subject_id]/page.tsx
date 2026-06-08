@@ -128,6 +128,7 @@ export default function SubjectPage() {
       <QuestionModal
         question={selectedQuestion}
         onClose={handleCloseModal}
+        theme={subjectId === 'a1000000-0000-0000-0000-000000000005' ? 'green' : 'blue'}
       />
 
       {/* Conditionally Render Translator for Tamils Subject */}
