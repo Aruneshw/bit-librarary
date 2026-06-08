@@ -21,9 +21,40 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   completionPercent: 0,
 
   fetchQuestions: async (subjectId: string) => {
-    const supabase = createClient();
     set({ isLoading: true });
+    const supabase = createClient();
 
+    // Try fetching from the backend cache first
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const res = await fetch(`${apiUrl}/questions/${subjectId}`, {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.questions) {
+              set({
+                questions: data.questions,
+                isLoading: false,
+                totalQuestions: data.total_questions || 0,
+                viewedCount: data.viewed_count || 0,
+                completionPercent: data.completion_percent || 0,
+              });
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch questions from cached API, falling back to direct Supabase query:', err);
+      }
+    }
+
+    // Fallback: direct Supabase query
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -101,7 +132,28 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         completionPercent: completion,
       });
 
-      // Sync to Supabase
+      // Try syncing to the backend first
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (apiUrl) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            const res = await fetch(`${apiUrl}/progress/mark-viewed`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`,
+              },
+              body: JSON.stringify({ question_id: questionId, subject_id: subjectId }),
+            });
+            if (res.ok) return;
+          }
+        } catch (err) {
+          console.warn('Failed to post mark-viewed to backend, trying direct Supabase upsert:', err);
+        }
+      }
+
+      // Fallback: Sync to Supabase
       await supabase
         .from('question_views')
         .upsert(

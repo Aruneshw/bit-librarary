@@ -3,25 +3,25 @@ import { type Subject, type Question } from '@/types';
 export const MOCK_SUBJECTS: Subject[] = [
   {
     id: 'a1000000-0000-0000-0000-000000000001',
-    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
+    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
     subject_name: 'Engineering Mathematics II',
     icon: '∑',
   },
   {
     id: 'a1000000-0000-0000-0000-000000000002',
-    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
+    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
     subject_name: 'Electromagnetism and Modern Physics',
     icon: '⚛',
   },
   {
     id: 'a1000000-0000-0000-0000-000000000003',
-    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
+    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
     subject_name: 'Engineering Chemistry II',
     icon: '🧪',
   },
   {
     id: 'a1000000-0000-0000-0000-000000000004',
-    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
+    department: ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'],
     subject_name: 'Computational Problem Solving',
     icon: '<>',
   },
@@ -39,7 +39,7 @@ export const MOCK_SUBJECTS: Subject[] = [
   },
   {
     id: 'a1000000-0000-0000-0000-000000000007',
-    department: [],
+    department: ['CS', 'IT', 'AL', 'AD', 'ECE'],
     subject_name: 'Basics of Electrical Engineering',
     icon: '⚡',
   },

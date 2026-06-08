@@ -4,7 +4,7 @@ import { type Profile, type Department } from '@/types';
 import { createClient } from '@/lib/supabase';
 
 const ALLOWED_EMAIL_DOMAIN = '@bitsathy.ac.in';
-const ALLOWED_DEPARTMENTS: Department[] = ['CS', 'IT', 'AL', 'AD', 'EEE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
+const ALLOWED_DEPARTMENTS: Department[] = ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
 const ADMIN_EMAILS = ['aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'];
 const isAdminEmail = (email?: string | null) => email ? ADMIN_EMAILS.includes(email) : false;
 
@@ -38,10 +38,20 @@ function extractDepartmentFromEmail(email: string): Department | null {
   const parts = emailPrefix.split('.');
   const lastPart = parts[parts.length - 1];
   const deptMatch = lastPart.match(/^[a-zA-Z]+/);
-  const extractedDept = deptMatch?.[0]?.toUpperCase() as Department | undefined;
+  let extractedDept = deptMatch?.[0]?.toUpperCase();
 
-  return extractedDept && ALLOWED_DEPARTMENTS.includes(extractedDept) ? extractedDept : null;
+  if (extractedDept === 'EE') {
+    extractedDept = 'EEE';
+  } else if (extractedDept === 'EC') {
+    extractedDept = 'ECE';
+  } else if (extractedDept === 'EI') {
+    extractedDept = 'EIE';
+  }
+
+  const finalDept = extractedDept as Department | undefined;
+  return finalDept && ALLOWED_DEPARTMENTS.includes(finalDept) ? finalDept : null;
 }
+
 
 interface AuthState {
   user: Profile | null;

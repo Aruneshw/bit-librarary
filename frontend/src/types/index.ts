@@ -2,7 +2,7 @@
    ARC_OS Type Definitions
    ═══════════════════════════════════════════ */
 
-export type Department = 'CS' | 'IT' | 'AL' | 'AD' | 'EEE' | 'EIE' | 'ME' | 'MZ' | 'AG' | 'BT';
+export type Department = 'CS' | 'IT' | 'AL' | 'AD' | 'EEE' | 'ECE' | 'EIE' | 'ME' | 'MZ' | 'AG' | 'BT';
 
 export interface Profile {
   id: string;
@@ -92,6 +92,7 @@ export const DEPARTMENTS: { value: Department; label: string }[] = [
   { value: 'AL', label: 'AL' },
   { value: 'AD', label: 'AD' },
   { value: 'EEE', label: 'EEE' },
+  { value: 'ECE', label: 'ECE' },
   { value: 'EIE', label: 'EIE' },
   { value: 'ME', label: 'ME' },
   { value: 'MZ', label: 'MZ' },

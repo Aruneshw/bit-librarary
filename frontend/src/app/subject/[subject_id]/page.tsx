@@ -79,8 +79,49 @@ export default function SubjectPage() {
     setPrevCompletion(completionPercent);
   }, [completionPercent, prevCompletion, totalQuestions]);
 
-  const handleSelectQuestion = (question: QuestionWithStatus) => {
-    setSelectedQuestion(question);
+  const handleSelectQuestion = async (question: QuestionWithStatus) => {
+    // Open modal immediately with basic info
+    setSelectedQuestion({ ...question, answer: question.answer || 'Loading answer from cache...' });
+
+    // Fetch full details from backend API
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (apiUrl && !question.answer) {
+      try {
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const res = await fetch(`${apiUrl}/questions/${question.id}/detail`, {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+          });
+          if (res.ok) {
+            const detail = await res.json();
+            setSelectedQuestion(detail);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch question detail from cached API, trying direct query:', err);
+      }
+    }
+
+    // Direct database query fallback
+    if (!question.answer) {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('id', question.id)
+          .single();
+        if (data) {
+          setSelectedQuestion({ ...question, ...data });
+        }
+      } catch (err) {
+        console.error('Failed to fetch question detail from Supabase:', err);
+      }
+    }
   };
 
   const handleCloseModal = useCallback(async () => {
@@ -98,6 +139,23 @@ export default function SubjectPage() {
     const supabase = createClient();
     const { error } = await supabase.from('questions').delete().eq('id', questionId);
     if (!error) {
+      // Clear cache on backend
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (apiUrl) {
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            await fetch(`${apiUrl}/questions/clear-cache?subject_id=${subjectId}`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+              },
+            });
+          }
+        } catch (err) {
+          console.warn('Failed to clear cache on delete:', err);
+        }
+      }
       fetchQuestions(subjectId);
     } else {
       alert("Failed to delete question");
@@ -120,8 +178,27 @@ export default function SubjectPage() {
       <AddQuestionModal 
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
-        subjectId={subjectId as string} 
-        onSuccess={() => fetchQuestions(subjectId as string)} 
+        subjectId={subjectId as string}
+        onSuccess={async () => {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+          if (apiUrl) {
+            try {
+              const supabase = createClient();
+              const { data: { session } } = await supabase.auth.getSession();
+              if (session) {
+                await fetch(`${apiUrl}/questions/clear-cache?subject_id=${subjectId}`, {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                  },
+                });
+              }
+            } catch (err) {
+              console.warn('Failed to clear cache on add:', err);
+            }
+          }
+          fetchQuestions(subjectId as string);
+        }} 
       />
 
       {/* Question Modal */}

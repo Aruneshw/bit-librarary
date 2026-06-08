@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../config/supabase';
-import { redis } from '../config/redis';
+import { safeRedisGet, safeRedisSet, safeRedisDel } from '../config/redis';
 
 export const questionsRouter = Router();
 
@@ -13,11 +13,9 @@ questionsRouter.get('/:subject_id', authMiddleware, async (req: AuthRequest, res
     // Get subject name (Cacheable)
     let subjectName = '';
     const subjectCacheKey = `subject_name:${subject_id}`;
-    
-    if (redis) {
-      const cachedName = await redis.get(subjectCacheKey);
-      if (cachedName) subjectName = cachedName as string;
-    }
+
+    const cachedName = await safeRedisGet<string>(subjectCacheKey);
+    if (cachedName) subjectName = cachedName;
 
     if (!subjectName) {
       const { data: subject } = await supabaseAdmin
@@ -25,10 +23,10 @@ questionsRouter.get('/:subject_id', authMiddleware, async (req: AuthRequest, res
         .select('subject_name')
         .eq('id', subject_id)
         .single();
-        
+
       if (subject?.subject_name) {
         subjectName = subject.subject_name;
-        if (redis) await redis.set(subjectCacheKey, subjectName, { ex: 86400 }); // Cache for 24 hours
+        await safeRedisSet(subjectCacheKey, subjectName, { ex: 86400 }); // Cache for 24 hours
       }
     }
 
@@ -36,9 +34,7 @@ questionsRouter.get('/:subject_id', authMiddleware, async (req: AuthRequest, res
     let questions: any[] | null = null;
     const questionsCacheKey = `subject_questions:${subject_id}`;
 
-    if (redis) {
-      questions = await redis.get(questionsCacheKey);
-    }
+    questions = await safeRedisGet<any[]>(questionsCacheKey);
 
     if (!questions) {
       const { data, error } = await supabaseAdmin
@@ -51,11 +47,11 @@ questionsRouter.get('/:subject_id', authMiddleware, async (req: AuthRequest, res
         res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Failed to fetch questions', status: 500 } });
         return;
       }
-      
+
       questions = data;
-      
-      if (redis && questions) {
-        await redis.set(questionsCacheKey, questions, { ex: 3600 });
+
+      if (questions) {
+        await safeRedisSet(questionsCacheKey, questions, { ex: 3600 });
         console.log(`[CACHE MISS] Fetched questions for subject ${subject_id} from Supabase.`);
       }
     } else {
@@ -106,9 +102,7 @@ questionsRouter.get('/:question_id/detail', authMiddleware, async (req: AuthRequ
     let question: any = null;
     const questionDetailCacheKey = `question_detail:${question_id}`;
 
-    if (redis) {
-      question = await redis.get(questionDetailCacheKey);
-    }
+    question = await safeRedisGet<any>(questionDetailCacheKey);
 
     if (!question) {
       const { data, error } = await supabaseAdmin
@@ -121,14 +115,12 @@ questionsRouter.get('/:question_id/detail', authMiddleware, async (req: AuthRequ
         res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Question not found', status: 404 } });
         return;
       }
-      
+
       question = data;
 
-      if (redis && question) {
-        // Cache question detail for a long time since answers are static and large
-        await redis.set(questionDetailCacheKey, question, { ex: 86400 }); 
-        console.log(`[CACHE MISS] Fetched question ${question_id} from Supabase.`);
-      }
+      // Cache question detail for a long time since answers are static and large
+      await safeRedisSet(questionDetailCacheKey, question, { ex: 86400 }); 
+      console.log(`[CACHE MISS] Fetched question ${question_id} from Supabase.`);
     } else {
       console.log(`[CACHE HIT] Fetched question ${question_id} from Redis.`);
     }
@@ -145,6 +137,21 @@ questionsRouter.get('/:question_id/detail', authMiddleware, async (req: AuthRequ
       ...question,
       viewed: view?.viewed ?? false,
     });
+  } catch {
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Server error', status: 500 } });
+  }
+});
+
+// POST /questions/clear-cache — clear cache for a subject
+questionsRouter.post('/clear-cache', authMiddleware, async (req: AuthRequest, res: Response) => {
+  try {
+    const { subject_id } = req.query;
+    if (subject_id) {
+      await safeRedisDel(`subject_questions:${subject_id}`);
+      await safeRedisDel(`subject_question_count:${subject_id}`);
+      console.log(`[CACHE CLEAR] Cleared questions cache for subject ${subject_id}.`);
+    }
+    res.json({ success: true });
   } catch {
     res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Server error', status: 500 } });
   }

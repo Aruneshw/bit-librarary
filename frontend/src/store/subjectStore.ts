@@ -14,9 +14,34 @@ export const useSubjectStore = create<SubjectState>((set, get) => ({
   isLoading: false,
 
   fetchSubjects: async (department: string) => {
-    const supabase = createClient();
     set({ isLoading: true });
+    const supabase = createClient();
 
+    // Try fetching from the backend cache first
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const res = await fetch(`${apiUrl}/subjects?department=${department}`, {
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.subjects) {
+              set({ subjects: data.subjects, isLoading: false });
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch subjects from cached API, falling back to direct Supabase query:', err);
+      }
+    }
+
+    // Fallback: direct Supabase query
     try {
       let query = supabase.from('subjects').select('*');
       

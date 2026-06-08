@@ -4,7 +4,7 @@ import { supabaseAdmin } from '../config/supabase';
 
 export const profileRouter = Router();
 
-const VALID_DEPARTMENTS = ['CS', 'IT', 'AL', 'AD', 'EEE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
+const VALID_DEPARTMENTS = ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
 
 // GET /profile
 profileRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {

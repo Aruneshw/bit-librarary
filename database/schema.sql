@@ -13,7 +13,7 @@ CREATE TABLE profiles (
   id          UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email       TEXT UNIQUE NOT NULL,
   name        TEXT,
-  department  TEXT CHECK (department IN ('CS','IT','AL','AD','EEE','EIE','ME','MZ','AG','BT')),
+  department  TEXT CHECK (department IN ('CS','IT','AL','AD','EEE','ECE','EIE','ME','MZ','AG','BT')),
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

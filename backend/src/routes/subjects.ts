@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../config/supabase';
-import { redis } from '../config/redis';
+import { safeRedisGet, safeRedisSet } from '../config/redis';
 
 export const subjectsRouter = Router();
 
@@ -32,9 +32,7 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
     // Fetch all subjects (with Redis Caching)
     let allSubjects: any[] | null = null;
 
-    if (redis) {
-      allSubjects = await redis.get('all_subjects');
-    }
+    allSubjects = await safeRedisGet<any[]>('all_subjects');
 
     if (!allSubjects) {
       const { data, error } = await supabaseAdmin
@@ -48,8 +46,8 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
 
       allSubjects = data;
 
-      if (redis && allSubjects) {
-        await redis.set('all_subjects', allSubjects, { ex: 3600 }); // Cache for 1 hour
+      if (allSubjects) {
+        await safeRedisSet('all_subjects', allSubjects, { ex: 3600 }); // Cache for 1 hour
         console.log('[CACHE MISS] Subjects fetched from Supabase and cached.');
       }
     } else {
@@ -66,28 +64,50 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
       return true;
     });
 
+    // Fetch all user views in a single query
+    const { data: allViews } = await supabaseAdmin
+      .from('question_views')
+      .select('subject_id, question_id')
+      .eq('user_id', req.userId!)
+      .eq('viewed', true);
+
+    const viewsBySubject = new Map<string, number>();
+    if (allViews) {
+      for (const view of allViews) {
+        const currentCount = viewsBySubject.get(view.subject_id) || 0;
+        viewsBySubject.set(view.subject_id, currentCount + 1);
+      }
+    }
+
     // Get completion for each subject
     const subjectsWithCompletion = await Promise.all(
       (subjects || []).map(async (subject) => {
-        const { count: total } = await supabaseAdmin
-          .from('questions')
-          .select('*', { count: 'exact', head: true })
-          .eq('subject_id', subject.id);
+        let totalCount = 0;
+        const totalCountCacheKey = `subject_question_count:${subject.id}`;
 
-        const { count: viewed } = await supabaseAdmin
-          .from('question_views')
-          .select('*', { count: 'exact', head: true })
-          .eq('subject_id', subject.id)
-          .eq('user_id', req.userId!)
-          .eq('viewed', true);
+        const cachedCount = await safeRedisGet<number>(totalCountCacheKey);
+        if (cachedCount !== null && cachedCount !== undefined) {
+          totalCount = Number(cachedCount);
+        }
 
-        const totalCount = total || 0;
-        const viewedCount = viewed || 0;
-        const completion = totalCount > 0 ? Math.round((viewedCount / totalCount) * 1000) / 10 : 0;
+        if (totalCount === 0) {
+          const { count: total } = await supabaseAdmin
+            .from('questions')
+            .select('*', { count: 'exact', head: true })
+            .eq('subject_id', subject.id);
+          totalCount = total || 0;
+          await safeRedisSet(totalCountCacheKey, totalCount, { ex: 86400 }); // Cache for 24 hours
+        }
+
+        const viewedCount = viewsBySubject.get(subject.id) || 0;
+        const completion = totalCount > 0 ? Math.round((viewedCount / totalCount) * 100 * 10) / 10 : 0;
 
         return {
           ...subject,
-          completion,
+          total_questions: totalCount,
+          viewed_count: viewedCount,
+          completion_percent: completion,
+          mastered: completion >= 100,
         };
       })
     );

@@ -24,6 +24,10 @@ export function getSubjectsForDepartment(department: Department): string[] {
     case 'MZ':
       return [...common, 'Basics of Electronics Engineering'];
 
+    case 'ECE':
+      return [...common, 'Basics of Electrical Engineering'];
+
+
     case 'AG':
     case 'BT':
       return [...common, 'Basics of Electronics Engineering', 'Tamils and Technology'];
