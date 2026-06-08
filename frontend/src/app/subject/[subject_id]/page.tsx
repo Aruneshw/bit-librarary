@@ -133,6 +133,32 @@ export default function SubjectPage() {
     setSelectedQuestion(null);
   }, [selectedQuestion, subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
 
+  const handleNextQuestion = useCallback(async () => {
+    if (!selectedQuestion) return;
+    const currentIndex = questions.findIndex(q => q.id === selectedQuestion.id);
+    if (currentIndex !== -1 && currentIndex < questions.length - 1) {
+      const nextQ = questions[currentIndex + 1];
+      if (!selectedQuestion.viewed) {
+        await markViewed(selectedQuestion.id, subjectId);
+        updateSubjectProgress(subjectId, viewedCount + 1, totalQuestions);
+      }
+      handleSelectQuestion(nextQ);
+    }
+  }, [selectedQuestion, questions, subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
+
+  const handlePrevQuestion = useCallback(async () => {
+    if (!selectedQuestion) return;
+    const currentIndex = questions.findIndex(q => q.id === selectedQuestion.id);
+    if (currentIndex > 0) {
+      const prevQ = questions[currentIndex - 1];
+      if (!selectedQuestion.viewed) {
+        await markViewed(selectedQuestion.id, subjectId);
+        updateSubjectProgress(subjectId, viewedCount + 1, totalQuestions);
+      }
+      handleSelectQuestion(prevQ);
+    }
+  }, [selectedQuestion, questions, subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
+
   const handleDeleteQuestion = async (questionId: string) => {
     if (!confirm("Are you sure you want to permanently delete this question?")) return;
     
@@ -206,6 +232,10 @@ export default function SubjectPage() {
         question={selectedQuestion}
         onClose={handleCloseModal}
         theme={subjectId === 'a1000000-0000-0000-0000-000000000005' ? 'green' : 'blue'}
+        onNext={handleNextQuestion}
+        onPrev={handlePrevQuestion}
+        hasNext={selectedQuestion ? questions.findIndex(q => q.id === selectedQuestion.id) < questions.length - 1 : false}
+        hasPrev={selectedQuestion ? questions.findIndex(q => q.id === selectedQuestion.id) > 0 : false}
       />
 
       {/* Conditionally Render Translator for Tamils Subject */}
