@@ -1126,5 +1126,659 @@ $$E_Y = -300 \times 0.02 = -6\text{ Volts (V)}$$
 #### 3. Conclusion
 * The magnitude of induced EMF in Coil X is **$3\text{ V}$**.
 * The magnitude of induced EMF in Coil Y is **$6\text{ V}$**.
-* **Reasoning**: Induced EMF is directly proportional to the number of turns ($E \propto N$) for a given rate of flux change. Thus, Coil Y has twice the turns and twice the induced EMF of Coil X.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q48', 48)
+* **Reasoning**: Induced EMF is directly proportional to the number of turns ($E \propto N$) for a given rate of flux change. Thus, Coil Y has twice the turns and twice the induced EMF of Coil X.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q48', 48),
+  ('beee0000-0000-0000-0000-000000000049', 'a1000000-0000-0000-0000-000000000007', '(i) A proton moves in a region where both electric and magnetic fields are present. Engineers analyze how each field affects the motion of the particle. Determine why electric fields can change the speed of a charged particle while magnetic fields mainly change the direction of motion.
+
+*(3 Marks - [U/P, 1])*', '### Topic: Charged Particle Motion in Electric and Magnetic Fields
+**Difficulty Level**: Medium (Conceptual)
+
+#### 1. Electric Field Action (Changing Speed)
+The force exerted by an electric field ($\vec{E}$) on a charge ($q$) is:
+$$\vec{F}_E = q\vec{E}$$
+* This force is always **parallel** (or anti-parallel) to the electric field lines, regardless of the particle''s velocity.
+* Since the force is parallel to the direction of motion (or has a component along it), the work done ($W$) is non-zero:
+$$W = \int \vec{F}_E \cdot d\vec{r} \neq 0$$
+By the Work-Energy Theorem, this work changes the kinetic energy and hence the **speed** of the particle.
+
+#### 2. Magnetic Field Action (Changing Direction)
+The force exerted by a magnetic field ($\vec{B}$) on a moving charge ($q$) with velocity ($\vec{v}$) is given by the Lorentz force:
+$$\vec{F}_B = q(\vec{v} \times \vec{B})$$
+* By definition of the cross product, the magnetic force $\vec{F}_B$ is always **perpendicular** to the velocity vector $\vec{v}$ ($\vec{F}_B \perp \vec{v}$).
+* Since the force is perpendicular to displacement, the power ($P$) and work done ($W$) by the magnetic field are always zero:
+$$P = \vec{F}_B \cdot \vec{v} = 0 \implies W = \int P\, dt = 0$$
+* Since no work is done, the kinetic energy remains constant, meaning the **speed** is unchanged. The force acts strictly as a centripetal force, altering only the **direction** of motion.
+
+```mermaid
+graph LR
+    EField[Electric Field E] -->|Force parallel to path| WorkE[Work Done != 0] -->|Changes| Speed[Speed & KE]
+    MField[Magnetic Field B] -->|Force perpendicular to path| WorkM[Work Done = 0] -->|Changes| Dir[Only Direction]
+```', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q1', 49),
+  ('beee0000-0000-0000-0000-000000000050', 'a1000000-0000-0000-0000-000000000007', '(ii) A charged particle moves perpendicular to a magnetic field. Formula Hint F = q x v x B. Determine how doubling the magnetic field affects the magnetic force.
+
+*(2 Marks - [U/C, 1])*', '### Topic: Magnetic Force Dependency
+**Difficulty Level**: Easy (Conceptual / Mathematical)
+
+#### 1. Mathematical Relationship
+The magnitude of the magnetic force ($F$) on a charged particle moving perpendicular ($\theta = 90^\circ$) to a magnetic field is given by:
+$$F = q v B \sin(90^\circ) = q v B$$
+Where:
+* $q$ = Charge of the particle
+* $v$ = Velocity of the particle
+* $B$ = Magnetic field strength
+
+#### 2. Effect of Doubling B
+If the magnetic field strength is doubled ($B'' = 2B$):
+$$F'' = q v B'' = q v (2B) = 2(q v B) = 2F$$
+* **Conclusion**: Doubling the magnetic field strength **doubles** the magnetic force acting on the particle, due to the direct linear relationship between $F$ and $B$.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q2', 50),
+  ('beee0000-0000-0000-0000-000000000051', 'a1000000-0000-0000-0000-000000000007', '(i) Scientists use crossed electric and magnetic fields in instruments such as mass spectrometers to control particle motion. Determine why velocity selectors are important in such instruments.
+
+*(3 Marks - [U/P, 1])*', '### Topic: Role of Velocity Selectors in Mass Spectrometry
+**Difficulty Level**: Medium (Conceptual)
+
+#### 1. What is a Velocity Selector?
+A **velocity selector** consists of crossed electric ($\vec{E}$) and magnetic ($\vec{B}$) fields. It filters a beam of charged particles so that only those with a specific velocity ($v = E/B$) pass straight through undeflected.
+
+```mermaid
+graph LR
+    Source[Ion Source: Varied Velocities] --> Sel[Velocity Selector v = E/B]
+    Sel --> Filtered[Mono-energetic Beam: Single Velocity]
+    Filtered --> Spec[Mass Analyzer: Separates by m/z]
+```
+
+#### 2. Rationale for Importance in Mass Spectrometers
+1. **Eliminating Velocity Dispersion**: Ion sources emit particles with a wide range of velocities due to thermal energy. In the mass analyzer, deflection depends on both mass-to-charge ratio ($m/z$) and velocity ($v$). If velocities vary, ions of the same mass would hit different spots, blurring the output.
+2. **Ensuring Precise Mass Separation**: By ensuring all entering ions have the exact same velocity, the subsequent magnetic deflection becomes purely a function of mass-to-charge ratio ($r = mv/qB$). This enables high-resolution mass identification.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q3', 51),
+  ('beee0000-0000-0000-0000-000000000052', 'a1000000-0000-0000-0000-000000000007', '(ii) A velocity selector has electric field 2000 N/C and magnetic field 0.02 Tesla. Formula Hint v = E / B. Determine the velocity of particles that pass through undeflected.
+
+*(2 Marks - [U/C, 1])*', '### Topic: Velocity Selector Calculation
+**Difficulty Level**: Easy (Numerical)
+
+#### 1. Given Data
+* Electric Field, $E = 2000\text{ N/C}$
+* Magnetic Field, $B = 0.02\text{ T}$
+
+#### 2. Formula
+For a particle to pass through crossed fields undeflected, the electric force ($F_E = qE$) must balance the magnetic force ($F_B = qvB$), which gives:
+$$v = \frac{E}{B}$$
+
+#### 3. Step-by-Step Calculation
+$$v = \frac{2000}{0.02} = \frac{2000}{2 \times 10^{-2}} = 1000 \times 10^2 = 1 \times 10^5\text{ m/s}$$
+
+#### 4. Conclusion
+* The velocity of the particles that pass through undeflected is **$10^5\text{ m/s}$** (or $100\text{ km/s}$$$).', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q4', 52),
+  ('beee0000-0000-0000-0000-000000000053', 'a1000000-0000-0000-0000-000000000007', '(i) A charged particle enters a magnetic field with its velocity parallel to the direction of the magnetic field. Engineers studying electromagnetic forces analyze the resulting magnetic force acting on the particle. Formula Hint F = q x v x B x sinθ. Determine the magnetic force acting on the particle and explain the result.
+
+*(3 Marks - [U/P, 1])*', '### Topic: Parallel Motion in a Magnetic Field
+**Difficulty Level**: Easy (Conceptual)
+
+#### 1. Mathematical Calculation
+The force ($F$) on a charged particle in a magnetic field is given by:
+$$F = q v B \sin(\theta)$$
+Where $\theta$ is the angle between the velocity vector ($\vec{v}$) and the magnetic field vector ($\vec{B}$).
+* Since the velocity is parallel to the magnetic field, the angle $\theta = 0^\circ$.
+* Substituting this into the equation:
+$$F = q v B \sin(0^\circ) = q v B \times 0 = 0\text{ N}$$
+
+#### 2. Physical Explanation
+* A magnetic field only exerts force on charge components moving **perpendicular** to the field lines.
+* When moving parallel, the particle does not cut across any magnetic flux lines. Consequently, no Lorentz force is generated, and the particle continues its motion in a straight line at constant velocity, unaffected by the field.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q5', 53),
+  ('beee0000-0000-0000-0000-000000000054', 'a1000000-0000-0000-0000-000000000007', '(ii) A charge 4 × 10⁻⁶ C is placed in an electric field of 2500 N/C. Formula Hint F = q x E. Determine the electric force acting on the charge.
+
+*(2 Marks - [U/C, 1])*', '### Topic: Electric Force Calculation
+**Difficulty Level**: Easy (Numerical)
+
+#### 1. Given Data
+* Charge, $q = 4 \times 10^{-6}\text{ C}$
+* Electric Field, $E = 2500\text{ N/C}$
+
+#### 2. Formula
+The magnitude of the force ($F$) exerted on a charge in an electric field is:
+$$F = q \cdot E$$
+
+#### 3. Step-by-Step Calculation
+$$F = (4 \times 10^{-6}\text{ C}) \times (2500\text{ N/C})$$
+$$F = 4 \times 2500 \times 10^{-6} = 10000 \times 10^{-6}\text{ N} = 0.01\text{ N}$$
+
+#### 4. Conclusion
+* The electric force acting on the charge is **$0.01\text{ N}$** (or $10\text{ mN}$).', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q6', 54),
+  ('beee0000-0000-0000-0000-000000000055', 'a1000000-0000-0000-0000-000000000007', '(i) In a velocity selector experiment, charged particles enter a region where electric and magnetic fields are perpendicular to each other. Some particles pass straight through the device without deflection while others deviate from the path. Determine why only particles with a specific velocity pass through the selector without deflection.
+
+*(3 Marks - [U/P, 1])*', '### Topic: Balance of Forces in Velocity Selector
+**Difficulty Level**: Medium (Conceptual)
+
+#### 1. Forces Acting on the Particle
+When a charged particle of charge $q$ and velocity $v$ enters the crossed fields:
+1. **Electric Force ($F_E$)**: $F_E = qE$ (independent of velocity).
+2. **Magnetic Force ($F_B$)**: $F_B = qvB$ (directly proportional to velocity).
+
+These fields are arranged so that $F_E$ and $F_B$ act in **opposite directions**.
+
+```
+             F_E = qE (Upward)
+                 ^
+                 |
+     O ---------> [q] (Velocity v)
+                 |
+                 v
+             F_B = qvB (Downward)
+```
+
+#### 2. Condition for Zero Deflection
+For a particle to travel in a straight line without deflecting, the net force must be zero ($F_{\text{net}} = 0$):
+$$F_E = F_B \implies qE = qvB \implies v = \frac{E}{B}$$
+* **If $v > E/B$**: The magnetic force dominates ($F_B > F_E$), deflecting the particle downward.
+* **If $v < E/B$**: The electric force dominates ($F_E > F_B$), deflecting the particle upward.
+* **If $v = E/B$**: The forces balance out exactly, allowing the particle to pass undeflected. Thus, the selector acts as a velocity filter.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q7', 55),
+  ('beee0000-0000-0000-0000-000000000056', 'a1000000-0000-0000-0000-000000000007', '(ii) A velocity selector uses crossed electric and magnetic fields. Formula Hint v ∝ E, v ∝ 1/B. Determine how doubling the magnetic field affects the selected velocity.
+
+*(2 Marks - [U/C, 1])*', '### Topic: Parameter Tuning in Velocity Selector
+**Difficulty Level**: Easy (Conceptual)
+
+#### 1. Formula Relationship
+The selected velocity ($v$) is inversely proportional to the magnetic field ($B$):
+$$v = \frac{E}{B}$$
+
+#### 2. Effect of Doubling B
+If the magnetic field is doubled ($B'' = 2B$) while keeping the electric field ($E$) constant:
+$$v'' = \frac{E}{B''} = \frac{E}{2B} = \frac{1}{2} v$$
+* **Conclusion**: Doubling the magnetic field **halves** the selected velocity ($v$). Only particles with half the original speed will now pass through undeflected.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q8', 56),
+  ('beee0000-0000-0000-0000-000000000057', 'a1000000-0000-0000-0000-000000000007', '(i) A particle with charge 4 × 10⁻⁶ C is placed in a uniform electric field of 5 × 10³ N/C between two conducting plates. Engineers analyzing electrostatic forces must determine the magnitude of the force acting on the particle and understand how the electric field controls particle motion. Formula Hint F = q x E. Determine the electric force acting on the charge and analyze how increasing the charge would affect the force.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Electrostatic Force Analysis
+**Difficulty Level**: Medium (Numerical / Analytical)
+
+#### 1. Given Data
+* Charge, $q = 4 \times 10^{-6}\text{ C}$
+* Electric Field, $E = 5 \times 10^3\text{ N/C}$
+
+#### 2. Calculation of Electric Force ($F$)
+Using the relation:
+$$F = q \cdot E$$
+$$F = (4 \times 10^{-6}\text{ C}) \times (5 \times 10^3\text{ N/C})$$
+$$F = 20 \times 10^{-3}\text{ N} = 0.02\text{ N}$$
+
+#### 3. Influence of Increasing Charge on the Force
+* **Linear Dependency**: The electric force $F$ is directly proportional to the magnitude of the charge $q$ ($F \propto q$) for a constant electric field.
+* **Proportional Scaling**: If the charge is doubled, the force doubles. 
+* **Directional Control**: If the sign of the charge changes (e.g. from positive to negative), the magnitude remains the same but the direction of the force reverses, enabling precise control of particle trajectories in CRT displays or ink-jet printers.
+
+```mermaid
+graph LR
+    Charge[Increase Charge q] -->|Linear Proportionality| Force[Increase Force F]
+    Sign[Change Charge Sign] -->|Vector Property| Dir[Reverse Direction of Force]
+```', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q9', 57),
+  ('beee0000-0000-0000-0000-000000000058', 'a1000000-0000-0000-0000-000000000007', '(i) A conductor of length 0.30 m carrying a current of 5 A is placed in a uniform magnetic field of 0.40 Tesla. The conductor is positioned perpendicular to the magnetic field. Engineers studying electromagnetic devices must determine the force on the conductor and understand how magnetic fields produce mechanical motion in electric motors. Formula Hint F = B x I x L. Determine the force acting on the conductor and analyze how increasing the magnetic field strength affects the force.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Magnetic Force on a Current-Carrying Conductor
+**Difficulty Level**: Medium (Numerical)
+
+#### 1. Given Data
+* Length of conductor, $L = 0.30\text{ m}$
+* Current, $I = 5\text{ A}$
+* Magnetic Field, $B = 0.40\text{ T}$
+* Angle, $\theta = 90^\circ$ (Perpendicular)
+
+#### 2. Calculation of Force ($F$)
+The formula for magnetic force on a conductor is:
+$$F = B I L \sin(\theta)$$
+Since the conductor is perpendicular:
+$$F = B I L \sin(90^\circ) = B I L$$
+$$F = 0.40\text{ T} \times 5\text{ A} \times 0.30\text{ m}$$
+$$F = 2.0 \times 0.30 = 0.60\text{ N}$$
+
+#### 3. Influence of Increasing Magnetic Field ($B$)
+* **Linear Proportionality**: The magnetic force is directly proportional to the magnetic field strength ($F \propto B$).
+* **Mechanism in Motors**: In an electric motor, increasing the magnetic field (e.g., using stronger permanent magnets or electromagnets) increases the force on the rotor windings, thereby increasing torque output.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q10', 58),
+  ('beee0000-0000-0000-0000-000000000059', 'a1000000-0000-0000-0000-000000000007', '(i) An electron moves inside a region where a uniform electric field of 3 × 10⁴ N/C exists between two plates. Engineers analyzing particle accelerators must determine the electric force acting on the electron. Charge of electron = 1.6 × 10⁻¹⁹ C. Formula Hint F = q x E. Determine the magnitude of the electric force acting on the electron.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Electric Force on Subatomic Particles
+**Difficulty Level**: Medium (Numerical)
+
+#### 1. Given Data
+* Electric Field, $E = 3 \times 10^4\text{ N/C}$
+* Charge of an electron, $q = e = 1.6 \times 10^{-19}\text{ C}$
+
+#### 2. Calculation of Magnitude of Force ($F$)
+Using the relation:
+$$F = q \cdot E$$
+$$F = (1.6 \times 10^{-19}\text{ C}) \times (3 \times 10^4\text{ N/C})$$
+$$F = 4.8 \times 10^{-15}\text{ N}$$
+
+#### 3. Physical Significance in Accelerators
+* This force, though small in absolute magnitude, acts on a very tiny electron mass ($m_e \approx 9.11 \times 10^{-31}\text{ kg}$), producing an enormous acceleration:
+$$a = \frac{F}{m} = \frac{4.8 \times 10^{-15}}{9.11 \times 10^{-31}} \approx 5.27 \times 10^{15}\text{ m/s}^2$$
+This principle is fundamental to accelerating electrons in cathode ray tubes (CRTs), X-ray machines, and synchrotron light sources.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q11', 59),
+  ('beee0000-0000-0000-0000-000000000060', 'a1000000-0000-0000-0000-000000000007', '(i) A straight conductor carrying current is placed in a magnetic field and experiences a force due to the interaction between moving charges and the magnetic field. This phenomenon is widely used in electric motors where electrical energy is converted into mechanical motion. Formula Hint F = B x I x L. Explain how the interaction between current and magnetic field produces a force on the conductor and how this principle enables the operation of electric motors.
+
+*(5 Marks - [Ap/C, 2])*', '### Topic: Force on a Conductor & Motor Principle
+**Difficulty Level**: Hard (Conceptual)
+
+#### 1. Physical Mechanism: Microscopic to Macroscopic
+An electric current in a conductor is a drift of free electrons.
+1. **Microscopic Lorentz Force**: When the conductor is placed in a magnetic field ($B$), each moving electron experiences a microscopic magnetic force:
+$$\vec{f} = q(\vec{v}_d \times \vec{B})$$
+2. **Macroscopic Force**: These forces are transmitted to the lattice of the conductor through collisions, resulting in a net macroscopic force on the entire wire:
+$$\vec{F} = I(\vec{L} \times \vec{B})$$
+
+#### 2. Application in Electric Motors
+
+```mermaid
+graph LR
+    Current[Electric Current I] -->|Flows through| Rotor[Rotor Coil in Magnetic Field B]
+    Rotor -->|Creates opposite forces on sides| Torque[Lorentz Torque F = BIL]
+    Torque -->|Rotates| Shaft[Mechanical Rotation]
+```
+
+* In a simple DC motor, a rectangular coil is placed in a magnetic field.
+* Current flows in opposite directions along the two sides of the coil perpendicular to the magnetic field.
+* Consequently, the magnetic forces ($F = B I L$) acting on the two sides are equal and opposite, creating a **torque** ($T = F \cdot w$, where $w$ is coil width) that rotates the shaft, converting electrical energy to mechanical work.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q12', 60),
+  ('beee0000-0000-0000-0000-000000000061', 'a1000000-0000-0000-0000-000000000007', '(i) A proton with charge 1.6 × 10⁻¹⁹ C enters a uniform magnetic field of 0.03 Tesla with velocity 3 × 10⁶ m/s perpendicular to the field direction. The magnetic field exerts a force that causes the proton to move in a circular path. Engineers studying cyclotron devices must determine the magnetic force acting on the proton. Formula Hint Magnetic Force F = q x v x B. Determine the magnetic force acting on the proton and interpret how increasing the magnetic field strength affects the force.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Lorentz Force in a Cyclotron
+**Difficulty Level**: Medium (Numerical / Analytical)
+
+#### 1. Given Data
+* Charge of proton, $q = 1.6 \times 10^{-19}\text{ C}$
+* Magnetic Field, $B = 0.03\text{ T}$
+* Velocity, $v = 3 \times 10^6\text{ m/s}$
+
+#### 2. Calculation of Magnetic Force ($F$)
+Since velocity is perpendicular to the field ($\theta = 90^\circ$):
+$$F = q v B$$
+$$F = (1.6 \times 10^{-19}\text{ C}) \times (3 \times 10^6\text{ m/s}) \times 0.03\text{ T}$$
+$$F = 4.8 \times 10^{-13} \times 0.03 = 1.44 \times 10^{-14}\text{ N}$$
+
+#### 3. Interpretation of Increasing B
+* **Force Scaling**: $F \propto B$. Stronger fields produce greater centripetal forces.
+* **Path Curvature**: The radius of the circular path is given by $r = mv / qB$. Increasing $B$ reduces the radius $r$, constraining the path. In cyclotrons, this allows for more compact accelerator designs and higher frequency acceleration cycles.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q13', 61),
+  ('beee0000-0000-0000-0000-000000000062', 'a1000000-0000-0000-0000-000000000007', '(i) Two long parallel conductors are placed 0.05 m apart in a laboratory setup used to study electromagnetic interaction between current carrying wires. The first conductor carries a current of 8 A, while the second conductor carries 6 A. A segment of length 0.50 m of the conductors is considered for analysis. Engineers analyzing electrostatic forces must determine the magnitude of the force between the conductors in order to understand the magnetic interaction between current carrying wires used in power transmission systems. Formula Hint Force between parallel conductors F = (μ0 × I1 × I2 × L) / (2π × d), μ0 = 4π × 10^-7. Determine the force between the conductors and interpret whether the conductors attract or repel if both currents flow in the same direction.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Force Between Parallel Currents
+**Difficulty Level**: Medium (Numerical)
+
+#### 1. Given Data
+* Distance, $d = 0.05\text{ m}$
+* Current 1, $I_1 = 8\text{ A}$
+* Current 2, $I_2 = 6\text{ A}$
+* Length, $L = 0.50\text{ m}$
+* Permeability of free space, $\mu_0 = 4\pi \times 10^{-7}\text{ T}\cdot\text{m/A}$
+
+#### 2. Calculation of Force ($F$)
+Using the formula:
+$$F = \frac{\mu_0 I_1 I_2 L}{2\pi d}$$
+$$F = \frac{(4\pi \times 10^{-7}) \times 8 \times 6 \times 0.50}{2\pi \times 0.05}$$
+Simplify the factor $\frac{4\pi}{2\pi} = 2$:
+$$F = \frac{2 \times 10^{-7} \times 48 \times 0.50}{0.05}$$
+$$F = \frac{48 \times 10^{-7}}{0.05} = 960 \times 10^{-7}\text{ N} = 9.6 \times 10^{-5}\text{ N}$$
+
+#### 3. Interpretation of Force Direction
+* **Parallel Currents (Same direction)**: The magnetic fields between the wires oppose each other, while the fields outside reinforce, resulting in a net **attractive force**.
+* **Antiparallel Currents (Opposite directions)**: Result in a **repulsive force**.
+
+```
+    Currents in Same Direction:           Currents in Opposite Directions:
+       I1 (Up)       I2 (Up)                 I1 (Up)       I2 (Down)
+         |             |                       |             |
+         |  -->   <--  |  (Attract)            |  <--     -->|  (Repel)
+```', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q14', 62),
+  ('beee0000-0000-0000-0000-000000000063', 'a1000000-0000-0000-0000-000000000007', '(i) A charged particle enters a magnetic field at an angle to the field direction. Because the velocity has components both perpendicular and parallel to the magnetic field, the particle follows a helical trajectory in the magnetic field. Engineers analyzing magnetic confinement systems must understand the relationship between particle motion and magnetic force. Formula Hint F = q x v x B x sinθ. Explain how the magnetic force influences the motion of the particle and why the particle follows a helical path.
+
+*(5 Marks - [Ap/C, 2])*', '### Topic: Helical Motion in Magnetic Fields
+**Difficulty Level**: Hard (Analytical)
+
+#### 1. Resolution of Velocity Components
+When a particle enters a magnetic field at an angle $\theta$ (where $0 < \theta < 90^\circ$), its velocity $\vec{v}$ can be resolved into two orthogonal components:
+1. **Parallel Component ($v_{\parallel} = v \cos\theta$)**: Parallel to the magnetic field.
+2. **Perpendicular Component ($v_{\perp} = v \sin\theta$)**: Perpendicular to the magnetic field.
+
+```
+                  ^ Magnetic Field B
+                  |     / v (velocity)
+                  |    / 
+                  |  θ/ 
+                  |  /___ v_perp = v sinθ
+                  | /
+                  |/______ v_para = v cosθ
+```
+
+#### 2. Individual Motion Dynamics
+* **Parallel Motion**: The magnetic force due to $v_{\parallel}$ is zero ($F_{\parallel} = q v_{\parallel} B \sin 0^\circ = 0$). Thus, the particle continues at a constant speed along the field lines.
+* **Perpendicular Motion**: The perpendicular component experiences a constant magnetic force ($F_{\perp} = q v_{\perp} B$) acting perpendicular to both velocity and field. This acts as a centripetal force, causing uniform circular motion in the plane perpendicular to the field.
+
+#### 3. Superposition: The Helical Path
+The combination of continuous linear translation along the field lines and circular motion in the perpendicular plane forms a **helical trajectory** (corkscrew path). This principle is utilized in magnetic confinement fusion devices (tokamaks) and explains the trapping of solar wind in Earth''s Van Allen radiation belts.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q15', 63),
+  ('beee0000-0000-0000-0000-000000000064', 'a1000000-0000-0000-0000-000000000007', '(i) In an experiment involving two long parallel conductors carrying electric currents, each conductor produces a magnetic field around it. This magnetic field interacts with the current in the other conductor and produces a force between them. Engineers must analyze the physical mechanism responsible for this interaction. Formula Hint Magnetic interaction principle F ∝ I1 x I2, F ∝ 1/d. Explain how the magnetic field produced by one conductor exerts a force on the other conductor and why the direction of current determines whether the wires attract or repel.
+
+*(5 Marks - [Ap/C, 2])*', '### Topic: Mechanism of Magnetic Interaction Between Wires
+**Difficulty Level**: Hard (Analytical)
+
+#### 1. Step-by-Step Interaction Mechanism
+The force between two parallel current-carrying conductors arises via a two-step magnetic field coupling:
+
+```mermaid
+graph TD
+    I1[Current I1 in Wire 1] -->|Generates| B1[Magnetic Field B1 = μ0 I1 / 2πd]
+    B1 -->|Interacts with| I2[Current I2 in Wire 2]
+    I2 -->|Experiences Force| F2[Force F2 = B1 I2 L]
+```
+
+1. **Field Generation**: Wire 1 carrying current $I_1$ produces a circular magnetic field ($B_1$) around itself. According to Ampere''s Law, the field strength at distance $d$ is:
+$$B_1 = \frac{\mu_0 I_1}{2\pi d}$$
+2. **Lorentz Force**: Wire 2 carrying current $I_2$ lies inside this magnetic field $B_1$. The moving charges in Wire 2 experience a Lorentz force:
+$$F = B_1 I_2 L = \left(\frac{\mu_0 I_1}{2\pi d}\right) I_2 L = \frac{\mu_0 I_1 I_2 L}{2\pi d}$$
+
+#### 2. Determining Attraction vs. Repulsion (Right-Hand Rules)
+* **Same Direction**: Using the Right-Hand Grip Rule, the magnetic field $B_1$ of Wire 1 at Wire 2 points into/out of the page. Applying Fleming''s Left-Hand Rule, the force on Wire 2 points toward Wire 1. By symmetry, the force on Wire 1 points toward Wire 2, causing **attraction**.
+* **Opposite Directions**: Reversing one current direction reverses the direction of the cross-product ($I \vec{L} \times \vec{B}$), resulting in a force pointing away from the other wire, causing **repulsion**.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q16', 64),
+  ('beee0000-0000-0000-0000-000000000065', 'a1000000-0000-0000-0000-000000000007', '(i) In a laboratory demonstration, a transmitter produces electromagnetic waves that propagate through space and reach a detector placed at some distance. The detector records the arrival of energy even though there is no direct electrical connection between the transmitter and the detector. Establish how energy is transferred between the transmitter and detector.
+
+*(3 Marks - [U/P, 2])*', '### Topic: Electromagnetic Wave Propagation & Energy Transfer
+**Difficulty Level**: Medium (Conceptual)
+
+#### 1. Mechanism of Energy Transfer
+1. **Source Generation**: An alternating current in the transmitter antenna accelerates electric charges, creating a time-varying electric field ($\vec{E}$).
+2. **Mutual Induction**: According to Maxwell''s equations, a changing electric field induces a changing magnetic field ($\vec{B}$), which in turn induces another changing electric field. This self-sustaining disturbance propagates through space as an **electromagnetic (EM) wave**.
+3. **Propagation and Detection**: The EM wave carries energy, quantified by the **Poynting Vector** ($\vec{S} = \frac{1}{\mu_0} \vec{E} \times \vec{B}$). When the wave reaches the detector antenna, its oscillating electric field exerts forces on the free electrons in the detector wire, generating an AC voltage that is registered as received signal/energy.
+
+```mermaid
+graph LR
+    Transmitter[AC Current in Antenna] -->|Generates| EField[Oscillating E Field]
+    EField -->|Induces| BField[Oscillating B Field]
+    BField -->|Propagates through space| EM[EM Wave]
+    EM -->|Oscillates electrons in| Detector[Detector Antenna]
+```', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q17', 65),
+  ('beee0000-0000-0000-0000-000000000066', 'a1000000-0000-0000-0000-000000000007', '(ii) Solar energy travels from the Sun to Earth through empty space. Identify the mechanism responsible for this energy transfer.
+
+*(2 Marks - [U/C, 1])*', '### Topic: Solar Energy Transmission
+**Difficulty Level**: Easy (Conceptual)
+
+#### 1. Identification of the Mechanism
+The mechanism responsible for this energy transfer is **electromagnetic radiation** (specifically through electromagnetic waves).
+
+#### 2. Rationale
+* Unlike conduction or convection, electromagnetic waves do not require a material medium (like air or water) to propagate.
+* They travel through the vacuum of space at the speed of light ($c \approx 3 \times 10^8\text{ m/s}$) as self-sustaining transverse oscillations of electric and magnetic fields, transporting thermal and light energy from the Sun to the Earth.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q18', 66),
+  ('beee0000-0000-0000-0000-000000000067', 'a1000000-0000-0000-0000-000000000007', '(i) A metal plate moving between the poles of a magnet experiences resistance to its motion. Relate this effect to the formation of eddy currents.
+
+*(3 Marks - [U/P, 2])*', '### Topic: Eddy Current Damping
+**Difficulty Level**: Medium (Conceptual)
+
+#### 1. Formation of Eddy Currents
+When a solid metal plate moves between the magnetic poles, the magnetic flux ($\Phi$) passing through different portions of the plate changes over time.
+* By Faraday''s Law of Induction, this changing flux induces circulating loops of electric current inside the body of the conductor, known as **eddy currents**.
+
+#### 2. Resistance to Motion (Lenz''s Law)
+* According to Lenz''s Law, these induced eddy currents create their own magnetic fields that **oppose** the change that produced them (the plate''s motion).
+* The magnetic force between the magnet''s field and the field of the eddy currents acts opposite to the direction of motion:
+$$\vec{F} = \int (d\vec{I} \times \vec{B})$$
+This results in electromagnetic braking (damping), which resists the motion of the plate and converts kinetic energy into thermal energy ($I^2R$ loss).
+
+```mermaid
+graph TD
+    Motion[Metal Plate Moves] -->|Changes| Flux[Magnetic Flux Φ]
+    Flux -->|Induces| Eddy[Circulating Eddy Currents]
+    Eddy -->|Generates| OpposingB[Opposing Magnetic Field]
+    OpposingB -->|Creates| BrakingForce[Electromagnetic Braking Force]
+```', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q19', 67),
+  ('beee0000-0000-0000-0000-000000000068', 'a1000000-0000-0000-0000-000000000007', '(ii) A metallic conductor placed in a changing magnetic field develops circulating electric currents within it. Identify these currents.
+
+*(2 Marks - [U/C, 1])*', '### Topic: Induced Currents
+**Difficulty Level**: Easy (Conceptual)
+
+#### 1. Identification
+These circulating currents are called **eddy currents** (or Foucault currents).
+
+#### 2. Explanation
+* They are loops of electrical current induced within bulk conductors by a changing magnetic field, due to Faraday''s law of induction.
+* They flow in closed loops within planes perpendicular to the magnetic field.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q20', 68),
+  ('beee0000-0000-0000-0000-000000000069', 'a1000000-0000-0000-0000-000000000007', '(i) During a microwave transmission experiment, energy generated by a transmitter travels through space and is detected by a receiver placed several meters away. Relate this observation to energy transfer in electromagnetic fields.
+
+*(3 Marks - [U/P, 2])*', '### Topic: Energy Transfer in EM Fields
+**Difficulty Level**: Medium (Conceptual)
+
+#### 1. Energy Density of EM Fields
+Electromagnetic waves (microwaves) carry energy in both their electric and magnetic fields. The total energy density ($u$) in a vacuum is:
+$$u = u_E + u_B = \frac{1}{2}\epsilon_0 E^2 + \frac{1}{2\mu_0} B^2$$
+
+#### 2. Energy Propagation (Poynting Vector)
+* The rate of energy flow per unit area is given by the **Poynting Vector**:
+$$\vec{S} = \frac{1}{\mu_0} (\vec{E} \times \vec{B})$$
+* During transmission, the microwave source excites electromagnetic fields that propagate outward, carrying energy density $u$ through space. The receiver absorbs a fraction of this field energy, converting it back into electrical currents for detection.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q21', 69),
+  ('beee0000-0000-0000-0000-000000000070', 'a1000000-0000-0000-0000-000000000007', '(ii) During an experiment on wireless communication, a transmitter generates electromagnetic waves that propagate through space and reach a receiver placed several meters away. Even though there is no physical conductor connecting the transmitter and receiver, the receiver successfully detects the signal energy carried by the wave. Determine the phenomenon responsible for this energy transfer.
+
+*(2 Marks - [U/C, 1])*', '### Topic: Wireless Propagation
+**Difficulty Level**: Easy (Conceptual)
+
+#### 1. Phenomenon Identification
+The phenomenon is **electromagnetic wave propagation** (or wireless electromagnetic transmission).
+
+#### 2. Explanation
+* Accelerating charges in the transmitter''s circuitry generate self-sustaining transverse electromagnetic waves.
+* These waves travel through the vacuum or air at the speed of light, carrying electromagnetic energy that is captured by the receiver antenna and converted back to a readable signal, requiring no physical wires.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q22', 70),
+  ('beee0000-0000-0000-0000-000000000071', 'a1000000-0000-0000-0000-000000000007', '(i) During a laboratory demonstration, a copper disc rotates between the poles of a magnet. Students observe that the disc gradually slows down even though no mechanical friction is applied. The instructor explains that the magnetic field induces circulating currents inside the metal disc which oppose its motion. Establish how eddy currents influence the motion of conductors in magnetic fields.
+
+*(3 Marks - [U/P, 2])*', '### Topic: Electromagnetic Braking in Rotating Discs
+**Difficulty Level**: Medium (Conceptual / Analytical)
+
+#### 1. Generation of Damping Forces
+* As the copper disc rotates through the localized magnetic field, sections of the disc enter and leave the field, causing the magnetic flux through those sections to change.
+* This induces **eddy currents** within the disc.
+* According to Lenz''s law, these eddy currents circulate in directions such that the magnetic forces they experience (Lorentz forces $F = I L B$) oppose the rotation of the disc.
+
+#### 2. Dynamic Influence (Deceleration)
+* Since the force is always opposing the velocity ($F \propto -v$), it behaves as a velocity-dependent frictional force (damping).
+* This electromagnetic torque slows down the rotation, converting the mechanical kinetic energy of the disc into heat via Joule heating ($P = I^2 R$). This principle is utilized in train brakes and electricity meters.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q23', 71),
+  ('beee0000-0000-0000-0000-000000000072', 'a1000000-0000-0000-0000-000000000007', '(ii) In a classroom experiment, a teacher moves a strong magnet close to a thick aluminum plate. Students notice that the plate slightly resists the motion of the magnet. The teacher explains that this happens because changing magnetic fields induce circular electric currents inside the conductor. Determine the phenomenon responsible for this effect.
+
+*(2 Marks - [U/C, 1])*', '### Topic: Electromagnetic Induction in Solid Conductors
+**Difficulty Level**: Easy (Conceptual)
+
+#### 1. Phenomenon Identification
+The phenomenon is **electromagnetic induction**, specifically resulting in the formation of **eddy currents** and the subsequent **Lenz''s Law repulsion/drag**.
+
+#### 2. Explanation
+* The relative motion between the magnet and the aluminum plate causes a changing magnetic flux in the plate.
+* This induces circular eddy currents in the plate, which produce an opposing magnetic field that exerts a repulsive or drag force on the moving magnet, resisting the motion.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q24', 72),
+  ('beee0000-0000-0000-0000-000000000073', 'a1000000-0000-0000-0000-000000000007', '(i) In power electronic systems, inductors are commonly used to store energy temporarily in magnetic fields. Engineers design inductors so that when current passes through them, energy is stored in the magnetic field created around the coil. This stored energy can later be released when the current changes, helping regulate electrical circuits. Evaluate the role of magnetic fields in storing electrical energy in inductors.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Energy Storage in Inductors
+**Difficulty Level**: Medium (Analytical)
+
+#### 1. Energy Storage Mechanism
+An inductor stores electrical energy in the form of a magnetic field.
+1. **Building the Field**: When a current $I$ flows through an inductor, it establishes a magnetic flux $\Phi = L I$, where $L$ is the self-inductance.
+2. **Work Done Against Induced EMF**: As the current increases, a back electromotive force (EMF) $e = -L \frac{dI}{dt}$ is induced in the coil. To maintain the flow, the power source must do work against this induced back-EMF.
+
+#### 2. Mathematical Derivation
+The work ($dW$) done in a small time interval $dt$ is:
+$$dW = P\, dt = (-e) I\, dt = \left(L \frac{dI}{dt}\right) I\, dt = L I\, dI$$
+Integrating this from zero current to a final steady-state current $I$:
+$$W = \int_{0}^{I} L I''\, dI'' = \frac{1}{2} L I^2$$
+Thus, the stored energy ($U$) is:
+$$U = \frac{1}{2} L I^2$$
+
+#### 3. Magnetic Field Energy Density
+For a solenoid of volume $V = A l$ and magnetic field $B = \mu_0 n I$:
+$$U = \frac{B^2}{2\mu_0} (A l)$$
+The energy density ($u_B$) within the magnetic field is:
+$$u_B = \frac{U}{V} = \frac{B^2}{2\mu_0}$$
+This is the fundamental energy storage mechanism used in switch-mode power supplies (SMPS) and filters.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q25', 73),
+  ('beee0000-0000-0000-0000-000000000074', 'a1000000-0000-0000-0000-000000000007', '(i) In an electrical laboratory, a coil connected to a power supply produces a magnetic field around it when current flows. When the current in the coil suddenly changes, the magnetic field around it also changes. This change in the magnetic field induces an electromotive force within the same coil that opposes the change in current. Engineers recognize this behavior as an important property of coils used in electrical circuits. Analyze the concept of self inductance in an electrical coil.
+
+*(5 Marks - [An/P, 2])*', '### Topic: Self-Inductance in Coils
+**Difficulty Level**: Hard (Analytical)
+
+#### 1. Definition and Physical Origin
+**Self-inductance ($L$)** is the property of a coil by which it opposes any change in the current flowing through it.
+* When current flows, it generates a magnetic flux ($\Phi$) linked with the coil itself.
+* The total flux linkage is proportional to the current:
+$$N\Phi = L I$$
+Where $N$ is the number of turns, and $L$ is the coefficient of self-inductance (measured in Henries, H).
+
+```mermaid
+graph LR
+    CurrentChange[Current I changes] -->|Alters| Flux[Magnetic Flux Φ]
+    Flux -->|Induces| BackEMF[Back-EMF e = -L dI/dt]
+    BackEMF -->|Opposes| CurrentChange
+```
+
+#### 2. Mathematical formulation
+By Faraday''s Law of Electromagnetic Induction:
+$$e = -\frac{d(N\Phi)}{dt} = -L \frac{dI}{dt}$$
+* **Lenz''s Law (Negative Sign)**: The negative sign indicates that the induced voltage (back-EMF) acts in a direction that opposes the rate of change of current ($dI/dt$).
+
+#### 3. Circuit Analysis
+* **Current Rise**: If current is increasing ($dI/dt > 0$), the back-EMF is negative, opposing the growth of current.
+* **Current Fall**: If current is decreasing ($dI/dt < 0$), the induced EMF is positive, attempting to sustain the falling current.
+* This property is analogous to electrical inertia, behaving exactly like mass in mechanical systems.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q26', 74),
+  ('beee0000-0000-0000-0000-000000000075', 'a1000000-0000-0000-0000-000000000007', '(i) In an electrical engineering laboratory, students connect a coil to a power supply and observe the behavior of the magnetic field produced around the coil. As current flows through the coil, a magnetic field develops around it and energy becomes stored within that magnetic field. When the power supply is switched off, the magnetic field collapses and releases the stored energy back into the circuit. Analyze how energy is stored in a magnetic field produced by an electric current.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Magnetic Field Energy Storage Analysis
+**Difficulty Level**: Hard (Analytical)
+
+#### 1. Energy Storage Mechanism
+* When an electric current is initiated in a coil, it creates a magnetic field. 
+* To establish this magnetic field, work must be done by the electrical source against the self-induced back-EMF of the coil:
+$$e = -L \frac{dI}{dt}$$
+* The energy is stored in the space surrounding the conductor where the magnetic field resides.
+
+#### 2. Derivation of Energy Stored
+The instantaneous power $P$ delivered to the inductor during the transient state is:
+$$P = v(t) I(t) = \left(L \frac{dI}{dt}\right) I = L I \frac{dI}{dt}$$
+The energy stored $E$ is the integral of power over time:
+$$E = \int_{0}^{\infty} P\, dt = \int_{0}^{I} L I''\, dI'' = \frac{1}{2} L I^2$$
+
+#### 3. Energy Release During Collapse
+* When the power supply is disconnected, the current drops to zero.
+* The collapsing magnetic field induces a large forward voltage (EMF) to try and maintain the current.
+* If a discharge path exists (like a freewheeling diode), the energy is dissipated safely. Otherwise, the collapsing field can produce high-voltage sparks across open switch contacts, demonstrating the physical release of stored magnetic energy.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q27', 75),
+  ('beee0000-0000-0000-0000-000000000076', 'a1000000-0000-0000-0000-000000000007', '(i) During a circuit experiment, a student observes that when the current through a coil is suddenly increased, the coil briefly resists the change in current. This happens because the magnetic field associated with the coil changes and produces an induced electromotive force that opposes the change. Assess how self inductance affects current changes in electrical circuits.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Transient Response & Self-Inductance
+**Difficulty Level**: Medium (Conceptual / Analytical)
+
+#### 1. Transient Behavior in LR Circuits
+When a DC voltage $V$ is applied to a series combination of a resistor $R$ and an inductor $L$ (an LR circuit), the current $I(t)$ does not instantly jump to its maximum value ($I_{\text{max}} = V/R$) due to self-inductance.
+
+#### 2. Mathematical Description of Current Growth
+The Kirchhoff''s Voltage Law (KVL) for the circuit is:
+$$V - L \frac{dI}{dt} - I R = 0$$
+Solving this differential equation yields the current as a function of time:
+$$I(t) = \frac{V}{R} \left(1 - e^{-t / \tau}\right)$$
+Where $\tau = \frac{L}{R}$ is the **inductive time constant** of the circuit.
+
+```
+  Current I(t)
+    ^
+V/R |                  ----------------
+    |               .-''
+    |            .-''
+    |         .-''
+    |      .-''
+    |   .-''
+  0 +----------------------------------> Time t
+    0         τ        2τ       3τ
+```
+
+#### 3. Assessment of Inductive Opposition
+1. **At $t=0$**: The term $e^{0} = 1$, giving $I(0) = 0$. The inductor behaves as an **open circuit**, completely blocking current changes.
+2. **At $t = \tau$**: $I(\tau) = \frac{V}{R}(1 - e^{-1}) \approx 0.632 \frac{V}{R}$ ($63.2\%$ of maximum).
+3. **At steady state ($t \to \infty$)**: $I(t) \to \frac{V}{R}$. The inductor acts as a **short circuit** (ideal wire).
+* **Summary**: Larger self-inductance $L$ increases the time constant $\tau$, meaning the circuit takes longer to respond to current changes, smoothing out current spikes and transients.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q28', 76),
+  ('beee0000-0000-0000-0000-000000000077', 'a1000000-0000-0000-0000-000000000007', '(i) In electrical power generators, mechanical rotation of coils within magnetic fields produces electric current that is supplied to homes and industries. As the coil rotates, the magnetic field linking the coil continuously changes. This changing magnetic field produces an induced electromotive force that drives current through the external circuit. Evaluate how electromagnetic induction enables electricity generation in generators.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: AC Generator & Electromagnetic Induction
+**Difficulty Level**: Medium (Conceptual / Analytical)
+
+#### 1. Principle of Operation
+An electric generator operates on the principle of **Faraday''s Law of Electromagnetic Induction**. It converts mechanical energy (rotation of a rotor) into electrical energy.
+
+#### 2. Mathematical Model of EMF Generation
+Consider a coil of $N$ turns and area $A$ rotating with constant angular velocity $\omega$ in a uniform magnetic field $B$.
+* The magnetic flux linked with the coil at any angle $\theta = \omega t$ is:
+$$\Phi(t) = B A \cos(\omega t)$$
+* By Faraday''s Law, the induced EMF $e$ is:
+$$e = -N \frac{d\Phi}{dt} = -N \frac{d}{dt}(B A \cos(\omega t)) = N B A \omega \sin(\omega t)$$
+* This results in an alternating voltage output:
+$$e(t) = E_m \sin(\omega t)$$
+where $E_m = N B A \omega$ is the peak EMF.
+
+```mermaid
+graph LR
+    Mechanical[Mechanical Rotation ω] -->|Rotates Coil| FluxChange[Flux Change dΦ/dt]
+    FluxChange -->|Faraday''s Law| InducedEMF[Induced EMF e = Em sinωt]
+    InducedEMF -->|Drives| ACCurrent[AC Current in Load]
+```
+
+#### 3. Evaluation of Key Factors
+* **Rotor Speed ($\omega$)**: Faster rotation increases both the output voltage and frequency.
+* **Magnetic Field ($B$) and Coil Geometry ($N, A$)**: Increasing the field strength or number of turns increases the amplitude of the generated electricity. This forms the foundation of modern grid power generation.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q29', 77),
+  ('beee0000-0000-0000-0000-000000000078', 'a1000000-0000-0000-0000-000000000007', '(i) In space research experiments, scientists use powerful laser beams to manipulate tiny particles. When the laser beam strikes a microscopic particle, it pushes the particle slightly in the direction of the beam. This happens because the electromagnetic field of the laser carries momentum that is transferred to the particle upon interaction. Evaluate how electromagnetic radiation transfers momentum to matter.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Radiation Pressure & Momentum Transfer
+**Difficulty Level**: Hard (Analytical)
+
+#### 1. Relativistic Relationship
+According to Maxwell''s electromagnetic theory and Einstein''s special relativity, electromagnetic waves carry momentum along with energy. The relationship between momentum ($p$) and energy ($U$) of electromagnetic radiation is:
+$$p = \frac{U}{c}$$
+where $c$ is the speed of light.
+
+#### 2. Mechanism of Force Transfer (Radiation Pressure)
+When radiation strikes a surface, it is either absorbed, reflected, or scattered.
+* **Complete Absorption**: The momentum transferred to the particle is:
+$$\Delta p = \frac{U}{c}$$
+* **Complete Reflection**: The wave bounces back with equal momentum in the opposite direction. The change in momentum is doubled:
+$$\Delta p = \frac{2U}{c}$$
+
+The force ($F$) exerted on the particle is the rate of change of momentum:
+$$F = \frac{dp}{dt} = \frac{1}{c} \frac{dU}{dt} = \frac{P}{c}$$
+where $P$ is the power of the incident radiation.
+
+#### 3. Physical Application: Optical Tweezers
+* Since $c$ is very large ($3 \times 10^8\text{ m/s}$), the force exerted by everyday light is negligible.
+* However, highly focused laser beams (with high power density) can exert forces in the pico-Newton range. This allows scientists to hold and manipulate microscopic objects (cells, DNA strands) in three dimensions without physical contact, a technique known as **optical trapping** or **optical tweezers**.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q30', 78),
+  ('beee0000-0000-0000-0000-000000000079', 'a1000000-0000-0000-0000-000000000007', '(i) In transformer systems used in power distribution, alternating current flowing through one coil produces a changing magnetic field. This varying magnetic field interacts with a nearby coil and induces an electromotive force in it. As a result, electric energy is transferred between the two coils without direct electrical contact. Assess how changing magnetic fields produce induced emf in nearby conductors.
+
+*(5 Marks - [Ap/P, 2])*', '### Topic: Mutual Induction in Transformers
+**Difficulty Level**: Hard (Analytical)
+
+#### 1. Physical Principle: Mutual Inductive Coupling
+The transfer of energy between separate circuits without electrical contact is called **mutual induction**.
+
+```mermaid
+graph TD
+    Primary[AC Current Ip in Primary] -->|Creates| ChangingB[Changing Magnetic Field in Core]
+    ChangingB -->|Couples to| Secondary[Secondary Coil Linkage]
+    Secondary -->|Faraday''s Law| InducedEMF[Induced EMF Es = -M dIp/dt]
+```
+
+#### 2. Mathematical Formulation
+1. **Flux Linkage**: The current $I_p$ in the primary coil generates a magnetic field. A fraction of the resulting flux $\Phi_s$ links the secondary coil:
+$$N_s \Phi_s = M I_p$$
+where $M$ is the coefficient of mutual inductance (in Henries, H).
+2. **Induced EMF**: If the primary current varies ($dI_p/dt$), the flux linked with the secondary changes, inducing an EMF:
+$$e_s = -N_s \frac{d\Phi_s}{dt} = -M \frac{dI_p}{dt}$$
+
+#### 3. Assessment of Transformer Efficiency
+* In an ideal transformer, the magnetic flux is confined entirely within a high-permeability ferromagnetic core, ensuring that the flux per turn is identical in both coils:
+$$\frac{V_p}{V_s} = \frac{N_p}{N_s}$$
+This enables efficient voltage stepping (up or down) for long-distance electrical power transmission with minimal losses.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q31', 79),
+  ('beee0000-0000-0000-0000-000000000080', 'a1000000-0000-0000-0000-000000000007', '(i) Scientists studying solar radiation observe that sunlight not only carries energy but also exerts a small pressure on surfaces it strikes. Sensitive instruments detect that when electromagnetic waves from the Sun hit a reflective surface, a tiny force is produced. This force indicates that electromagnetic radiation carries momentum even though it consists only of electric and magnetic fields traveling through space. Analyze how electromagnetic fields can carry linear momentum.
+
+*(5 Marks - [An/P, 2])*', '### Topic: Electromagnetic Momentum Analysis
+**Difficulty Level**: Hard (Analytical)
+
+#### 1. Classical Electrodynamic Analysis
+A classical way to understand electromagnetic momentum is by analyzing the Lorentz force on charges within the surface:
+* Consider an EM wave incident on a surface containing free charges.
+* The electric field $\vec{E}$ exerts a force and causes the charges to move with velocity $\vec{v}$ in the direction of $\vec{E}$.
+* The magnetic field $\vec{B}$ (which is perpendicular to $\vec{E}$) then exerts a Lorentz force on the moving charge:
+$$\vec{F}_B = q(\vec{v} \times \vec{B})$$
+* By the right-hand rule, this force $\vec{F}_B$ points in the **direction of propagation** of the wave.
+* This classical mechanism shows that electromagnetic waves exert a forward pressure, directly demonstrating that they carry linear momentum.
+
+#### 2. Momentum Density of Fields
+The momentum density $\vec{g}$ (momentum per unit volume) stored in the electromagnetic fields is related to the Poynting vector $\vec{S}$:
+$$\vec{g} = \frac{\vec{S}}{c^2} = \epsilon_0 (\vec{E} \times \vec{B})$$
+* Even in the absence of physical particles, the electric and magnetic fields themselves carry momentum through space. This momentum is transferred to any matter that absorbs, reflects, or scatters the fields, resulting in radiation pressure.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-II Q32', 80);
 ON CONFLICT (id) DO UPDATE SET question = EXCLUDED.question, answer = EXCLUDED.answer, notes = EXCLUDED.notes, order_index = EXCLUDED.order_index;
