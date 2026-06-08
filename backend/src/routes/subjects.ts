@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../config/supabase';
+import { redis } from '../config/redis';
 
 export const subjectsRouter = Router();
 
@@ -28,14 +29,31 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
       return;
     }
 
-    // Fetch all subjects
-    const { data: allSubjects, error } = await supabaseAdmin
-      .from('subjects')
-      .select('*');
+    // Fetch all subjects (with Redis Caching)
+    let allSubjects: any[] | null = null;
 
-    if (error) {
-      res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Failed to fetch subjects', status: 500 } });
-      return;
+    if (redis) {
+      allSubjects = await redis.get('all_subjects');
+    }
+
+    if (!allSubjects) {
+      const { data, error } = await supabaseAdmin
+        .from('subjects')
+        .select('*');
+
+      if (error) {
+        res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Failed to fetch subjects', status: 500 } });
+        return;
+      }
+
+      allSubjects = data;
+
+      if (redis && allSubjects) {
+        await redis.set('all_subjects', allSubjects, { ex: 3600 }); // Cache for 1 hour
+        console.log('[CACHE MISS] Subjects fetched from Supabase and cached.');
+      }
+    } else {
+      console.log('[CACHE HIT] Subjects fetched from Redis.');
     }
 
     // Filter subjects: show all subjects to everyone, EXCEPT hide "Electronics" for CS, AL, AD, IT
