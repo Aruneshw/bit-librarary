@@ -6,7 +6,7 @@ INSERT INTO questions (id, subject_id, question, answer, image_url, "references"
 
 #### 1. Core Principle Illustrated
 This observation directly illustrates the **fundamental law of electrostatics**:
-$$\text{Like charges repel each other, while unlike charges attract each other.}$$
+$$\\text{Like charges repel each other, while unlike charges attract each other.}$$
 
 #### 2. Explanation of the Mechanism
 1. **Triboelectric Charging (Friction)**: When two plastic rods are rubbed with wool, electrons are transferred from the wool to the plastic rods. 
@@ -42,14 +42,14 @@ Electric charges are fundamentally classified into two distinct types:
 The physical law that explains this behavior is the **Law of Conservation of Electric Charge**.
 
 #### 2. Statement of the Law
-$$\text{The total electric charge in an isolated system remains constant over time.}$$
+$$\\text{The total electric charge in an isolated system remains constant over time.}$$
 Charges can neither be created nor destroyed; they can only be transferred from one body to another.
 
 #### 3. Application to the Scenario
-* Let $Q_{\text{total}}$ be the initial charge on the first sphere.
+* Let $Q_{\\text{total}}$ be the initial charge on the first sphere.
 * When contact is established, free electrons flow from the charged sphere to the neutral sphere (or vice versa) until their electrical potentials equalize.
 * If $q_1$ and $q_2$ are the final charges on the spheres after contact:
-$$Q_{\text{total}} = q_1 + q_2$$
+$$Q_{\\text{total}} = q_1 + q_2$$
 * No charge is created or destroyed during contact; the total charge remains exactly conserved.
 
 ```mermaid
@@ -74,9 +74,9 @@ The physical law illustrated is the **Law of Conservation of Electric Charge**.
 
 #### 2. Detailed Explanation
 * An isolated system contains a fixed total algebraic sum of charges:
-$$\sum Q_{\text{initial}} = \sum Q_{\text{final}}$$
+$$\\sum Q_{\\text{initial}} = \\sum Q_{\\text{final}}$$
 * When individual objects interact (e.g., through friction, conduction, or induction), electrons are transferred.
-* While the charge on any individual object ($q_i$) changes, the net charge of the system ($Q_{\text{net}}$) remains constant because electrons are merely relocated, not created or destroyed.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q4', 4),
+* While the charge on any individual object ($q_i$) changes, the net charge of the system ($Q_{\\text{net}}$) remains constant because electrons are merely relocated, not created or destroyed.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q4', 4),
   ('beee0000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000007', 'In a school physics laboratory, students perform an experiment using a plastic comb and small pieces of paper placed on a table. The comb is first rubbed against dry hair and then brought close to the paper pieces without touching them. The students observe that the paper pieces immediately jump toward the comb and stick to its surface. Even after some pieces fall back to the table, the comb continues to attract other nearby paper fragments. The teacher explains that this behavior occurs because the comb acquires electric charge through friction and produces a force that acts on nearby objects. Establish the role of electric charge in producing forces between objects.
 
 *(3 Marks - [U/C, 2])*', '### Topic: Electrostatic Force and Polarization
@@ -117,7 +117,7 @@ The fundamental physical property responsible for this interaction is **electric
 
 #### 1. Relation to Conservation of Charge
 This observation demonstrates that the total charge remains conserved during charge transfer between conductors.
-$$Q_{\text{total}} = Q_1 + Q_2 = Q_1'' + Q_2''$$
+$$Q_{\\text{total}} = Q_1 + Q_2 = Q_1'' + Q_2''$$
 
 #### 2. Step-by-Step Explanation
 1. **Initial State**: Plate 1 has charge $Q_1$, Plate 2 has charge $Q_2$.
@@ -134,10 +134,10 @@ The law governing this behavior is the **Law of Conservation of Electric Charge*
 
 #### 2. Explanation
 * In any closed system, the net electric charge is constant.
-* When electrons (which carry a fundamental negative charge $e = -1.6 \times 10^{-19}\text{ C}$) move from Conductor A to Conductor B:
+* When electrons (which carry a fundamental negative charge $e = -1.6 \\times 10^{-19}\\text{ C}$) move from Conductor A to Conductor B:
   * Conductor A becomes more positive (deficit of electrons).
   * Conductor B becomes more negative (excess of electrons).
-  * The sum of charges $\Delta q_A + \Delta q_B = 0$ ensures the net system charge remains constant.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q8', 8),
+  * The sum of charges $\\Delta q_A + \\Delta q_B = 0$ ensures the net system charge remains constant.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q8', 8),
   ('beee0000-0000-0000-0000-000000000009', 'a1000000-0000-0000-0000-000000000007', 'During a laboratory investigation of electric charge, scientists observe that whenever an object becomes charged, the charge always appears in fixed discrete amounts rather than any arbitrary value. Even when very small charges are measured, they always appear as multiples of a fundamental unit. This observation leads researchers to study the concept that electric charge exists in discrete packets rather than continuous values. Assess the concept of quantization of electric charge and its significance in electrostatics.
 
 *(5 Marks - [Ap/P, 2])*', '### Topic: Quantization of Electric Charge
@@ -145,11 +145,11 @@ The law governing this behavior is the **Law of Conservation of Electric Charge*
 
 #### 1. Introduction & Concept of Quantization
 **Quantization of electric charge** is the principle that the net charge ($q$) on any physical body is always an integral multiple of the basic fundamental unit of charge ($e$), which is the charge of a single electron or proton.
-$$q = \pm n e$$
+$$q = \\pm n e$$
 Where:
 * $q$ = Total net charge on the body
-* $n$ = Any integer ($1, 2, 3, \dots$)
-* $e$ = Fundamental unit of charge $\approx 1.602 \times 10^{-19}\text{ C}$
+* $n$ = Any integer ($1, 2, 3, \\dots$)
+* $e$ = Fundamental unit of charge $\\approx 1.602 \\times 10^{-19}\\text{ C}$
 
 No body can possess a charge like $1.5e$, $2.75e$, or any fractional value of the electron charge.
 
@@ -158,13 +158,13 @@ No body can possess a charge like $1.5e$, $2.75e$, or any fractional value of th
 * Since electrons cannot be split into fractions during everyday physical or chemical processes, the transferred charge must be in integer quantities of electrons.
 
 #### 3. Mathematical Analysis & Example
-Suppose an object has a charge of $q = 8.0 \times 10^{-19}\text{ C}$. We can find the number of missing electrons:
-$$n = \frac{q}{e} = \frac{8.0 \times 10^{-19}\text{ C}}{1.6 \times 10^{-19}\text{ C}} = 5\text{ electrons}$$
-Since $5$ is an integer, this charge is physically possible. A charge of $5.5 \times 10^{-19}\text{ C}$ would not be possible as it requires a non-integer number of electrons ($3.43$).
+Suppose an object has a charge of $q = 8.0 \\times 10^{-19}\\text{ C}$. We can find the number of missing electrons:
+$$n = \\frac{q}{e} = \\frac{8.0 \\times 10^{-19}\\text{ C}}{1.6 \\times 10^{-19}\\text{ C}} = 5\\text{ electrons}$$
+Since $5$ is an integer, this charge is physically possible. A charge of $5.5 \\times 10^{-19}\\text{ C}$ would not be possible as it requires a non-integer number of electrons ($3.43$).
 
 #### 4. Significance in Electrostatics
 1. **Microscopic vs. Macroscopic Scale**: At the atomic level, quantization is crucial for analyzing atomic structures, chemical bonds, and semiconductor operations. 
-2. **Macroscopic Approximation**: At a macroscopic level (e.g., microcoulombs of charge), the number of electrons is so massive ($1\ \mu\text{C} \approx 6.25 \times 10^{12}$ electrons) that the discrete steps are imperceptible, and charge can be treated as a continuous distribution.
+2. **Macroscopic Approximation**: At a macroscopic level (e.g., microcoulombs of charge), the number of electrons is so massive ($1\\ \\mu\\text{C} \\approx 6.25 \\times 10^{12}$ electrons) that the discrete steps are imperceptible, and charge can be treated as a continuous distribution.
 
 ```mermaid
 graph TD
@@ -177,7 +177,7 @@ graph TD
 **Difficulty Level**: Medium (Analytical)
 
 #### 1. Concept of Electron Drift
-In a metallic conductor, free valence electrons move randomly in all directions due to thermal energy. Their average thermal velocity is high ($\approx 10^5\text{ m/s}$), but because the motion is random, the net current is zero.
+In a metallic conductor, free valence electrons move randomly in all directions due to thermal energy. Their average thermal velocity is high ($\\approx 10^5\\text{ m/s}$), but because the motion is random, the net current is zero.
 When an external electric field ($E$) is applied by a battery:
 * Electrons experience an electrostatic force:
 $$F = -e E$$
@@ -203,21 +203,21 @@ $$N = n A L$$
 Total charge contained in this volume:
 $$Q = N e = n A L e$$
 The time ($t$) taken for this charge to drift across the length $L$ of the conductor is:
-$$t = \frac{L}{v_d}$$
+$$t = \\frac{L}{v_d}$$
 By definition, electric current ($I$) is:
-$$I = \frac{Q}{t} = \frac{n A L e}{\frac{L}{v_d}}$$
+$$I = \\frac{Q}{t} = \\frac{n A L e}{\\frac{L}{v_d}}$$
 $$I = n A e v_d$$
 
 #### 3. Why the Bulb Glows Immediately
-Although the drift velocity of electrons is extremely slow (usually a fraction of a millimeter per second, e.g., $10^{-4}\text{ m/s}$), the bulb glows instantly because:
-* The applied electric field propagates through the conductor at nearly the **speed of light** ($\approx 3 \times 10^8\text{ m/s}$).
+Although the drift velocity of electrons is extremely slow (usually a fraction of a millimeter per second, e.g., $10^{-4}\\text{ m/s}$), the bulb glows instantly because:
+* The applied electric field propagates through the conductor at nearly the **speed of light** ($\\approx 3 \\times 10^8\\text{ m/s}$).
 * Electrons throughout the entire circuit begin to drift simultaneously. The bulb does not wait for electrons from the battery to reach it; the local electrons inside the bulb''s filament immediately start moving.
 
 #### 4. Summary of Key Factors
 * **Drift velocity ($v_d$)**:
-$$v_d = \frac{e E \tau}{m}$$
-Where $\tau$ is the mean free time between collisions and $m$ is the mass of an electron.
-* **Direct Proportion**: Current is directly proportional to drift velocity ($I \propto v_d$).', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q10', 10),
+$$v_d = \\frac{e E \\tau}{m}$$
+Where $\\tau$ is the mean free time between collisions and $m$ is the mass of an electron.
+* **Direct Proportion**: Current is directly proportional to drift velocity ($I \\propto v_d$).', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q10', 10),
   ('beee0000-0000-0000-0000-000000000011', 'a1000000-0000-0000-0000-000000000007', 'In an electrostatics experiment, students charge several small metal spheres by rubbing them with different materials. After charging, they bring the spheres into contact with each other and measure the resulting charge using an electrometer. They observe that the final charge on the combined system equals the sum of the individual charges originally present on each sphere. This observation leads them to analyze the principle that electric charges combine algebraically when multiple charged bodies interact. Examine the principle of additivity of electric charges and explain how total charge is determined when several charged bodies interact.
 
 *(5 Marks - [Ap/P, 2])*', '### Topic: Additivity of Electric Charges
@@ -225,7 +225,7 @@ Where $\tau$ is the mean free time between collisions and $m$ is the mass of an 
 
 #### 1. Definition of Additivity of Charge
 The **additivity of electric charge** is the property by which the total charge of a system containing multiple charges is equal to the algebraic sum of the individual charges.
-$$Q_{\text{total}} = q_1 + q_2 + q_3 + \dots + q_n = \sum_{i=1}^{n} q_i$$
+$$Q_{\\text{total}} = q_1 + q_2 + q_3 + \\dots + q_n = \\sum_{i=1}^{n} q_i$$
 
 #### 2. Key Characteristics
 * **Algebraic Summation**: Unlike mass, which is always positive, electric charges can be positive or negative. Therefore, when summing charges, their signs ($+$ or $-$) must be taken into account.
@@ -233,21 +233,21 @@ $$Q_{\text{total}} = q_1 + q_2 + q_3 + \dots + q_n = \sum_{i=1}^{n} q_i$$
 
 #### 3. Mathematical Example
 Consider an isolated system consisting of four charged spheres with the following charges:
-* $q_1 = +5\ \mu\text{C}$
-* $q_2 = -3\ \mu\text{C}$
-* $q_3 = +8\ \mu\text{C}$
-* $q_4 = -2\ \mu\text{C}$
+* $q_1 = +5\\ \\mu\\text{C}$
+* $q_2 = -3\\ \\mu\\text{C}$
+* $q_3 = +8\\ \\mu\\text{C}$
+* $q_4 = -2\\ \\mu\\text{C}$
 
-The total charge ($Q_{\text{total}}$) of the system is:
-$$Q_{\text{total}} = q_1 + q_2 + q_3 + q_4$$
-$$Q_{\text{total}} = (+5) + (-3) + (+8) + (-2)\ \mu\text{C}$$
-$$Q_{\text{total}} = (5 - 3 + 8 - 2)\ \mu\text{C} = +8\ \mu\text{C}$$
+The total charge ($Q_{\\text{total}}$) of the system is:
+$$Q_{\\text{total}} = q_1 + q_2 + q_3 + q_4$$
+$$Q_{\\text{total}} = (+5) + (-3) + (+8) + (-2)\\ \\mu\\text{C}$$
+$$Q_{\\text{total}} = (5 - 3 + 8 - 2)\\ \\mu\\text{C} = +8\\ \\mu\\text{C}$$
 
 #### 4. Behavior During Interaction (Contact)
 When the spheres are brought into contact, charge redistribution occurs due to potential differences. 
 * Electrons flow between the spheres.
-* Although individual charges change ($q_1 \rightarrow q_1''$), the total final charge is still conserved and equals the original algebraic sum:
-$$q_1'' + q_2'' + q_3'' + q_4'' = Q_{\text{total}} = +8\ \mu\text{C}$$
+* Although individual charges change ($q_1 \\rightarrow q_1''$), the total final charge is still conserved and equals the original algebraic sum:
+$$q_1'' + q_2'' + q_3'' + q_4'' = Q_{\\text{total}} = +8\\ \\mu\\text{C}$$
 
 ```mermaid
 graph TD
@@ -273,20 +273,20 @@ Conductors (like copper, aluminum, and silver) are materials that allow electric
 
 #### 2. Behavior of Charges Under Different Conditions
 * **Without External Electric Field ($E = 0$)**: Free electrons undergo random thermal motion, colliding with lattice ions. The average velocity is zero; hence, no net current flows.
-* **With External Electric Field ($E \neq 0$)**: When a potential difference is applied across the conductor:
+* **With External Electric Field ($E \\neq 0$)**: When a potential difference is applied across the conductor:
   1. The electric field propagates instantly through the material.
   2. Free electrons experience an electrostatic force ($F = -eE$) directing them toward the positive terminal.
   3. This directed drift of electrons produces a net electric current.
 
 #### 3. Why Conductors are Efficient
-The efficiency of a conductor is determined by its **conductivity** ($\sigma$):
-$$\sigma = \frac{n e^2 \tau}{m}$$
+The efficiency of a conductor is determined by its **conductivity** ($\\sigma$):
+$$\\sigma = \\frac{n e^2 \\tau}{m}$$
 Where:
-* $n$ = Density of free electrons (very high in metals: $\approx 10^{28}\text{ electrons/m}^3$).
-* $\tau$ = Relaxation time (average time between collisions).
+* $n$ = Density of free electrons (very high in metals: $\\approx 10^{28}\\text{ electrons/m}^3$).
+* $\\tau$ = Relaxation time (average time between collisions).
 * $m$ = Mass of electron.
 
-Copper and aluminum have low resistivity (high $\sigma$) due to their exceptionally high free electron density ($n$), making them the materials of choice for electrical wiring.
+Copper and aluminum have low resistivity (high $\\sigma$) due to their exceptionally high free electron density ($n$), making them the materials of choice for electrical wiring.
 
 #### 4. Characteristics of Ideal Conductors
 1. Net electric field inside a static conductor is zero.
@@ -307,7 +307,7 @@ Let:
 * Sphere A be initially charged with positive charge $Q_A = +Q$.
 * Sphere B be initially neutral, so $Q_B = 0$.
 * The total initial charge of the isolated system is:
-$$Q_{\text{initial}} = Q_A + Q_B = Q + 0 = Q$$
+$$Q_{\\text{initial}} = Q_A + Q_B = Q + 0 = Q$$
 
 When connected by a conducting wire:
 1. Since Sphere A is positive (low electron concentration) and Sphere B is neutral (higher relative electron concentration), electrons flow from Sphere B to Sphere A.
@@ -315,11 +315,11 @@ When connected by a conducting wire:
 3. The flow continues until both spheres reach the same electric potential.
 4. After disconnecting, let the new charges be $Q_A''$ and $Q_B''$.
 5. For two identical spheres, the charge divides equally:
-$$Q_A'' = Q_B'' = \frac{Q}{2}$$
+$$Q_A'' = Q_B'' = \\frac{Q}{2}$$
 6. Summing the final charges:
-$$Q_{\text{final}} = Q_A'' + Q_B'' = \frac{Q}{2} + \frac{Q}{2} = Q$$
+$$Q_{\\text{final}} = Q_A'' + Q_B'' = \\frac{Q}{2} + \\frac{Q}{2} = Q$$
 
-This matches $Q_{\text{initial}}$ exactly, proving that the net charge was conserved.
+This matches $Q_{\\text{initial}}$ exactly, proving that the net charge was conserved.
 
 ```mermaid
 graph TD
@@ -340,7 +340,7 @@ Atmospheric charge separation in thunderclouds (cumulonimbus clouds) primarily o
 #### 2. Step-by-Step Atmospheric Charge Separation
 1. **Updrafts and Downdrafts**: Powerful convective air currents push lighter ice crystals upward, while gravity pulls heavier graupel downward.
 2. **Friction and Collisions**: As these particles move in opposite directions, they collide repeatedly.
-3. **Electron Transfer**: During collisions in the presence of supercooled water droplets (at temperatures below $0^{\circ}\text{C}$):
+3. **Electron Transfer**: During collisions in the presence of supercooled water droplets (at temperatures below $0^{\\circ}\\text{C}$):
    * Lighter ice crystals lose electrons and become **positively charged**.
    * Heavier graupel particles gain electrons and become **negatively charged**.
 4. **Gravitational Separation**:
@@ -359,7 +359,7 @@ graph TD
 ```
 
 #### 3. Resultant Electric Potential Difference
-This spatial separation creates a massive dipole structure. The bottom of the cloud (negative) induces a positive charge on the Earth''s surface directly below it. When the potential difference exceeds the dielectric breakdown strength of air ($\approx 3 \times 10^6\text{ V/m}$), ionization occurs, leading to a **lightning discharge**.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q14', 14),
+This spatial separation creates a massive dipole structure. The bottom of the cloud (negative) induces a positive charge on the Earth''s surface directly below it. When the potential difference exceeds the dielectric breakdown strength of air ($\\approx 3 \\times 10^6\\text{ V/m}$), ionization occurs, leading to a **lightning discharge**.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q14', 14),
   ('beee0000-0000-0000-0000-000000000015', 'a1000000-0000-0000-0000-000000000007', 'In particle physics experiments, scientists observe interactions between electrons and protons inside controlled environments. During collisions or interactions, particles may exchange charge or produce other particles, but careful measurements show that the total electric charge before and after the interaction always remains constant. This experimental evidence supports a fundamental conservation principle in physics. Analyze how particle interactions demonstrate the conservation of electric charge.
 
 *(5 Marks - [Ap/P, 2])*', '### Topic: Conservation of Charge in Particle Physics
@@ -372,22 +372,22 @@ In particle physics, **charge conservation** is an absolute conservation law. It
 We can demonstrate charge conservation through three key types of particle interactions:
 
 ##### A. Pair Production
-A high-energy gamma-ray photon ($\gamma$) interacts with a nucleus to produce an electron ($e^-$) and a positron ($e^+$):
-$$\gamma \rightarrow e^- + e^+$$
+A high-energy gamma-ray photon ($\\gamma$) interacts with a nucleus to produce an electron ($e^-$) and a positron ($e^+$):
+$$\\gamma \\rightarrow e^- + e^+$$
 * **Before**: Charge of photon = $0$
 * **After**: Charge of electron + positron = $(-1) + (+1) = 0$
 * **Status**: Conserved.
 
 ##### B. Beta Decay (Neutron Decay)
-A free neutron ($n$) decays into a proton ($p$), an electron ($e^-$), and an electron antineutrino ($\bar{\nu}_e$):
-$$n \rightarrow p + e^- + \bar{\nu}_e$$
+A free neutron ($n$) decays into a proton ($p$), an electron ($e^-$), and an electron antineutrino ($\\bar{\\nu}_e$):
+$$n \\rightarrow p + e^- + \\bar{\\nu}_e$$
 * **Before**: Charge of neutron = $0$
 * **After**: Charge of proton + electron + antineutrino = $(+1) + (-1) + 0 = 0$
 * **Status**: Conserved.
 
 ##### C. Electron-Positron Annihilation
 An electron and a positron collide to destroy each other, producing gamma photons:
-$$e^- + e^+ \rightarrow 2\gamma$$
+$$e^- + e^+ \\rightarrow 2\\gamma$$
 * **Before**: $(-1) + (+1) = 0$
 * **After**: $0$
 * **Status**: Conserved.
@@ -414,9 +414,9 @@ The massive negative charge at the cloud base repels free electrons in the Earth
 ```
 
 #### 3. Step-by-Step Discharge Process (Lightning Strike)
-1. **Stepped Leader**: The negative charge at the base of the cloud begins to ionize the surrounding air, creating a path of plasma that branches downward in steps (moves at $\approx 200\text{ km/s}$).
+1. **Stepped Leader**: The negative charge at the base of the cloud begins to ionize the surrounding air, creating a path of plasma that branches downward in steps (moves at $\\approx 200\\text{ km/s}$).
 2. **Upward Streamer**: As the stepped leader nears the ground, the intense electric field pulls positive charges up from tall ground objects (like trees, buildings, or lightning rods) in the form of upward-reaching streamers.
-3. **Return Stroke**: When the stepped leader and upward streamer meet, a highly conducting channel is completed. Electrons rapidly dump into the ground, creating the bright, high-current **return stroke** (currents up to $100,000\text{ A}$, temperature $\approx 30,000\text{ K}$).
+3. **Return Stroke**: When the stepped leader and upward streamer meet, a highly conducting channel is completed. Electrons rapidly dump into the ground, creating the bright, high-current **return stroke** (currents up to $100,000\\text{ A}$, temperature $\\approx 30,000\\text{ K}$).
 4. **Dart Leader**: If residual charge remains in the cloud, a secondary continuous discharge path called a dart leader can descend along the same path, producing subsequent strokes.
 
 #### 4. Summary of Energy Conversions
@@ -428,16 +428,16 @@ During this electrostatic discharge, the stored electrostatic potential energy o
 
 #### 1. Principle of Superposition Statement
 The principle states that:
-$$\text{The net electric field } \vec{E} \text{ at a point due to a system of point charges is the vector sum of}$$
-$$\text{the electric fields produced by each individual charge at that point:}$$
-$$\vec{E}_{\text{net}} = \vec{E}_1 + \vec{E}_2 + \vec{E}_3 + \dots$$
+$$\\text{The net electric field } \\vec{E} \\text{ at a point due to a system of point charges is the vector sum of}$$
+$$\\text{the electric fields produced by each individual charge at that point:}$$
+$$\\vec{E}_{\\text{net}} = \\vec{E}_1 + \\vec{E}_2 + \\vec{E}_3 + \\dots$$
 
 #### 2. Explanation of the Observed Behavior
-* **Initial State (Three Charges)**: The resultant electric field $\vec{E}_{\text{initial}}$ is:
-$$\vec{E}_{\text{initial}} = \vec{E}_1 + \vec{E}_2 + \vec{E}_3$$
-* **Final State (One Charge Removed)**: If charge 3 is removed, its contribution $\vec{E}_3$ becomes zero:
-$$\vec{E}_{\text{final}} = \vec{E}_1 + \vec{E}_2$$
-* **Analysis**: Since the vector sum of two vectors $(\vec{E}_1 + \vec{E}_2)$ is generally different in both magnitude and direction compared to three vectors $(\vec{E}_1 + \vec{E}_2 + \vec{E}_3)$, removing charge 3 alters the net vector''s direction, explaining the change noticed by the students.
+* **Initial State (Three Charges)**: The resultant electric field $\\vec{E}_{\\text{initial}}$ is:
+$$\\vec{E}_{\\text{initial}} = \\vec{E}_1 + \\vec{E}_2 + \\vec{E}_3$$
+* **Final State (One Charge Removed)**: If charge 3 is removed, its contribution $\\vec{E}_3$ becomes zero:
+$$\\vec{E}_{\\text{final}} = \\vec{E}_1 + \\vec{E}_2$$
+* **Analysis**: Since the vector sum of two vectors $(\\vec{E}_1 + \\vec{E}_2)$ is generally different in both magnitude and direction compared to three vectors $(\\vec{E}_1 + \\vec{E}_2 + \\vec{E}_3)$, removing charge 3 alters the net vector''s direction, explaining the change noticed by the students.
 
 ```mermaid
 graph TD
@@ -453,9 +453,9 @@ graph TD
 The motion is caused by the **repulsive electrostatic force** exerted by the positive source charge on the positive test charge.
 
 #### 2. Electric Field Concept
-* The electric field ($ec{E}$) around an isolated positive charge is directed **radially outwards** from the charge.
-* By definition, the force ($ec{F}$) on a charge $q$ in an electric field is:
-$$ec{F} = q ec{E}$$
+* The electric field ($\vec{E}$) around an isolated positive charge is directed **radially outwards** from the charge.
+* By definition, the force ($\vec{F}$) on a charge $q$ in an electric field is:
+$$\vec{F} = q \vec{E}$$
 * Since the test charge is positive ($q > 0$), the force acts in the **same direction** as the electric field (radially outwards). Therefore, the test charge accelerates away from the positive source charge.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q18', 18),
   ('beee0000-0000-0000-0000-000000000019', 'a1000000-0000-0000-0000-000000000007', 'A square conducting plate carries a total charge of 8 microC distributed uniformly across its surface. The area of the plate is 2 square meters. Students are asked to determine the surface charge density of the plate in order to analyze the electric field generated by the charged surface. Evaluate the surface charge density using the relation sigma = Q / A.
 
@@ -463,31 +463,31 @@ $$ec{F} = q ec{E}$$
 **Difficulty Level**: Easy (Numerical)
 
 #### 1. Given Parameters
-* Total Charge, $Q = 8\ \mu\text{C} = 8 \times 10^{-6}\text{ C}$
-* Area of the Plate, $A = 2\text{ m}^2$
+* Total Charge, $Q = 8\\ \\mu\\text{C} = 8 \\times 10^{-6}\\text{ C}$
+* Area of the Plate, $A = 2\\text{ m}^2$
 
 #### 2. Formula
-The surface charge density ($\sigma$) is defined as charge per unit area:
-$$\sigma = \frac{Q}{A}$$
+The surface charge density ($\\sigma$) is defined as charge per unit area:
+$$\\sigma = \\frac{Q}{A}$$
 
 #### 3. Calculation
-$$\sigma = \frac{8 \times 10^{-6}\text{ C}}{2\text{ m}^2}$$
-$$\sigma = 4 \times 10^{-6}\text{ C/m}^2 = 4\ \mu\text{C/m}^2$$
+$$\\sigma = \\frac{8 \\times 10^{-6}\\text{ C}}{2\\text{ m}^2}$$
+$$\\sigma = 4 \\times 10^{-6}\\text{ C/m}^2 = 4\\ \\mu\\text{C/m}^2$$
 
 #### 4. Conclusion
-The surface charge density of the plate is **$4 \times 10^{-6}\text{ C/m}^2$** (or $4\ \mu\text{C/m}^2$). This value represents the charge distribution per unit area, which can be used to calculate the electric field near the plate using Gauss''s Law ($E = \sigma / (2\epsilon_0)$).', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q19', 19),
+The surface charge density of the plate is **$4 \\times 10^{-6}\\text{ C/m}^2$** (or $4\\ \\mu\\text{C/m}^2$). This value represents the charge distribution per unit area, which can be used to calculate the electric field near the plate using Gauss''s Law ($E = \\sigma / (2\\epsilon_0)$).', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q19', 19),
   ('beee0000-0000-0000-0000-000000000020', 'a1000000-0000-0000-0000-000000000007', 'During a classroom experiment a long conducting rod is uniformly charged along its entire length. Students are asked to express the distribution of charge along the rod using a suitable physical quantity. Infer why linear charge density is used to describe this distribution.
 
 *(2 Marks - [U/C, 1])*', '### Topic: Linear Charge Density Concept
 **Difficulty Level**: Easy (Conceptual)
 
 #### 1. Identified Physical Quantity
-The physical quantity used is **linear charge density** (represented by $\lambda$).
-$$\lambda = \frac{Q}{L}$$
+The physical quantity used is **linear charge density** (represented by $\\lambda$).
+$$\\lambda = \\frac{Q}{L}$$
 Where $Q$ is the total charge and $L$ is the length of the rod.
 
 #### 2. Rationale for Selection
-* A rod is a one-dimensional (1D) geometry where the length ($L$) is significantly greater than the cross-sectional radius ($r \ll L$).
+* A rod is a one-dimensional (1D) geometry where the length ($L$) is significantly greater than the cross-sectional radius ($r \\ll L$).
 * Since the charge is distributed almost entirely along the length, treating the cross-section as negligible simplifies electric field derivations (such as using Gauss''s Law) by reduction to a 1D charge line density.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q20', 20),
   ('beee0000-0000-0000-0000-000000000021', 'a1000000-0000-0000-0000-000000000007', 'During an electrostatic experiment, a charged particle produces an electric field of 12000 N/C at a distance of 1 m from the charge. When the observation point is moved to 2 m away from the same charge, researchers observe that the field intensity decreases significantly. Students are asked to interpret this change based on the mathematical relationship governing electric fields. Determine how the electric field changes with distance and evaluate the new field value at 2 m.
 
@@ -496,23 +496,23 @@ Where $Q$ is the total charge and $L$ is the length of the rod.
 
 #### 1. Mathematical Relationship
 The electric field ($E$) of a point charge is governed by the **Inverse Square Law**:
-$$E = \frac{1}{4 \pi \epsilon_0} \frac{q}{r^2}$$
+$$E = \\frac{1}{4 \\pi \\epsilon_0} \\frac{q}{r^2}$$
 Hence, the electric field is inversely proportional to the square of the distance ($r$) from the charge:
-$$E \propto \frac{1}{r^2}$$
+$$E \\propto \\frac{1}{r^2}$$
 
 #### 2. Evaluating the New Field Value
 Let:
-* Initial distance $r_1 = 1\text{ m}$, Initial field $E_1 = 12000\text{ N/C}$
-* Final distance $r_2 = 2\text{ m}$, Final field = $E_2$
+* Initial distance $r_1 = 1\\text{ m}$, Initial field $E_1 = 12000\\text{ N/C}$
+* Final distance $r_2 = 2\\text{ m}$, Final field = $E_2$
 
 From the proportionality relationship:
-$$\frac{E_2}{E_1} = \left(\frac{r_1}{r_2}\right)^2$$
-$$E_2 = E_1 \times \left(\frac{r_1}{r_2}\right)^2$$
-$$E_2 = 12000 \times \left(\frac{1}{2}\right)^2$$
-$$E_2 = 12000 \times \frac{1}{4} = 3000\text{ N/C}$$
+$$\\frac{E_2}{E_1} = \\left(\\frac{r_1}{r_2}\\right)^2$$
+$$E_2 = E_1 \\times \\left(\\frac{r_1}{r_2}\\right)^2$$
+$$E_2 = 12000 \\times \\left(\\frac{1}{2}\\right)^2$$
+$$E_2 = 12000 \\times \\frac{1}{4} = 3000\\text{ N/C}$$
 
 #### 3. Conclusion
-Doubling the distance reduces the electric field intensity by a factor of 4. The new field value at 2 m is **$3000\text{ N/C}$**.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q21', 21),
+Doubling the distance reduces the electric field intensity by a factor of 4. The new field value at 2 m is **$3000\\text{ N/C}$**.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q21', 21),
   ('beee0000-0000-0000-0000-000000000022', 'a1000000-0000-0000-0000-000000000007', 'In a microelectronics laboratory two equal positive charges are placed very close to each other while engineers attempt to find a point between them where the electric field becomes zero. When a third nearby charge is introduced the field at that point no longer cancels. Determine why the electric field cancellation fails.
 
 *(2 Marks - [U/C, 1])*', '### Topic: Superposition of Electric Fields
@@ -522,11 +522,11 @@ Doubling the distance reduces the electric field intensity by a factor of 4. The
 The electric field cancellation fails because the electric field of the newly introduced third charge is not balanced, violating the conditions for zero net field.
 
 #### 2. Vector Explanation
-* **Initial State**: For two equal positive charges, the electric fields they produce at the exact midpoint are equal in magnitude but opposite in direction ($\vec{E}_1 = -\vec{E}_2$), so they cancel out completely:
-$$\vec{E}_{\text{net}} = \vec{E}_1 + \vec{E}_2 = 0$$
-* **Final State**: When a third charge ($Q_3$) is introduced, it produces its own electric field $\vec{E}_3$ at that midpoint. The new net field becomes:
-$$\vec{E}_{\text{net}} = \vec{E}_1 + \vec{E}_2 + \vec{E}_3 = 0 + \vec{E}_3 = \vec{E}_3 \neq 0$$
-Since $\vec{E}_3 \neq 0$, the net electric field is no longer zero.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q22', 22),
+* **Initial State**: For two equal positive charges, the electric fields they produce at the exact midpoint are equal in magnitude but opposite in direction ($\\vec{E}_1 = -\\vec{E}_2$), so they cancel out completely:
+$$\\vec{E}_{\\text{net}} = \\vec{E}_1 + \\vec{E}_2 = 0$$
+* **Final State**: When a third charge ($Q_3$) is introduced, it produces its own electric field $\\vec{E}_3$ at that midpoint. The new net field becomes:
+$$\\vec{E}_{\\text{net}} = \\vec{E}_1 + \\vec{E}_2 + \\vec{E}_3 = 0 + \\vec{E}_3 = \\vec{E}_3 \\neq 0$$
+Since $\\vec{E}_3 \\neq 0$, the net electric field is no longer zero.', NULL, '22GE003 - Basics of Electrical Engineering', 'Module Test-I Q22', 22),
   ('beee0000-0000-0000-0000-000000000023', 'a1000000-0000-0000-0000-000000000007', 'A simulation program visualizes the electric field produced by a long uniformly charged wire. Students observe that the electric field around the wire forms circular symmetry around the wire and its magnitude decreases as the distance from the wire increases. Researchers explain that the electric field at a point results from the combined contribution of all small charge elements along the wire. Assess why continuous charge distribution requires considering contributions from many small charge elements instead of treating the wire as a single point charge.
 
 *(3 Marks - [U/P, 2])*', '### Topic: Continuous Charge Distributions
@@ -539,11 +539,11 @@ A physical object like a wire has real spatial dimensions. Treating it as a sing
 
 #### 2. Vector Superposition via Integration
 To find the correct net field:
-* The wire is divided into infinitely small charge elements ($dq = \lambda \cdot dl$).
-* Each element is treated as a point charge producing an infinitesimal field vector $d\vec{E}$:
-$$d\vec{E} = \frac{1}{4\pi\epsilon_0}\frac{dq}{r^2}\hat{r}$$
+* The wire is divided into infinitely small charge elements ($dq = \\lambda \\cdot dl$).
+* Each element is treated as a point charge producing an infinitesimal field vector $d\\vec{E}$:
+$$d\\vec{E} = \\frac{1}{4\\pi\\epsilon_0}\\frac{dq}{r^2}\\hat{r}$$
 * The total field is the vector sum (integral) of all these elements:
-$$\vec{E} = \int d\vec{E}$$
+$$\\vec{E} = \\int d\\vec{E}$$
 Integration automatically accounts for the geometry, distance variations, and direction changes of the field vectors.
 
 ```mermaid

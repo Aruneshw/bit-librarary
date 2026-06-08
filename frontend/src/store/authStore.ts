@@ -5,7 +5,8 @@ import { createClient } from '@/lib/supabase';
 
 const ALLOWED_EMAIL_DOMAIN = '@bitsathy.ac.in';
 const ALLOWED_DEPARTMENTS: Department[] = ['CS', 'IT', 'AL', 'AD', 'EEE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
-const ADMIN_EMAIL = 'aruneshownsty1@gmail.com';
+const ADMIN_EMAILS = ['aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'];
+const isAdminEmail = (email?: string | null) => email ? ADMIN_EMAILS.includes(email) : false;
 
 type AuthUser = User & {
   raw_user_meta_data?: Record<string, unknown>;
@@ -66,7 +67,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isAuthenticated: false,
   isAdmin: false,
 
-  setUser: (user) => set({ user, isAuthenticated: !!user, isAdmin: user?.email === ADMIN_EMAIL }),
+  setUser: (user) => set({ user, isAuthenticated: !!user, isAdmin: isAdminEmail(user?.email) }),
   setAvatarUrl: (avatarUrl) => set({ avatarUrl }),
   setLoading: (isLoading) => set({ isLoading }),
 
@@ -81,7 +82,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
-      if (!authUser.email || (!authUser.email.endsWith(ALLOWED_EMAIL_DOMAIN) && authUser.email !== ADMIN_EMAIL)) {
+      if (!authUser.email || (!authUser.email.endsWith(ALLOWED_EMAIL_DOMAIN) && !isAdminEmail(authUser.email))) {
         await supabase.auth.signOut();
         set({ user: null, avatarUrl: null, isAuthenticated: false, isAdmin: false, isLoading: false });
         return;
@@ -143,7 +144,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           user: userProfile as Profile,
           avatarUrl: getAvatarUrl(authUser),
           isAuthenticated: true,
-          isAdmin: userProfile.email === ADMIN_EMAIL,
+          isAdmin: isAdminEmail(userProfile.email),
           isLoading: false
         });
 
@@ -166,7 +167,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
               const updatedProfile = payload.new as Profile;
               set({
                 user: updatedProfile,
-                isAdmin: updatedProfile.email === ADMIN_EMAIL,
+                isAdmin: isAdminEmail(updatedProfile.email),
               });
             }
           )

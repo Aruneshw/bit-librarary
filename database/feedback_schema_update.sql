@@ -22,9 +22,9 @@ CREATE POLICY "Users can insert own feedback"
 -- 4. Policy: Admin can read all feedback
 CREATE POLICY "Admin can read all feedback"
   ON user_feedbacks FOR SELECT
-  USING (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com');
+  USING (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'));
 
 -- 5. Policy: Admin can delete feedback
 CREATE POLICY "Admin can delete feedback"
   ON user_feedbacks FOR DELETE
-  USING (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com');
+  USING (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'));
