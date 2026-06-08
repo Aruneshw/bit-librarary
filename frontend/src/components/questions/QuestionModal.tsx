@@ -213,7 +213,7 @@ export default function QuestionModal({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.85, opacity: 0 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              style={{ borderRadius: 'var(--radius-modal)' }}
+              style={{ borderRadius: 'var(--radius-modal)', backgroundColor: '#070707' }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
