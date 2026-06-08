@@ -13,6 +13,7 @@ interface UserFeedback {
   reply: string | null;
   replied_at: string | null;
   reply_read: boolean;
+  is_broadcast: boolean;
 }
 
 export default function NotificationCenter() {
@@ -20,7 +21,6 @@ export default function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const [feedbacks, setFeedbacks] = useState<UserFeedback[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated || !user) return;
@@ -30,30 +30,37 @@ export default function NotificationCenter() {
       const { data, error } = await supabase
         .from('user_feedbacks')
         .select('*')
-        .eq('user_id', user.id)
+        .or(`user_id.eq.${user.id},is_broadcast.eq.true`)
         .order('created_at', { ascending: false });
 
       if (data && !error) {
         const list = data as UserFeedback[];
         setFeedbacks(list);
-        const unread = list.filter((f) => f.reply && !f.reply_read).length;
+        
+        // Count unread: own unread replies, plus broadcasted ones not dismissed locally
+        const dismissed = JSON.parse(localStorage.getItem('dismissed_broadcasts') || '[]');
+        const unread = list.filter((f) => {
+          if (f.is_broadcast) {
+            return !dismissed.includes(f.id);
+          }
+          return f.reply && !f.reply_read;
+        }).length;
         setUnreadCount(unread);
       }
     };
 
     fetchNotifications();
 
-    // Subscribe to real-time updates for user_feedbacks
+    // Subscribe to real-time updates for user_feedbacks globally
     const supabase = createClient();
     const channel = supabase
-      .channel(`user-feedbacks-${user.id}`)
+      .channel('user-feedbacks-global')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'user_feedbacks',
-          filter: `user_id=eq.${user.id}`,
         },
         () => {
           fetchNotifications();
@@ -68,22 +75,29 @@ export default function NotificationCenter() {
 
   const handleOpen = async () => {
     setIsOpen(true);
-    if (unreadCount === 0 || !user) return;
+    if (!user) return;
 
-    // Mark replies as read
+    // 1. Mark user's own feedback replies as read in database
     const supabase = createClient();
-    const { error } = await supabase
+    await supabase
       .from('user_feedbacks')
       .update({ reply_read: true })
       .eq('user_id', user.id)
       .eq('reply_read', false);
 
-    if (!error) {
-      setUnreadCount(0);
-      setFeedbacks((prev) =>
-        prev.map((f) => (f.reply ? { ...f, reply_read: true } : f))
-      );
-    }
+    // 2. Dismiss all current broadcast announcements locally
+    const dismissed = JSON.parse(localStorage.getItem('dismissed_broadcasts') || '[]');
+    const broadcastIds = feedbacks.filter((f) => f.is_broadcast).map((f) => f.id);
+    const updatedDismissed = Array.from(new Set([...dismissed, ...broadcastIds]));
+    localStorage.setItem('dismissed_broadcasts', JSON.stringify(updatedDismissed));
+
+    setUnreadCount(0);
+    setFeedbacks((prev) =>
+      prev.map((f) => {
+        if (f.is_broadcast) return f;
+        return f.reply ? { ...f, reply_read: true } : f;
+      })
+    );
   };
 
   if (!isAuthenticated) return null;
@@ -194,13 +208,17 @@ export default function NotificationCenter() {
                   feedbacks.map((f) => (
                     <div
                       key={f.id}
-                      className={`p-4 rounded-lg border border-arc-blue/10 bg-arc-blue/5 transition-all ${
-                        f.reply && !f.reply_read ? 'border-arc-blue bg-arc-blue/10' : ''
+                      className={`p-4 rounded-lg border transition-all ${
+                        f.is_broadcast
+                          ? 'border-terminal-green/30 bg-terminal-green/5'
+                          : f.reply && !f.reply_read
+                          ? 'border-arc-blue bg-arc-blue/10'
+                          : 'border-arc-blue/10 bg-arc-blue/5'
                       }`}
                     >
                       <div className="flex justify-between items-start mb-2">
-                        <span className="font-orbitron text-xs text-text-white/60 uppercase tracking-wider">
-                          Feedback Sent
+                        <span className={`font-orbitron text-xs font-bold uppercase tracking-wider ${f.is_broadcast ? 'text-terminal-green' : 'text-text-white/60'}`}>
+                          {f.is_broadcast ? '📢 SYSTEM ANNOUNCEMENT' : 'Feedback Sent'}
                         </span>
                         <span className="font-mono text-[9px] text-text-white/30">
                           {new Date(f.created_at).toLocaleDateString()}
@@ -214,7 +232,7 @@ export default function NotificationCenter() {
                         <div className="mt-3 p-3 border-l-2 border-terminal-green bg-terminal-green/5 rounded font-mono text-xs">
                           <div className="flex justify-between items-center mb-1">
                             <span className="text-terminal-green font-bold uppercase tracking-wider">
-                              Admin Response:
+                              Response:
                             </span>
                             <span className="text-text-white/40 text-[9px]">
                               {f.replied_at
@@ -225,10 +243,12 @@ export default function NotificationCenter() {
                           <p className="text-text-white/80 whitespace-pre-wrap">{f.reply}</p>
                         </div>
                       ) : (
-                        <div className="mt-3 flex items-center gap-1.5 font-mono text-[10px] text-text-white/30 uppercase">
-                          <span className="w-1.5 h-1.5 rounded-full bg-arc-blue/50 animate-pulse" />
-                          Awaiting Admin Transmissions...
-                        </div>
+                        !f.is_broadcast && (
+                          <div className="mt-3 flex items-center gap-1.5 font-mono text-[10px] text-text-white/30 uppercase">
+                            <span className="w-1.5 h-1.5 rounded-full bg-arc-blue/50 animate-pulse" />
+                            Awaiting Admin Transmissions...
+                          </div>
+                        )
                       )}
                     </div>
                   ))
