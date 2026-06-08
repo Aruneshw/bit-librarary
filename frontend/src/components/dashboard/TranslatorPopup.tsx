@@ -1,9 +1,25 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function TranslatorPopup() {
+  const [lang, setLang] = useState<'en' | 'ta'>('en');
+
+  // Helper to read the cookie
+  const getTranslateCookie = () => {
+    if (typeof document === 'undefined') return 'en';
+    const match = document.cookie.match(/(^|;)\s*googtrans\s*=\s*([^;]+)/);
+    if (match) {
+      const val = match[2];
+      if (val.includes('/ta')) return 'ta';
+    }
+    return 'en';
+  };
+
   useEffect(() => {
+    // Determine initial language from cookie
+    setLang(getTranslateCookie());
+
     // Only add the script if it doesn't exist
     if (!document.getElementById('google-translate-script')) {
       const script = document.createElement('script');
@@ -16,65 +32,69 @@ export default function TranslatorPopup() {
         new window.google.translate.TranslateElement(
           { 
             pageLanguage: 'en', 
-            includedLanguages: 'en,ta', 
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE 
+            includedLanguages: 'en,ta'
           },
           'google_translate_element'
         );
       };
     }
-
-    return () => {
-      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=' + window.location.hostname + '; path=/;';
-    };
   }, []);
 
+  const handleToggle = (targetLang: 'en' | 'ta') => {
+    if (targetLang === lang) return;
+    
+    if (targetLang === 'ta') {
+      document.cookie = "googtrans=/en/ta; path=/;";
+      if (window.location.hostname !== 'localhost') {
+        document.cookie = "googtrans=/en/ta; path=/; domain=" + window.location.hostname + ";";
+      }
+    } else {
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      if (window.location.hostname !== 'localhost') {
+        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+      }
+    }
+    
+    setLang(targetLang);
+    window.location.reload();
+  };
+
   return (
-    <div className="fixed bottom-4 right-4 z-50 bg-black/80 border border-[var(--glass-border)] rounded-full px-4 py-2 shadow-[var(--glow-blue)] backdrop-blur-md transition-all hover:scale-105 group">
-      <div className="flex items-center space-x-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#00D9FF] animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-        </svg>
-        <div id="google_translate_element" className="translate-widget" />
-      </div>
+    <div className="fixed bottom-4 right-4 z-50 bg-[#050A15]/90 border border-[#00D9FF]/30 rounded-full p-1 shadow-[0_0_15px_rgba(0,217,255,0.25)] backdrop-blur-md flex items-center space-x-1 transition-all hover:scale-105">
+      {/* Hidden google translate widget where google expects it */}
+      <div id="google_translate_element" className="absolute invisible pointer-events-none w-0 h-0 overflow-hidden" />
+      
+      {/* Custom toggle buttons */}
+      <button
+        onClick={() => handleToggle('en')}
+        className={`px-3 py-1 rounded-full text-[10px] font-bold font-orbitron tracking-wider transition-all duration-300 ${
+          lang === 'en'
+            ? 'bg-[#00D9FF] text-[#050A15] shadow-[0_0_10px_rgba(0,217,255,0.5)]'
+            : 'text-gray-400 hover:text-white'
+        }`}
+      >
+        EN
+      </button>
+      <button
+        onClick={() => handleToggle('ta')}
+        className={`px-3 py-1 rounded-full text-[10px] font-bold font-orbitron tracking-wider transition-all duration-300 ${
+          lang === 'ta'
+            ? 'bg-[#00D9FF] text-[#050A15] shadow-[0_0_10px_rgba(0,217,255,0.5)]'
+            : 'text-gray-400 hover:text-white'
+        }`}
+      >
+        தமிழ்
+      </button>
+
       <style jsx global>{`
-        /* Hide the Google Translate branding and styling to make it fit ARC_OS theme */
-        .goog-te-gadget {
-          color: transparent !important;
-          font-family: 'Rajdhani', sans-serif !important;
-          font-size: 0px !important; /* Hides extra text */
-        }
-        .goog-te-gadget .goog-te-combo {
-          color: var(--arc-blue) !important;
-          background-color: #050A15 !important;
-          border: 1px solid rgba(0, 217, 255, 0.4) !important;
-          border-radius: 12px !important;
-          padding: 4px 8px !important;
-          font-family: 'Rajdhani', sans-serif !important;
-          font-weight: 600 !important;
-          font-size: 12px !important;
-          outline: none !important;
-          cursor: pointer !important;
-          box-shadow: 0 0 8px rgba(0, 217, 255, 0.2) !important;
-          appearance: none !important; /* Removes default OS styling on mobile */
-          -webkit-appearance: none !important;
-          -moz-appearance: none !important;
-        }
-        .goog-te-gadget .goog-te-combo option {
-          background-color: #050A15 !important;
-          color: #fff !important;
-          font-family: 'Rajdhani', sans-serif !important;
-        }
-        /* Hide the top banner frame */
-        .skiptranslate iframe, iframe.skiptranslate {
+        /* Hide all google translate artifacts completely */
+        .skiptranslate iframe, iframe.skiptranslate, .goog-te-banner-frame {
           display: none !important;
           visibility: hidden !important;
         }
         body {
           top: 0 !important;
         }
-        /* Hide the Google Translate tooltip balloon popup on click/hover */
         #goog-gt-tt, .goog-te-balloon-frame, .goog-tooltip, .goog-tooltip:hover {
           display: none !important;
           visibility: hidden !important;
