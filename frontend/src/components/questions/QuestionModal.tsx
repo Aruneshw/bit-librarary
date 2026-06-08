@@ -4,6 +4,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import { type QuestionWithStatus } from '@/types';
 
@@ -150,7 +151,7 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
               <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
               <div className="font-exo2 text-sm text-text-white/90 leading-relaxed prose prose-invert prose-p:my-1 max-w-none translate">
                 <ReactMarkdown
-                  remarkPlugins={[remarkMath]}
+                  remarkPlugins={[remarkMath, remarkGfm]}
                   rehypePlugins={[rehypeKatex]}
                   components={{
                     pre({ children, ...props }: any) {
@@ -184,7 +185,7 @@ export default function QuestionModal({ question, onClose }: QuestionModalProps)
               <div className="w-full h-px bg-gradient-to-r from-arc-blue/30 to-transparent mb-4" />
               <div className="font-exo2 text-sm text-text-white/80 leading-relaxed prose prose-invert prose-p:my-1 max-w-none translate">
                 <ReactMarkdown
-                  remarkPlugins={[remarkMath]}
+                  remarkPlugins={[remarkMath, remarkGfm]}
                   rehypePlugins={[rehypeKatex]}
                   components={{
                     pre({ children, ...props }: any) {
