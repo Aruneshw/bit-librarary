@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNoticeStore } from '@/store/noticeStore';
 import { useAuthStore } from '@/store/authStore';
+import { createClient } from '@/lib/supabase';
 
 export default function AINoticeBoard() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState('');
   
@@ -15,13 +16,46 @@ export default function AINoticeBoard() {
 
   useEffect(() => {
     fetchNotice();
+
+    // Show notice board only once on login/first load in the current session
+    const hasBeenShown = sessionStorage.getItem('notice_shown');
+    if (!hasBeenShown) {
+      setIsVisible(true);
+      sessionStorage.setItem('notice_shown', 'true');
+    }
+
+    // Subscribe to system notice updates in real-time
+    const supabase = createClient();
+    const channel = supabase
+      .channel('system-notices-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'system_notices' },
+        (payload: any) => {
+          if (payload.new && payload.new.message) {
+            fetchNotice();
+            // Pop open the notice board because it was updated while online!
+            setIsVisible(true);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchNotice]);
+
+  useEffect(() => {
+    if (!isVisible) return;
+
     // Only auto-hide if not admin, or wait longer. Admins might want to edit it.
     const timer = setTimeout(() => {
       if (!isEditing && !isAdmin) setIsVisible(false);
     }, 12000); 
 
     return () => clearTimeout(timer);
-  }, [fetchNotice, isEditing, isAdmin]);
+  }, [isVisible, isEditing, isAdmin]);
 
   const handleSave = async (e: React.MouseEvent | React.FormEvent) => {
     e.preventDefault();
