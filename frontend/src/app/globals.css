@@ -304,3 +304,23 @@ body::after {
   background: rgba(0, 217, 255, 0.3);
   color: var(--text-white);
 }
+
+/* ═══════════════════════════════════════════
+   Google Translate UI Override (Hiding Tooltips)
+   ═══════════════════════════════════════════ */
+#goog-gt-tt, 
+.goog-te-balloon-frame, 
+.goog-tooltip, 
+.goog-tooltip:hover {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+

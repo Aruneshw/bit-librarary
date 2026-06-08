@@ -67,11 +67,22 @@ export default function TranslatorPopup() {
           font-family: 'Rajdhani', sans-serif !important;
         }
         /* Hide the top banner frame */
-        .skiptranslate iframe {
+        .skiptranslate iframe, iframe.skiptranslate {
           display: none !important;
+          visibility: hidden !important;
         }
         body {
           top: 0 !important;
+        }
+        /* Hide the Google Translate tooltip balloon popup on click/hover */
+        #goog-gt-tt, .goog-te-balloon-frame, .goog-tooltip, .goog-tooltip:hover {
+          display: none !important;
+          visibility: hidden !important;
+        }
+        .goog-text-highlight {
+          background-color: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
         }
       `}</style>
     </div>
