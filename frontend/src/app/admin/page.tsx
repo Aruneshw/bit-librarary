@@ -33,6 +33,7 @@ export default function AdminDashboard() {
   const [feedbacks, setFeedbacks] = useState<UserFeedback[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
+  const [onlineUserIds, setOnlineUserIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -44,6 +45,38 @@ export default function AdminDashboard() {
       }
     }
   }, [isAdmin, isLoading, router]);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const supabase = createClient();
+    const presenceChannel = supabase.channel('online-users', {
+      config: {
+        presence: {
+          key: user?.id || 'admin',
+        },
+      },
+    });
+
+    presenceChannel
+      .on('presence', { event: 'sync' }, () => {
+        const state = presenceChannel.presenceState();
+        const onlineIds = Object.keys(state);
+        setOnlineUserIds(onlineIds);
+      })
+      .subscribe(async (status: string) => {
+        if (status === 'SUBSCRIBED' && user) {
+          await presenceChannel.track({
+            online_at: new Date().toISOString(),
+            name: user.name || user.email,
+          });
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(presenceChannel);
+    };
+  }, [isAdmin, user]);
 
   const fetchUsers = async () => {
     const supabase = createClient();
@@ -113,9 +146,16 @@ export default function AdminDashboard() {
           className="bg-black/40 border border-arc-blue/20 rounded-xl backdrop-blur-md overflow-hidden shadow-[0_0_30px_rgba(0,217,255,0.05)]"
         >
           <div className="p-6 border-b border-arc-blue/20 bg-arc-blue/5">
-            <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-arc-blue shadow-[0_0_8px_rgba(0,217,255,1)] animate-pulse" />
-              Registered Personnel Directory
+            <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-arc-blue shadow-[0_0_8px_rgba(0,217,255,1)] animate-pulse" />
+                Registered Personnel Directory
+              </div>
+              {onlineUserIds.length > 0 && (
+                <span className="text-[10px] font-orbitron text-terminal-green px-2 py-0.5 border border-terminal-green/30 bg-terminal-green/10 rounded tracking-widest uppercase animate-pulse">
+                  {onlineUserIds.length} Active
+                </span>
+              )}
             </h2>
           </div>
           
@@ -148,7 +188,17 @@ export default function AdminDashboard() {
                       key={u.id} 
                       className="hover:bg-arc-blue/5 transition-colors group"
                     >
-                      <td className="p-4 pl-6 text-white group-hover:text-arc-blue transition-colors">{u.name || 'Unknown'}</td>
+                      <td className="p-4 pl-6 text-white group-hover:text-arc-blue transition-colors">
+                        <div className="flex items-center gap-2">
+                          {onlineUserIds.includes(u.id) && (
+                            <span 
+                              className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-terminal-green shadow-[0_0_6px_rgba(0,255,65,0.8)] animate-pulse shrink-0" 
+                              title="Online"
+                            />
+                          )}
+                          <span>{u.name || 'Unknown'}</span>
+                        </div>
+                      </td>
                       <td className="p-4 text-white/70 font-mono text-sm">{u.email}</td>
                       <td className="p-4">
                         <span className="px-2 py-1 text-xs font-mono border border-arc-blue/30 rounded bg-arc-blue/10 text-arc-blue">
