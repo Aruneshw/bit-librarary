@@ -19,10 +19,10 @@ For binary fraction $0.00011_2$:
 
 ```mermaid
 graph TD
-    A[Decimal Fraction: 0.1] --> B[Infinite Binary: 0.000110011...]
-    B --> C{Correct Grouping?}
-    C -->|Yes: Left-to-Right| D[$.000 | 110 | 011..._2 \rightarrow 0.063..._8]
-    C -->|No: Right-to-Left| E[$.000 | 011..._2 \rightarrow 0.03..._8 Grouping Error]
+    A["Decimal Fraction: 0.1"] --> B["Infinite Binary: 0.000110011..."]
+    B --> C{"Correct Grouping?"}
+    C -->|Yes: Left-to-Right| D["$.000 | 110 | 011..._2 \rightarrow 0.063..._8"]
+    C -->|No: Right-to-Left| E["$.000 | 011..._2 \rightarrow 0.03..._8 Grouping Error"]
 ```', NULL, '22AM206 - Digital Computer Electronics', 'Module Test-I Q1', 1),
   ('dce00000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000005', 'A calculator device internally processes numbers in binary but must display outputs in a user-friendly format. The display has limited space, and binary representation appears lengthy. The system designer must choose between octal and hexadecimal formats for output representation while ensuring accuracy and minimal processing overhead.
    Determine the most appropriate number system for display and justify the decision based on efficiency and usability.', 'Hexadecimal representation is the most appropriate number system for the calculator display.
@@ -954,11 +954,11 @@ Develop the sequence of operations.', 'The sequence of operations for Call and R
 ```mermaid
 graph TD
     subgraph CALL Sequence
-    A1[SP <- SP - 1] --> A2[Memory[SP] <- PC]
-    A2 --> A3[PC <- Target Subroutine Address]
+    A1["SP <- SP - 1"] --> A2["Memory[SP] <- PC"]
+    A2 --> A3["PC <- Target Subroutine Address"]
     end
     subgraph RETURN Sequence
-    B1[PC <- Memory[SP]] --> B2[SP <- SP + 1]
+    B1["PC <- Memory[SP]"] --> B2["SP <- SP + 1"]
     end
 ```
 
