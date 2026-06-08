@@ -162,7 +162,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
               table: 'profiles',
               filter: `id=eq.${authUser.id}`,
             },
-            (payload) => {
+            (payload: any) => {
               const updatedProfile = payload.new as Profile;
               set({
                 user: updatedProfile,
