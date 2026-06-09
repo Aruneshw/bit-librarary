@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { supabaseAdmin } from '../config/supabase';
+import { isAdminEmail } from '../lib/adminEmails';
 
 export interface AuthRequest extends Request {
   userId?: string;
@@ -28,8 +29,8 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
       return;
     }
 
-    // Validate email domain
-    if (!user.email?.endsWith('@bitsathy.ac.in')) {
+    // Validate email domain (allow admin emails outside bitsathy domain)
+    if (!user.email?.endsWith('@bitsathy.ac.in') && !isAdminEmail(user.email)) {
       res.status(403).json({
         error: { code: 'FORBIDDEN', message: 'Access restricted to @bitsathy.ac.in accounts', status: 403 },
       });

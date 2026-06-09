@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../config/supabase';
 import { safeRedisGet, safeRedisSet } from '../config/redis';
+import { isAdminEmail } from '../lib/adminEmails';
 
 export const subjectsRouter = Router();
 
@@ -10,9 +11,10 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
   try {
     // Get user's department
     const department = req.query.department as string;
+    const showAll = req.query.all === 'true' || department === 'ALL' || isAdminEmail(req.userEmail);
     let userDept = department;
 
-    if (!userDept) {
+    if (!showAll && !userDept) {
       const { data: profile } = await supabaseAdmin
         .from('profiles')
         .select('department')
@@ -22,7 +24,7 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
       userDept = profile?.department;
     }
 
-    if (!userDept) {
+    if (!showAll && !userDept) {
       res.status(400).json({
         error: { code: 'BAD_REQUEST', message: 'Department not set. Please select a department first.', status: 400 },
       });
@@ -54,15 +56,17 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
       console.log('[CACHE HIT] Subjects fetched from Redis.');
     }
 
-    // Filter subjects: show all subjects to everyone, EXCEPT hide "Electronics" for CS, AL, AD, IT
+    // Filter subjects for regular users; admins see everything
     const restrictedDepts = ['CS', 'IT', 'AL', 'AD'];
-    const subjects = (allSubjects || []).filter(subject => {
-      const isElectronics = subject.subject_name.toLowerCase().includes('electronics');
-      if (isElectronics && restrictedDepts.includes(userDept.toUpperCase())) {
-        return false;
-      }
-      return true;
-    });
+    const subjects = showAll
+      ? (allSubjects || [])
+      : (allSubjects || []).filter(subject => {
+          const isElectronics = subject.subject_name.toLowerCase().includes('electronics');
+          if (isElectronics && restrictedDepts.includes(userDept.toUpperCase())) {
+            return false;
+          }
+          return true;
+        });
 
     // Fetch all user views in a single query
     const { data: allViews } = await supabaseAdmin

@@ -23,7 +23,7 @@ export const useSubjectStore = create<SubjectState>((set, get) => ({
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          const res = await fetch(`${apiUrl}/subjects?department=${department}`, {
+          const res = await fetch(`${apiUrl}/subjects?department=${department}${department === 'ALL' ? '&all=true' : ''}`, {
             headers: {
               'Authorization': `Bearer ${session.access_token}`,
             },

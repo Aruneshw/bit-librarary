@@ -8,6 +8,7 @@ import { subjectsRouter } from './routes/subjects';
 import { questionsRouter } from './routes/questions';
 import { progressRouter } from './routes/progress';
 import { settingsRouter } from './routes/settings';
+import { postsRouter } from './routes/posts';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -32,6 +33,7 @@ app.use('/api/v1/subjects', subjectsRouter);
 app.use('/api/v1/questions', questionsRouter);
 app.use('/api/v1/progress', progressRouter);
 app.use('/api/v1/settings', settingsRouter);
+app.use('/api/v1/posts', postsRouter);
 
 // 404
 app.use((_req, res) => {

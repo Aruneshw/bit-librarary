@@ -10,10 +10,10 @@ import ArcReactor from '@/components/dashboard/ArcReactor';
 import AINoticeBoard from '@/components/dashboard/AINoticeBoard';
 import HudFrontPage from '@/components/animations/HudFrontPage';
 import TutorialModal from '@/components/tutorial/TutorialModal';
-import FeedbackForm from '@/components/dashboard/FeedbackForm';
-import NotificationCenter from '@/components/dashboard/NotificationCenter';
+import MobileActionDock from '@/components/dashboard/MobileActionDock';
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner';
 import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
+import AdminPostFeed from '@/components/dashboard/AdminPostFeed';
 import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 
@@ -202,8 +202,7 @@ export default function DashboardPage() {
     if (user?.department) {
       fetchSubjects(user.department);
     } else if (isAdmin) {
-      // Admins bypass department check, so load default subjects (e.g. CS)
-      fetchSubjects('CS');
+      fetchSubjects('ALL');
     }
   }, [user?.department, isAdmin, fetchSubjects]);
 
@@ -333,6 +332,13 @@ export default function DashboardPage() {
           </div>
         </header>
 
+        {/* Director posts feed */}
+        {!subjectsLoading && introComplete && (
+          <div className="w-full max-w-2xl mx-auto px-4 pt-4">
+            <AdminPostFeed />
+          </div>
+        )}
+
         {/* Subject Display */}
         {!subjectsLoading && introComplete && (
           <div className="w-full flex-1 flex flex-col items-center justify-center pb-12 pt-24 lg:pt-0">
@@ -375,13 +381,7 @@ export default function DashboardPage() {
           </p>
         </footer>
 
-        {/* Feedback Form & Notification Center */}
-        {isAuthenticated && introComplete && (
-          <>
-            <FeedbackForm />
-            <NotificationCenter />
-          </>
-        )}
+        {isAuthenticated && introComplete && <MobileActionDock />}
       </div>
     </main>
   );

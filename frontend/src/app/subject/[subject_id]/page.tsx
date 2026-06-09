@@ -36,6 +36,7 @@ export default function SubjectPage() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [prevCompletion, setPrevCompletion] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [studyStats, setStudyStats] = useState<{ studying_count: number; recently_active: number } | null>(null);
 
   // Fetch user
   useEffect(() => {
@@ -63,6 +64,26 @@ export default function SubjectPage() {
     };
     fetchSubjectName();
   }, [subjectId]);
+
+  // Fetch admin study stats
+  useEffect(() => {
+    if (!isAdmin || !subjectId) return;
+
+    const fetchStats = async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.rpc('get_subject_study_stats', {
+        target_subject_id: subjectId,
+      });
+      if (!error && data) {
+        setStudyStats({
+          studying_count: Number(data.studying_count) || 0,
+          recently_active: Number(data.recently_active) || 0,
+        });
+      }
+    };
+
+    fetchStats();
+  }, [isAdmin, subjectId]);
 
   // Fetch questions
   useEffect(() => {
@@ -290,6 +311,29 @@ export default function SubjectPage() {
             </button>
           )}
         </motion.div>
+
+        {isAdmin && studyStats && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="glass-panel p-4 mb-6 border border-terminal-green/20"
+          >
+            <p className="font-orbitron text-[10px] text-terminal-green tracking-[3px] uppercase mb-3">
+              Admin Intel — {subjectName}
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="font-mono text-[10px] text-text-white/40 uppercase">Users Studying</p>
+                <p className="font-orbitron text-2xl text-arc-blue">{studyStats.studying_count}</p>
+              </div>
+              <div>
+                <p className="font-mono text-[10px] text-text-white/40 uppercase">Active This Week</p>
+                <p className="font-orbitron text-2xl text-terminal-green">{studyStats.recently_active}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* Progress Section */}
         <motion.div

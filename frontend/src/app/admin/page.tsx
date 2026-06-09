@@ -42,6 +42,12 @@ export default function AdminDashboard() {
   const [systemMetrics, setSystemMetrics] = useState<{ totalUsers: number; totalVisits: number } | null>(null);
   const [replyingFeedbackId, setReplyingFeedbackId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
+  const [postTitle, setPostTitle] = useState('');
+  const [postBody, setPostBody] = useState('');
+  const [postVideoUrl, setPostVideoUrl] = useState('');
+  const [postImageUrl, setPostImageUrl] = useState('');
+  const [posting, setPosting] = useState(false);
+  const [postMessage, setPostMessage] = useState('');
 
   const fetchSystemMetrics = useCallback(async () => {
     const supabase = createClient();
@@ -187,11 +193,17 @@ export default function AdminDashboard() {
 
   const handleToggleBroadcast = async (feedbackId: string, currentBroadcast: boolean) => {
     const supabase = createClient();
+
+    if (!currentBroadcast) {
+      await supabase
+        .from('user_feedbacks')
+        .update({ is_broadcast: false })
+        .eq('is_broadcast', true);
+    }
+
     const { error } = await supabase
       .from('user_feedbacks')
-      .update({
-        is_broadcast: !currentBroadcast
-      })
+      .update({ is_broadcast: !currentBroadcast })
       .eq('id', feedbackId);
 
     if (!error) {
@@ -202,6 +214,67 @@ export default function AdminDashboard() {
     } else {
       console.error('Failed to toggle broadcast:', error);
     }
+  };
+
+  const handleCreatePost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!postBody.trim()) return;
+
+    setPosting(true);
+    setPostMessage('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const supabase = createClient();
+
+    try {
+      if (apiUrl) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const res = await fetch(`${apiUrl}/posts`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title: postTitle.trim() || null,
+              body: postBody.trim(),
+              video_url: postVideoUrl.trim() || null,
+              image_url: postImageUrl.trim() || null,
+            }),
+          });
+          if (res.ok) {
+            setPostTitle('');
+            setPostBody('');
+            setPostVideoUrl('');
+            setPostImageUrl('');
+            setPostMessage('Post published to all users.');
+            setPosting(false);
+            return;
+          }
+        }
+      }
+
+      const { error } = await supabase.from('admin_posts').insert({
+        title: postTitle.trim() || null,
+        body: postBody.trim(),
+        video_url: postVideoUrl.trim() || null,
+        image_url: postImageUrl.trim() || null,
+        created_by: user?.id,
+      });
+
+      if (!error) {
+        setPostTitle('');
+        setPostBody('');
+        setPostVideoUrl('');
+        setPostImageUrl('');
+        setPostMessage('Post published to all users.');
+      } else {
+        setPostMessage('Failed to publish post.');
+      }
+    } catch {
+      setPostMessage('Failed to publish post.');
+    }
+    setPosting(false);
   };
 
   if (isLoading || !isAdmin) {
@@ -336,6 +409,61 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </div>
+        </motion.div>
+
+        {/* Director Post Composer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mt-8 bg-black/40 border border-arc-blue/20 rounded-xl backdrop-blur-md overflow-hidden shadow-[0_0_30px_rgba(0,217,255,0.05)]"
+        >
+          <div className="p-6 border-b border-arc-blue/20 bg-arc-blue/5">
+            <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-terminal-green shadow-[0_0_8px_rgba(0,255,65,1)]" />
+              Publish Post / Video
+            </h2>
+          </div>
+          <form onSubmit={handleCreatePost} className="p-6 space-y-4">
+            <input
+              value={postTitle}
+              onChange={(e) => setPostTitle(e.target.value)}
+              placeholder="Title (optional)"
+              className="w-full bg-black/60 border border-arc-blue/30 rounded p-3 text-white font-mono text-sm focus:outline-none focus:border-arc-blue"
+            />
+            <textarea
+              value={postBody}
+              onChange={(e) => setPostBody(e.target.value)}
+              placeholder="Write your announcement for all users..."
+              className="w-full bg-black/60 border border-arc-blue/30 rounded p-3 text-white font-mono text-sm h-28 focus:outline-none focus:border-arc-blue resize-none"
+              required
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                value={postVideoUrl}
+                onChange={(e) => setPostVideoUrl(e.target.value)}
+                placeholder="YouTube or video URL (optional)"
+                className="w-full bg-black/60 border border-arc-blue/30 rounded p-3 text-white font-mono text-sm focus:outline-none focus:border-arc-blue"
+              />
+              <input
+                value={postImageUrl}
+                onChange={(e) => setPostImageUrl(e.target.value)}
+                placeholder="Image URL (optional)"
+                className="w-full bg-black/60 border border-arc-blue/30 rounded p-3 text-white font-mono text-sm focus:outline-none focus:border-arc-blue"
+              />
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <p className="font-mono text-xs text-white/40">Visible to all users on dashboard. Cached in Redis.</p>
+              <button
+                type="submit"
+                disabled={posting || !postBody.trim()}
+                className="px-5 py-2 bg-terminal-green/10 border border-terminal-green text-terminal-green font-orbitron text-xs tracking-widest uppercase rounded hover:bg-terminal-green/20 disabled:opacity-50"
+              >
+                {posting ? 'Publishing...' : 'Publish Post'}
+              </button>
+            </div>
+            {postMessage && <p className="font-mono text-xs text-arc-blue">{postMessage}</p>}
+          </form>
         </motion.div>
 
         {/* Feedback Section */}
