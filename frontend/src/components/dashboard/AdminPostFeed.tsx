@@ -37,7 +37,7 @@ export default function AdminPostFeed() {
           });
           if (res.ok) {
             const data = await res.json();
-            setPosts(data.posts || []);
+            setPosts((data.posts || []).filter((p: AdminPost) => !p.image_url && !p.video_url));
             return;
           }
         }
@@ -53,7 +53,7 @@ export default function AdminPostFeed() {
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (data) setPosts(data as AdminPost[]);
+    if (data) setPosts((data as AdminPost[]).filter((p) => !p.image_url && !p.video_url));
   };
 
   const handleDelete = async (postId: string) => {
