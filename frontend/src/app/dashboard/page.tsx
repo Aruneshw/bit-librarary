@@ -8,7 +8,7 @@ import SubjectOrbit from '@/components/dashboard/SubjectOrbit';
 import SubjectCardStack from '@/components/dashboard/SubjectCardStack';
 import ArcReactor from '@/components/dashboard/ArcReactor';
 import AINoticeBoard from '@/components/dashboard/AINoticeBoard';
-import IntroAnimation from '@/components/animations/IntroAnimation';
+import HudFrontPage from '@/components/animations/HudFrontPage';
 import TutorialModal from '@/components/tutorial/TutorialModal';
 import FeedbackForm from '@/components/dashboard/FeedbackForm';
 import NotificationCenter from '@/components/dashboard/NotificationCenter';
@@ -234,11 +234,10 @@ export default function DashboardPage() {
       <AINoticeBoard />
       <PwaInstallBanner />
 
-      {/* Intro Animation */}
+      {/* HUD Front Page / Boot sequence */}
       {showIntro && (
-        <IntroAnimation
-          subjectCount={subjects.length || 6}
-          onComplete={handleIntroComplete}
+        <HudFrontPage
+          onEnter={handleIntroComplete}
         />
       )}
 
