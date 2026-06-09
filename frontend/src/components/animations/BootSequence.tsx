@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BOOT_LINES, type BootStep } from '@/types';
+import { audioService } from '@/lib/audioService';
 
 interface BootSequenceProps {
   onComplete: () => void;
@@ -28,10 +29,12 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
       return () => clearTimeout(timer);
     }
     if (step === 'point') {
+      audioService.playDiagnosticPing();
       const timer = setTimeout(() => setStep('reactor'), 400);
       return () => clearTimeout(timer);
     }
     if (step === 'reactor') {
+      audioService.playPowerSweep();
       const timer = setTimeout(() => setStep('terminal'), 800);
       return () => clearTimeout(timer);
     }
@@ -55,6 +58,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
       if (charIndex <= line.text.length) {
         setCurrentLineText(line.text.slice(0, charIndex));
         charIndex++;
+        audioService.playTypeClick();
         setTimeout(typeChar, 60);
       } else {
         // Line complete — add to finished lines

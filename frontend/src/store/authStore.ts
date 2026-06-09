@@ -85,6 +85,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const supabase = createClient();
     try {
       set({ isLoading: true });
+
+      // Tab session control: force sign out if opened in a new tab session
+      if (typeof window !== 'undefined') {
+        const sessionActive = sessionStorage.getItem('session_active');
+        if (!sessionActive) {
+          sessionStorage.setItem('session_active', 'true');
+          await supabase.auth.signOut();
+          localStorage.removeItem('arc_os_user');
+          set({ user: null, avatarUrl: null, isAuthenticated: false, isAdmin: false, isLoading: false });
+          return;
+        }
+      }
+
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {

@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '@/store/authStore';
+import { audioService } from '@/lib/audioService';
 
 interface IntroAnimationProps {
   subjectCount: number;
@@ -10,6 +12,14 @@ interface IntroAnimationProps {
 
 export default function IntroAnimation({ subjectCount, onComplete }: IntroAnimationProps) {
   const [phase, setPhase] = useState<'fadeIn' | 'charging' | 'text' | 'emerge' | 'done'>('fadeIn');
+  const { isAdmin } = useAuthStore();
+
+  // Play cmatrix cascading sound for non-admin on login/dashboard entry
+  useEffect(() => {
+    if (phase === 'charging' && !isAdmin) {
+      audioService.playCmatrixRain();
+    }
+  }, [phase, isAdmin]);
 
   const advancePhase = useCallback(() => {
     switch (phase) {
