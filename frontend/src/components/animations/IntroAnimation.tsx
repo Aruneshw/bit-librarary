@@ -14,10 +14,10 @@ export default function IntroAnimation({ subjectCount, onComplete }: IntroAnimat
   const [phase, setPhase] = useState<'fadeIn' | 'charging' | 'text' | 'emerge' | 'done'>('fadeIn');
   const { isAdmin } = useAuthStore();
 
-  // Play cmatrix cascading sound for non-admin on login/dashboard entry
+  // Play modern rain flow sound for non-admin on login/dashboard entry
   useEffect(() => {
     if (phase === 'charging' && !isAdmin) {
-      audioService.playCmatrixRain();
+      audioService.playModernRainFlow();
     }
   }, [phase, isAdmin]);
 
