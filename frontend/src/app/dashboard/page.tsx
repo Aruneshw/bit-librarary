@@ -150,8 +150,21 @@ export default function DashboardPage() {
 
   const [showIntro, setShowIntro] = useState(true);
   const [introComplete, setIntroComplete] = useState(false);
+  const [isSessionLoaded, setIsSessionLoaded] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Check if intro has already been completed in this browser session
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const introSeen = sessionStorage.getItem('intro_seen') === 'true';
+      if (introSeen) {
+        setShowIntro(false);
+        setIntroComplete(true);
+      }
+      setIsSessionLoaded(true);
+    }
+  }, []);
 
   // Check viewport
   useEffect(() => {
@@ -206,6 +219,9 @@ export default function DashboardPage() {
   }, [introComplete, user]);
 
   const handleIntroComplete = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('intro_seen', 'true');
+    }
     setShowIntro(false);
     setIntroComplete(true);
   }, []);
@@ -215,7 +231,7 @@ export default function DashboardPage() {
     router.push('/login');
   };
 
-  if (authLoading || (isAuthenticated && user && !user.department && !isAdmin)) {
+  if (authLoading || (isAuthenticated && user && !user.department && !isAdmin) || !isSessionLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="relative z-10 w-12 h-12">
