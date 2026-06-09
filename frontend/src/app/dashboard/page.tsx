@@ -424,11 +424,12 @@ export default function DashboardPage() {
           </p>
         </footer>
 
-        {isAuthenticated && introComplete && <MobileActionDock />}
-        {isAuthenticated && introComplete && <NotificationCenter />}
-        {isAuthenticated && introComplete && <FeedbackForm />}
-        <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
       </div>
+
+      {isAuthenticated && introComplete && <MobileActionDock />}
+      {isAuthenticated && introComplete && <NotificationCenter />}
+      {isAuthenticated && introComplete && <FeedbackForm />}
+      <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
     </main>
   );
 }

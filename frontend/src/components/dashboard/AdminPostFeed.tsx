@@ -20,7 +20,7 @@ function getYouTubeEmbedUrl(url: string): string | null {
 }
 
 export default function AdminPostFeed() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, isAdmin } = useAuthStore();
   const [posts, setPosts] = useState<AdminPost[]>([]);
 
   const fetchPosts = async () => {
@@ -53,6 +53,36 @@ export default function AdminPostFeed() {
       .limit(10);
 
     if (data) setPosts(data as AdminPost[]);
+  };
+
+  const handleDelete = async (postId: string) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const supabase = createClient();
+
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const res = await fetch(`${apiUrl}/posts/${postId}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+          if (res.ok) {
+            setPosts((prev) => prev.filter((p) => p.id !== postId));
+            return;
+          }
+        }
+      } catch {
+        // fall through
+      }
+    }
+
+    const { error } = await supabase
+      .from('admin_posts')
+      .update({ is_active: false })
+      .eq('id', postId);
+
+    if (!error) setPosts((prev) => prev.filter((p) => p.id !== postId));
   };
 
   useEffect(() => {
@@ -109,9 +139,24 @@ export default function AdminPostFeed() {
                 Open video link
               </a>
             )}
-            <p className="font-mono text-[10px] text-text-white/30 mt-2">
-              {new Date(post.created_at).toLocaleString()}
-            </p>
+            <div className="flex items-center justify-between mt-2">
+              <p className="font-mono text-[10px] text-text-white/30">
+                {new Date(post.created_at).toLocaleString()}
+              </p>
+              {isAdmin && (
+                <button
+                  onClick={() => handleDelete(post.id)}
+                  className="text-warning-red/50 hover:text-warning-red transition-colors p-1"
+                  aria-label="Delete post"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                  </svg>
+                </button>
+              )}
+            </div>
           </motion.article>
         );
       })}
