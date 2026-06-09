@@ -5,6 +5,10 @@ import os
 # Each key represents the question number (1-80) and the value is the 13-part structured study guide.
 ANSWERS = {}
 
+from maths_part1_solutions import ANSWERS_6_TO_40
+ANSWERS.update(ANSWERS_6_TO_40)
+
+
 # Question 1 to 40 are loaded here (refer to previous updates)
 # To save file size while writing we will write the whole active map.
 # We will define the full array from 1 to 60 now.
