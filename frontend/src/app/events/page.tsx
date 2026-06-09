@@ -25,6 +25,40 @@ export default function EventsPage() {
         router.replace('/login');
       } else {
         fetchEvents();
+
+        // Subscribe to Supabase Realtime database changes
+        const supabase = createClient();
+        const channel = supabase
+          .channel('public:events')
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'events' },
+            (payload: any) => {
+              console.log('Realtime event update received:', payload);
+              if (payload.eventType === 'INSERT') {
+                const newEvent = payload.new as Event;
+                setEvents((prev) => {
+                  if (prev.some((e) => e.id === newEvent.id)) return prev;
+                  return [newEvent, ...prev];
+                });
+              } else if (payload.eventType === 'UPDATE') {
+                const updatedEvent = payload.new as Event;
+                setEvents((prev) =>
+                  prev.map((e) => (e.id === updatedEvent.id ? updatedEvent : e))
+                );
+              } else if (payload.eventType === 'DELETE') {
+                const deletedId = payload.old.id;
+                setEvents((prev) => prev.filter((e) => e.id !== deletedId));
+              }
+            }
+          )
+          .subscribe();
+
+        return () => {
+          if (typeof supabase.removeChannel === 'function') {
+            supabase.removeChannel(channel);
+          }
+        };
       }
     }
   }, [isAuthenticated, authLoading, router]);
@@ -50,8 +84,20 @@ export default function EventsPage() {
     }
   };
 
+  // Client-side self-healing fallback: filter out duplicate event entries
+  const uniqueEvents = (() => {
+    const seen = new Set<string>();
+    return events.filter((event) => {
+      // Deduplicate using lowercase Name + Organizer (or name + link if organizer is null)
+      const key = `${event.name.toLowerCase().trim()}_${(event.organizer || event.registration_link || '').toLowerCase().trim()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  })();
+
   // Filter events based on search query and status filter
-  const filteredEvents = events.filter((event) => {
+  const filteredEvents = uniqueEvents.filter((event) => {
     const matchesSearch =
       event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (event.organizer && event.organizer.toLowerCase().includes(searchQuery.toLowerCase()));

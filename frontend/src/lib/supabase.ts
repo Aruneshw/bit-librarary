@@ -290,6 +290,22 @@ export function createClient() {
       from: (table: string) => {
         return new MockQueryBuilder(table);
       },
+      channel: (name: string) => {
+        const mockChan = {
+          on: (event: string, filter: any, callback: any) => {
+            return mockChan;
+          },
+          subscribe: () => {
+            return {
+              unsubscribe: () => {}
+            };
+          }
+        };
+        return mockChan;
+      },
+      removeChannel: (channel: any) => {
+        return Promise.resolve({ error: null });
+      }
     } as any;
   }
 
