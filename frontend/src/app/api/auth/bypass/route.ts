@@ -34,10 +34,15 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: error.message }, { status: 400 });
       }
 
-      if (data?.properties?.action_link) {
+      if (data?.properties?.hashed_token) {
+        const callbackUrl = new URL('/auth/callback', origin);
+        callbackUrl.searchParams.set('token_hash', data.properties.hashed_token);
+        callbackUrl.searchParams.set('type', 'magiclink');
+        callbackUrl.searchParams.set('next', '/dashboard');
+
         return NextResponse.json({
           success: true,
-          actionLink: data.properties.action_link,
+          actionLink: callbackUrl.toString(),
         });
       }
     }
