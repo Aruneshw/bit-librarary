@@ -91,7 +91,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (typeof window !== 'undefined') {
         const bypassActive = localStorage.getItem('admin_bypass_active') === 'true';
         if (bypassActive) {
-          const mockAdminProfile: Profile = {
+          let savedProfile: Profile | null = null;
+          try {
+            const profileStr = localStorage.getItem('admin_bypass_profile');
+            if (profileStr) {
+              savedProfile = JSON.parse(profileStr) as Profile;
+            }
+          } catch (e) {
+            console.error('Failed to parse admin_bypass_profile', e);
+          }
+
+          const mockAdminProfile: Profile = savedProfile || {
             id: 'admin-bypass-id',
             email: 'aruneshownsty1@gmail.com',
             name: 'Administrator Bypass',
@@ -267,6 +277,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const supabase = createClient();
     if (typeof window !== 'undefined') {
       localStorage.removeItem('admin_bypass_active');
+      localStorage.removeItem('admin_bypass_profile');
     }
     if (profileSubscription) {
       await supabase.removeChannel(profileSubscription);
@@ -278,7 +289,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   loginAsAdmin: async (username, password) => {
     if (username === 'admin' && password === '12345') {
-      const mockAdminProfile: Profile = {
+      const supabase = createClient();
+      let dbProfile: Profile | null = null;
+      try {
+        const { data } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('email', 'aruneshownsty1@gmail.com')
+          .single();
+        if (data) {
+          dbProfile = data as Profile;
+        }
+      } catch (err) {
+        console.error('Error fetching admin profile', err);
+      }
+
+      const mockAdminProfile: Profile = dbProfile || {
         id: 'admin-bypass-id',
         email: 'aruneshownsty1@gmail.com',
         name: 'Administrator Bypass',
@@ -286,8 +312,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         login_count: 999,
         created_at: new Date().toISOString(),
       };
+
       if (typeof window !== 'undefined') {
         localStorage.setItem('admin_bypass_active', 'true');
+        localStorage.setItem('admin_bypass_profile', JSON.stringify(mockAdminProfile));
       }
       set({
         user: mockAdminProfile,
