@@ -66,6 +66,7 @@ interface AuthState {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   fetchUser: () => Promise<void>;
+  loginAsAdmin: (username: string, password: string) => Promise<boolean>;
 }
 
 let profileSubscription: any = null;
@@ -85,6 +86,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const supabase = createClient();
     try {
       set({ isLoading: true });
+
+      // Check if admin bypass is active in localStorage
+      if (typeof window !== 'undefined') {
+        const bypassActive = localStorage.getItem('admin_bypass_active') === 'true';
+        if (bypassActive) {
+          const mockAdminProfile: Profile = {
+            id: 'admin-bypass-id',
+            email: 'aruneshownsty1@gmail.com',
+            name: 'Administrator Bypass',
+            department: 'CS',
+            login_count: 999,
+            created_at: new Date().toISOString(),
+          };
+          set({
+            user: mockAdminProfile,
+            avatarUrl: null,
+            isAuthenticated: true,
+            isAdmin: true,
+            isLoading: false,
+          });
+          return;
+        }
+      }
 
       // Tab session control: force sign out if opened in a new tab session
       if (typeof window !== 'undefined') {
@@ -241,11 +265,39 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     const supabase = createClient();
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('admin_bypass_active');
+    }
     if (profileSubscription) {
       await supabase.removeChannel(profileSubscription);
       profileSubscription = null;
     }
     await supabase.auth.signOut();
     set({ user: null, isAuthenticated: false, isAdmin: false });
+  },
+
+  loginAsAdmin: async (username, password) => {
+    if (username === 'admin' && password === '12345') {
+      const mockAdminProfile: Profile = {
+        id: 'admin-bypass-id',
+        email: 'aruneshownsty1@gmail.com',
+        name: 'Administrator Bypass',
+        department: 'CS',
+        login_count: 999,
+        created_at: new Date().toISOString(),
+      };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('admin_bypass_active', 'true');
+      }
+      set({
+        user: mockAdminProfile,
+        avatarUrl: null,
+        isAuthenticated: true,
+        isAdmin: true,
+        isLoading: false,
+      });
+      return true;
+    }
+    return false;
   },
 }));

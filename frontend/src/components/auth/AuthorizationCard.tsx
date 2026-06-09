@@ -5,9 +5,11 @@ import { useAuthStore } from '@/store/authStore';
 import { useState } from 'react';
 
 export default function AuthorizationCard() {
-  const { signInWithGoogle } = useAuthStore();
+  const { signInWithGoogle, loginAsAdmin } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSignIn = async () => {
     setError(null);
@@ -16,6 +18,26 @@ export default function AuthorizationCard() {
       await signInWithGoogle();
     } catch {
       setError('Authentication failed. Please try again.');
+      setIsLoading(false);
+    }
+  };
+
+  const handleBypassSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!username.trim() || !password.trim()) {
+      setError('Please fill in all operator credentials.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const success = await loginAsAdmin(username.trim(), password.trim());
+      if (!success) {
+        setError('Invalid operator credentials.');
+        setIsLoading(false);
+      }
+    } catch {
+      setError('Bypass authorization failed.');
       setIsLoading(false);
     }
   };
@@ -37,7 +59,7 @@ export default function AuthorizationCard() {
 
       {/* Auth Card */}
       <div
-        className="relative glass-panel-green px-10 py-12 w-[340px] md:w-[380px] flex flex-col items-center gap-6"
+        className="relative glass-panel-green px-10 py-10 w-[340px] md:w-[380px] flex flex-col items-center gap-5"
       >
         {/* Title */}
         <h1
@@ -57,6 +79,7 @@ export default function AuthorizationCard() {
 
         {/* Google Sign In Button */}
         <button
+          type="button"
           onClick={handleSignIn}
           disabled={isLoading}
           className="w-full flex items-center justify-center gap-3 px-6 py-3 bg-white text-gray-800 rounded-lg font-rajdhani font-semibold text-sm tracking-wide hover:bg-gray-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -84,12 +107,52 @@ export default function AuthorizationCard() {
           {isLoading ? 'Connecting...' : 'Sign in with Google'}
         </button>
 
+        {/* Divider */}
+        <div className="flex items-center gap-2 w-full my-1">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/10" />
+          <span className="font-mono text-[9px] text-white/30 uppercase tracking-[2px] whitespace-nowrap">
+            OR BYPASS WITH KEY
+          </span>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/10" />
+        </div>
+
+        {/* Bypass Form */}
+        <form onSubmit={handleBypassSubmit} className="w-full flex flex-col gap-3">
+          <div className="flex flex-col gap-1.5 text-left">
+            <input
+              type="text"
+              placeholder="Operator ID"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={isLoading}
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-text-white font-mono text-xs focus:outline-none focus:border-terminal-green transition-colors"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5 text-left">
+            <input
+              type="password"
+              placeholder="Passcode"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-text-white font-mono text-xs focus:outline-none focus:border-terminal-green transition-colors"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-2 bg-terminal-green/10 border border-terminal-green/30 text-terminal-green hover:bg-terminal-green/20 transition-all rounded-lg font-rajdhani text-xs font-semibold tracking-widest uppercase disabled:opacity-50"
+          >
+            {isLoading ? 'VERIFYING...' : '[ > AUTHORIZE KEY ]'}
+          </button>
+        </form>
+
         {/* Error Display */}
         {error && (
           <motion.p
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-warning-red font-mono text-xs text-center"
+            className="text-warning-red font-mono text-[10px] text-center"
           >
             {error}
           </motion.p>
@@ -99,7 +162,7 @@ export default function AuthorizationCard() {
         <div className="w-full h-px bg-gradient-to-r from-transparent via-terminal-green/40 to-transparent" />
 
         {/* Domain Notice */}
-        <p className="font-mono text-[11px] text-terminal-green tracking-wider">
+        <p className="font-mono text-[10px] text-terminal-green tracking-wider">
           @bitsathy.ac.in only
         </p>
       </div>
