@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
@@ -38,8 +38,29 @@ export default function AdminDashboard() {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
   const [onlineUserIds, setOnlineUserIds] = useState<string[]>([]);
+  const [systemMetrics, setSystemMetrics] = useState<{ totalUsers: number; totalVisits: number } | null>(null);
   const [replyingFeedbackId, setReplyingFeedbackId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
+
+  const fetchSystemMetrics = useCallback(async () => {
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc('get_system_metrics');
+    if (!error && data) {
+      setSystemMetrics({
+        totalUsers: Number(data.total_users) || 0,
+        totalVisits: Number(data.total_visits) || 0,
+      });
+      return;
+    }
+
+    const { data: profiles } = await supabase.from('profiles').select('login_count');
+    if (profiles) {
+      setSystemMetrics({
+        totalUsers: profiles.length,
+        totalVisits: profiles.reduce((acc: number, p: { login_count?: number }) => acc + (p.login_count || 0), 0),
+      });
+    }
+  }, []);
 
   useEffect(() => {
     fetchUser();
@@ -52,14 +73,28 @@ export default function AdminDashboard() {
       } else {
         fetchUsers();
         fetchFeedbacks();
+        fetchSystemMetrics();
       }
     }
-  }, [isAdmin, isLoading, router]);
+  }, [isAdmin, isLoading, router, fetchSystemMetrics]);
 
   useEffect(() => {
     if (!isAdmin) return;
 
     const supabase = createClient();
+
+    const metricsChannel = supabase
+      .channel('admin-system-metrics')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        () => {
+          fetchSystemMetrics();
+          fetchUsers();
+        }
+      )
+      .subscribe();
+
     const presenceChannel = supabase.channel('online-users', {
       config: {
         presence: {
@@ -84,9 +119,10 @@ export default function AdminDashboard() {
       });
 
     return () => {
+      supabase.removeChannel(metricsChannel);
       supabase.removeChannel(presenceChannel);
     };
-  }, [isAdmin, user]);
+  }, [isAdmin, user, fetchSystemMetrics]);
 
   const fetchUsers = async () => {
     const supabase = createClient();
@@ -196,6 +232,38 @@ export default function AdminDashboard() {
           </button>
         </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
+        >
+          <div className="bg-black/40 border border-arc-blue/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(0,217,255,0.05)]">
+            <p className="font-orbitron text-[10px] text-arc-blue/60 tracking-widest uppercase mb-2">Users Entered</p>
+            <p className="font-orbitron text-3xl text-arc-blue font-bold" style={{ textShadow: '0 0 12px rgba(0,217,255,0.4)' }}>
+              {systemMetrics ? systemMetrics.totalUsers : '—'}
+            </p>
+            <p className="font-mono text-[10px] text-white/40 mt-1">New signups only — returning users not counted</p>
+          </div>
+          <div className="bg-black/40 border border-arc-blue/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(0,217,255,0.05)]">
+            <p className="font-orbitron text-[10px] text-arc-blue/60 tracking-widest uppercase mb-2">System Access</p>
+            <p className="font-orbitron text-3xl text-white font-bold">
+              {systemMetrics ? systemMetrics.totalVisits : '—'}
+            </p>
+            <p className="font-mono text-[10px] text-white/40 mt-1">Total logins including repeat visits</p>
+          </div>
+          <div className="bg-black/40 border border-terminal-green/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(0,255,65,0.05)]">
+            <p className="font-orbitron text-[10px] text-terminal-green/60 tracking-widest uppercase mb-2 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-terminal-green animate-pulse" />
+              Online Now
+            </p>
+            <p className="font-orbitron text-3xl text-terminal-green font-bold" style={{ textShadow: '0 0 12px rgba(0,255,65,0.4)' }}>
+              {onlineUserIds.length}
+            </p>
+            <p className="font-mono text-[10px] text-white/40 mt-1">Currently active on the platform</p>
+          </div>
+        </motion.div>
+
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -203,16 +271,9 @@ export default function AdminDashboard() {
           className="bg-black/40 border border-arc-blue/20 rounded-xl backdrop-blur-md overflow-hidden shadow-[0_0_30px_rgba(0,217,255,0.05)]"
         >
           <div className="p-6 border-b border-arc-blue/20 bg-arc-blue/5">
-            <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-arc-blue shadow-[0_0_8px_rgba(0,217,255,1)] animate-pulse" />
-                Registered Personnel Directory
-              </div>
-              {onlineUserIds.length > 0 && (
-                <span className="text-[10px] font-orbitron text-terminal-green px-2 py-0.5 border border-terminal-green/30 bg-terminal-green/10 rounded tracking-widest uppercase animate-pulse">
-                  {onlineUserIds.length} Active
-                </span>
-              )}
+            <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-arc-blue shadow-[0_0_8px_rgba(0,217,255,1)] animate-pulse" />
+              Registered Personnel Directory
             </h2>
           </div>
           
