@@ -16,15 +16,17 @@ export default function FeedbackForm({ mobileInline, onOpen }: Props) {
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!message.trim() || !user) return;
 
     setIsSubmitting(true);
+    setError('');
     const supabase = createClient();
 
-    const { error } = await supabase
+    const { error: err } = await supabase
       .from('user_feedbacks')
       .insert({
         user_id: user.id,
@@ -33,7 +35,7 @@ export default function FeedbackForm({ mobileInline, onOpen }: Props) {
 
     setIsSubmitting(false);
 
-    if (!error) {
+    if (!err) {
       setSubmitted(true);
       setTimeout(() => {
         setIsOpen(false);
@@ -41,13 +43,21 @@ export default function FeedbackForm({ mobileInline, onOpen }: Props) {
         setMessage('');
       }, 3000);
     } else {
-      console.error('Failed to submit feedback:', error);
+      setError(err.message || 'Failed to submit feedback');
     }
   };
 
   const openModal = () => {
     onOpen?.();
+    setError('');
     setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    setError('');
+    setSubmitted(false);
+    setMessage('');
   };
 
   const fabClass = mobileInline
@@ -91,7 +101,7 @@ export default function FeedbackForm({ mobileInline, onOpen }: Props) {
               style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
             >
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={closeModal}
                 className="absolute top-4 right-4 text-text-white/50 hover:text-white transition-colors p-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -114,6 +124,11 @@ export default function FeedbackForm({ mobileInline, onOpen }: Props) {
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                  {error && (
+                    <p className="font-mono text-xs text-warning-red bg-warning-red/10 border border-warning-red/30 rounded-lg p-3">
+                      {error}
+                    </p>
+                  )}
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}

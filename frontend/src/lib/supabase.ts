@@ -21,9 +21,10 @@ const hasValidEnv =
 
 class MockQueryBuilder {
   private table: string;
-  private operation: 'select' | 'update' | 'upsert' = 'select';
+  private operation: 'select' | 'insert' | 'update' | 'upsert' = 'select';
   private filters: { type: string; column: string; value: any }[] = [];
   private orderVal: { column: string; ascending: boolean } | null = null;
+  private insertValues: any = null;
   private updateValues: any = null;
   private isSingle = false;
   private countOptions: { count?: string; head?: boolean } | null = null;
@@ -37,6 +38,12 @@ class MockQueryBuilder {
     if (options) {
       this.countOptions = options;
     }
+    return this;
+  }
+
+  insert(values: any) {
+    this.operation = 'insert';
+    this.insertValues = values;
     return this;
   }
 
@@ -149,6 +156,36 @@ class MockQueryBuilder {
         }
         setStorage('arc_os_question_views', data);
         data = this.updateValues;
+      }
+    } else if (this.table === 'user_feedbacks') {
+      const feedbacks = getStorage('arc_os_user_feedbacks', []);
+      if (this.operation === 'select') {
+        data = [...feedbacks];
+      } else if (this.operation === 'insert') {
+        const newFeedback = { id: Math.random().toString(36).substring(2), created_at: new Date().toISOString(), ...this.insertValues };
+        feedbacks.unshift(newFeedback);
+        setStorage('arc_os_user_feedbacks', feedbacks);
+        data = newFeedback;
+      } else if (this.operation === 'update') {
+        const idFilter = this.filters.find((f) => f.column === 'id');
+        if (idFilter) {
+          const index = feedbacks.findIndex((f: any) => f.id === idFilter.value);
+          if (index !== -1) {
+            feedbacks[index] = { ...feedbacks[index], ...this.updateValues };
+            setStorage('arc_os_user_feedbacks', feedbacks);
+            data = feedbacks[index];
+          }
+        }
+      }
+    } else if (this.table === 'admin_posts') {
+      const posts = getStorage('arc_os_admin_posts', []);
+      if (this.operation === 'select') {
+        data = [...posts];
+      } else if (this.operation === 'insert') {
+        const newPost = { id: Math.random().toString(36).substring(2), created_at: new Date().toISOString(), is_active: true, ...this.insertValues };
+        posts.unshift(newPost);
+        setStorage('arc_os_admin_posts', posts);
+        data = newPost;
       }
     } else if (this.table === 'settings') {
       const settings = getStorage('arc_os_settings', []);

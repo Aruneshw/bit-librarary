@@ -18,52 +18,26 @@ export default function PostComposer({ isOpen, onClose }: Props) {
   const [videoUrl, setVideoUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+
+  const reset = () => {
+    setTitle('');
+    setBody('');
+    setImageUrl('');
+    setVideoUrl('');
+    setSubmitted(false);
+    setError('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!body.trim() || !user) return;
 
     setIsSubmitting(true);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    setError('');
+
     const supabase = createClient();
-
-    if (apiUrl) {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const res = await fetch(`${apiUrl}/posts`, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${session.access_token}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              title: title.trim() || null,
-              body: body.trim(),
-              image_url: imageUrl.trim() || null,
-              video_url: videoUrl.trim() || null,
-            }),
-          });
-          if (res.ok) {
-            setSubmitted(true);
-            setTimeout(() => {
-              onClose();
-              setSubmitted(false);
-              setTitle('');
-              setBody('');
-              setImageUrl('');
-              setVideoUrl('');
-            }, 2000);
-            setIsSubmitting(false);
-            return;
-          }
-        }
-      } catch {
-        // fall through to supabase
-      }
-    }
-
-    const { error } = await supabase.from('admin_posts').insert({
+    const { error: err } = await supabase.from('admin_posts').insert({
       title: title.trim() || null,
       body: body.trim(),
       image_url: imageUrl.trim() || null,
@@ -73,17 +47,16 @@ export default function PostComposer({ isOpen, onClose }: Props) {
 
     setIsSubmitting(false);
 
-    if (!error) {
-      setSubmitted(true);
-      setTimeout(() => {
-        onClose();
-        setSubmitted(false);
-        setTitle('');
-        setBody('');
-        setImageUrl('');
-        setVideoUrl('');
-      }, 2000);
+    if (err) {
+      setError(err.message || 'Failed to publish post');
+      return;
     }
+
+    setSubmitted(true);
+    setTimeout(() => {
+      onClose();
+      reset();
+    }, 2000);
   };
 
   return (
@@ -103,7 +76,7 @@ export default function PostComposer({ isOpen, onClose }: Props) {
             style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }}
           >
             <button
-              onClick={onClose}
+              onClick={() => { onClose(); reset(); }}
               className="absolute top-4 right-4 text-text-white/50 hover:text-white transition-colors p-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -111,13 +84,13 @@ export default function PostComposer({ isOpen, onClose }: Props) {
 
             <div className="mb-6 flex flex-col items-center">
               <div className="w-10 h-10 rounded-full bg-arc-blue/10 border border-arc-blue/30 flex items-center justify-center mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-arc-blue"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-arc-blue"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
               </div>
               <h3 className="font-orbitron text-lg sm:text-xl text-arc-blue tracking-widest text-center">
-                {isAdmin ? 'PUBLISH MEDIA' : 'SHARE MEDIA'}
+                {isAdmin ? 'PUBLISH MESSAGE' : 'SHARE POST'}
               </h3>
               <p className="font-mono text-xs text-text-white/50 mt-1 text-center">
-                Share images and videos with everyone
+                {isAdmin ? 'Send an announcement to all users' : 'Share images and videos with everyone'}
               </p>
             </div>
 
@@ -126,10 +99,15 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                 <div className="w-12 h-12 rounded-full border-2 border-terminal-green flex items-center justify-center mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-terminal-green"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 </div>
-                <p className="font-orbitron text-terminal-green text-lg tracking-wider">POST SHARED</p>
+                <p className="font-orbitron text-terminal-green text-lg tracking-wider">PUBLISHED</p>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                {error && (
+                  <p className="font-mono text-xs text-warning-red bg-warning-red/10 border border-warning-red/30 rounded-lg p-3">
+                    {error}
+                  </p>
+                )}
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -139,28 +117,32 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                 <textarea
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  placeholder="Write something about your media..."
-                  className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-3 text-text-white font-mono text-base sm:text-sm min-h-[80px] focus:outline-none focus:border-arc-blue focus:ring-1 focus:ring-arc-blue transition-all resize-none placeholder:text-text-white/20"
+                  placeholder={isAdmin ? 'Write your announcement...' : 'Write something about your media...'}
+                  className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-3 text-text-white font-mono text-base sm:text-sm min-h-[100px] focus:outline-none focus:border-arc-blue focus:ring-1 focus:ring-arc-blue transition-all resize-none placeholder:text-text-white/20"
                   required
                 />
-                <input
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="Image URL (optional)"
-                  className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-3 text-text-white font-mono text-base sm:text-sm focus:outline-none focus:border-arc-blue focus:ring-1 focus:ring-arc-blue transition-all placeholder:text-text-white/20"
-                />
-                <input
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="YouTube or video URL (optional)"
-                  className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-3 text-text-white font-mono text-base sm:text-sm focus:outline-none focus:border-arc-blue focus:ring-1 focus:ring-arc-blue transition-all placeholder:text-text-white/20"
-                />
+                {!isAdmin && (
+                  <>
+                    <input
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      placeholder="Image URL (optional)"
+                      className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-3 text-text-white font-mono text-base sm:text-sm focus:outline-none focus:border-arc-blue focus:ring-1 focus:ring-arc-blue transition-all placeholder:text-text-white/20"
+                    />
+                    <input
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      placeholder="YouTube or video URL (optional)"
+                      className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-3 text-text-white font-mono text-base sm:text-sm focus:outline-none focus:border-arc-blue focus:ring-1 focus:ring-arc-blue transition-all placeholder:text-text-white/20"
+                    />
+                  </>
+                )}
                 <button
                   type="submit"
                   disabled={isSubmitting || !body.trim()}
                   className="w-full px-6 py-3 bg-arc-blue/10 border border-arc-blue text-arc-blue font-orbitron text-sm font-bold tracking-wider rounded hover:bg-arc-blue/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? 'SHARING...' : isAdmin ? 'PUBLISH POST' : 'SHARE POST'}
+                  {isSubmitting ? 'PUBLISHING...' : 'PUBLISH'}
                 </button>
               </form>
             )}
