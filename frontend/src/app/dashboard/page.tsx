@@ -338,7 +338,7 @@ export default function DashboardPage() {
 
         {/* Feed tabs */}
         {!subjectsLoading && introComplete && (
-          <div className="w-full max-w-2xl mx-auto px-4 pt-4">
+          <div className="w-full max-w-2xl mx-auto px-4 pt-20 sm:pt-24">
             <div className="flex items-center justify-between mb-3">
               <div className="flex gap-1 bg-arc-blue/5 border border-arc-blue/20 rounded-lg p-1">
                 <button
