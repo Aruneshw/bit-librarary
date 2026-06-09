@@ -17,16 +17,19 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
 
-  // Dynamic telemetry values that change rapidly to look authentic and complex
+  // Dynamic telemetry values
   const [voltage, setVoltage] = useState('1.205V');
   const [temp, setTemp] = useState('42.8°C');
-  const [dataStream, setDataStream] = useState<string[]>([]);
+  const [dataStreamLeft, setDataStreamLeft] = useState<string[]>([]);
+  const [dataStreamRight, setDataStreamRight] = useState<string[]>([]);
+  
+  // Oscilloscope wave offset
+  const [waveOffset, setWaveOffset] = useState(0);
 
   // Equalizer ladders values
   const [leftLadder, setLeftLadder] = useState<number[]>([3, 5, 2, 6, 4, 7, 3, 5]);
   const [rightLadder, setRightLadder] = useState<number[]>([4, 2, 7, 5, 3, 6, 2, 4]);
 
-  // Ref to track typing timer
   const typeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Blinking cursor
@@ -35,25 +38,40 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
     return () => clearInterval(interval);
   }, []);
 
+  // Wave offset animation loop
+  useEffect(() => {
+    let animId: number;
+    const tick = () => {
+      setWaveOffset((prev) => (prev + 0.15) % (Math.PI * 2));
+      animId = requestAnimationFrame(tick);
+    };
+    animId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
   // Rapidly updating telemetry values
   useEffect(() => {
     const interval = setInterval(() => {
       setVoltage((1.18 + Math.random() * 0.05).toFixed(3) + 'V');
       setTemp((41.5 + Math.random() * 2.5).toFixed(1) + '°C');
-    }, 400);
+    }, 350);
     return () => clearInterval(interval);
   }, []);
 
-  // Scrolling hex data stream on the margins
+  // Scrolling hex data streams
   useEffect(() => {
     const interval = setInterval(() => {
-      const hexChars = '0123456789ABCDEF';
-      let line = '';
-      for (let i = 0; i < 4; i++) {
-        line += hexChars[Math.floor(Math.random() * 16)] + hexChars[Math.floor(Math.random() * 16)] + ' ';
-      }
-      setDataStream((prev) => [line, ...prev.slice(0, 12)]);
-    }, 150);
+      const hex = '0123456789ABCDEF';
+      const makeLine = () => {
+        let line = '';
+        for (let i = 0; i < 4; i++) {
+          line += hex[Math.floor(Math.random() * 16)] + hex[Math.floor(Math.random() * 16)] + ' ';
+        }
+        return line;
+      };
+      setDataStreamLeft((prev) => [makeLine(), ...prev.slice(0, 10)]);
+      setDataStreamRight((prev) => [makeLine(), ...prev.slice(0, 10)]);
+    }, 180);
     return () => clearInterval(interval);
   }, []);
 
@@ -77,25 +95,20 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
     }
   }, [phase]);
 
-  // Loading progress counter (staggered to take exactly 10 seconds total)
-  // Progress takes ~6.5 seconds, Assembled takes ~2.5 seconds, Transition takes 1.0 second.
+  // Loading progress counter (takes exactly 10 seconds total: 6.5s loading + 2.5s assembled + 1.0s transition)
   useEffect(() => {
     if (phase !== 'loading') return;
 
     const interval = setInterval(() => {
       setProgress((prev) => {
-        // Increment by small steps to span ~6.5 seconds (6500ms / 100ms = 65 steps)
-        const step = Math.floor(Math.random() * 2) + 1.2; // average 1.5% per tick
+        const step = Math.floor(Math.random() * 2) + 1.2; // ~1.5% per tick
         const next = Math.min(prev + step, 100);
 
-        const roundedNext = Math.floor(next);
-
-        if (roundedNext < 100) {
+        if (Math.floor(next) < 100) {
           if (Math.random() > 0.4) {
             audioService.playTypeClick();
           }
         } else {
-          // Finished loading
           clearInterval(interval);
           audioService.playDiagnosticPing();
           setTimeout(() => {
@@ -103,7 +116,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
             setTimeout(() => {
               setPhase('transition');
               setTimeout(onComplete, 1000);
-            }, 2500); // 2.5 seconds assembled phase
+            }, 2500);
           }, 300);
         }
         return next;
@@ -127,7 +140,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
         if (Math.random() > 0.55) {
           audioService.playTypeClick();
         }
-        typeTimerRef.current = setTimeout(typeChar, 45);
+        typeTimerRef.current = setTimeout(typeChar, 40);
       } else {
         setTerminalLines((prev) => [...prev, line.text]);
         setCurrentLineText('');
@@ -162,10 +175,10 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
           key={i}
           points={`${xTop},458 ${xTop + 14},458 ${xBottom + 14},542 ${xBottom},542`}
           fill={isFilled ? '#00d9ff' : 'none'}
-          stroke={isFilled ? 'none' : 'rgba(0, 217, 255, 0.22)'}
+          stroke={isFilled ? 'none' : 'rgba(0, 217, 255, 0.25)'}
           strokeWidth={isFilled ? 0 : 1.2}
           style={{
-            filter: isFilled ? 'drop-shadow(0 0 7px rgba(0, 217, 255, 0.95))' : 'none',
+            filter: isFilled ? 'drop-shadow(0 0 8px rgba(0, 217, 255, 0.95))' : 'none',
             transition: 'fill 0.12s ease, stroke 0.12s ease'
           }}
         />
@@ -177,7 +190,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
   // Curved grid density
   const renderSphericalGrid = () => {
     const lines = [];
-    const resolution = 28; // Higher density for more complex detail
+    const resolution = 28;
     for (let i = 1; i < resolution; i++) {
       const ratio = i / resolution;
       const pos = ratio * 1000;
@@ -207,9 +220,19 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
     return lines;
   };
 
+  // Generate sine wave points for oscilloscope
+  const generateWavePath = (startX: number, startY: number, width: number) => {
+    const points = [];
+    for (let x = 0; x <= width; x += 4) {
+      const y = Math.sin(x * 0.08 + waveOffset) * 10 + startY;
+      points.push(`${startX + x},${y}`);
+    }
+    return `M ${points.join(' L ')}`;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-between bg-black overflow-hidden select-none font-mono p-4 md:p-8">
-      {/* Dynamic scanlines & rotations */}
+      {/* Global CSS for animations */}
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes spin-clockwise {
           0% { transform: rotate(0deg); }
@@ -221,30 +244,38 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
         }
         @keyframes scan-radar {
           0% { transform: translateY(-100vh); opacity: 0; }
-          15% { opacity: 0.45; }
-          85% { opacity: 0.45; }
+          15% { opacity: 0.4; }
+          85% { opacity: 0.4; }
           100% { transform: translateY(100vh); opacity: 0; }
-        }
-        @keyframes pulse-glowing {
-          0%, 100% { opacity: 0.2; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.02); }
         }
       `}} />
 
       {/* Cybernetic Scanlines */}
-      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%)] bg-[size:100%_4px] z-40 opacity-25" />
+      <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.22)_50%)] bg-[size:100%_4px] z-40 opacity-20" />
 
       {/* Laser Radar Line */}
-      <div className="absolute inset-x-0 top-0 h-[2px] bg-arc-blue/35 shadow-[0_0_20px_#00d9ff] pointer-events-none z-30" style={{ animation: 'scan-radar 7s linear infinite' }} />
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-arc-blue/35 shadow-[0_0_15px_#00d9ff] pointer-events-none z-30" style={{ animation: 'scan-radar 6.5s linear infinite' }} />
 
       {/* CRT Vignette/Glow */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)] z-20" />
 
-      {/* Fullscreen Canvas Wrapper */}
-      <div className="relative w-full h-full max-w-[1450px] max-h-[950px] flex flex-col items-center justify-between z-10">
-        
+      {/* Fullscreen Parallax perspective wrapper */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, rotateX: 20 }}
+        animate={{ opacity: 1, scale: 1, rotateX: 10, rotateY: -8 }}
+        exit={{ opacity: 0, scale: 1.05, rotateX: -15, y: -10, filter: 'blur(10px)' }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full h-full max-w-[1450px] max-h-[950px] flex flex-col items-center justify-between z-10"
+        style={{
+          transformStyle: 'preserve-3d',
+          perspective: '1200px',
+        }}
+      >
         {/* TOP STATUS SYSTEM BAR */}
-        <div className="w-full flex justify-between items-center text-[8px] md:text-[10px] text-arc-blue/50 border-b border-arc-blue/15 pb-2.5">
+        <div 
+          className="w-full flex justify-between items-center text-[8px] md:text-[10px] text-arc-blue/50 border-b border-arc-blue/15 pb-2.5"
+          style={{ transform: 'translateZ(20px)' }}
+        >
           <div className="flex gap-6 items-center">
             <span className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-arc-blue animate-pulse"></span>ARC_SYS: CHARGING</span>
             <span>CORE_VOLT: {voltage}</span>
@@ -263,14 +294,20 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
         {/* HUD CONTENT CANVAS */}
         <div className="relative flex-1 w-full flex items-center justify-center">
           
-          {/* Scrolling hex code streams on far margins for high complexity */}
-          <div className="absolute left-2 top-1/4 bottom-1/4 hidden xl:flex flex-col text-[7px] text-arc-blue/25 text-left select-none overflow-hidden h-[300px]">
-            {dataStream.map((line, idx) => (
+          {/* Scrolling hex data streams on far margins */}
+          <div 
+            className="absolute left-2 top-1/4 bottom-1/4 hidden xl:flex flex-col text-[7px] text-arc-blue/20 text-left select-none overflow-hidden h-[250px]"
+            style={{ transform: 'translateZ(10px)' }}
+          >
+            {dataStreamLeft.map((line, idx) => (
               <div key={idx} className="font-mono tracking-wider">{line}</div>
             ))}
           </div>
-          <div className="absolute right-2 top-1/4 bottom-1/4 hidden xl:flex flex-col text-[7px] text-arc-blue/25 text-right select-none overflow-hidden h-[300px]">
-            {dataStream.map((line, idx) => (
+          <div 
+            className="absolute right-2 top-1/4 bottom-1/4 hidden xl:flex flex-col text-[7px] text-arc-blue/20 text-right select-none overflow-hidden h-[250px]"
+            style={{ transform: 'translateZ(10px)' }}
+          >
+            {dataStreamRight.map((line, idx) => (
               <div key={idx} className="font-mono tracking-wider">{line}</div>
             ))}
           </div>
@@ -281,8 +318,8 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* 1. Curved CRT Spherical Grid */}
-            <g mask="url(#grid-mask-fs)">
+            {/* 1. Curved CRT Spherical Grid - Placed Deep in 3D Space */}
+            <g mask="url(#grid-mask-fs)" style={{ transform: 'translateZ(-40px)' }}>
               {renderSphericalGrid()}
             </g>
 
@@ -297,39 +334,47 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
               </mask>
             </defs>
 
-            {/* Floating micro target crosshairs for complexity */}
-            <path d="M 200,250 L 210,250 M 205,245 L 205,255" stroke="rgba(0, 217, 255, 0.2)" strokeWidth="0.8" />
-            <circle cx="205" cy="250" r="8" stroke="rgba(0, 217, 255, 0.12)" strokeWidth="0.5" />
-            <path d="M 790,250 L 800,250 M 795,245 L 795,255" stroke="rgba(0, 217, 255, 0.2)" strokeWidth="0.8" />
-            <circle cx="795" cy="250" r="8" stroke="rgba(0, 217, 255, 0.12)" strokeWidth="0.5" />
+            {/* Target Locking Reticles & Oscilloscope Waveforms (Placed at translateZ=10px) */}
+            <g style={{ transform: 'translateZ(10px)' }}>
+              {/* Corner target reticles */}
+              <path d="M 150,220 L 160,220 M 155,215 L 155,225" stroke="rgba(0, 217, 255, 0.25)" strokeWidth="0.8" />
+              <circle cx="155" cy="220" r="8" stroke="rgba(0, 217, 255, 0.15)" strokeWidth="0.5" />
+              <path d="M 840,220 L 850,220 M 845,215 L 845,225" stroke="rgba(0, 217, 255, 0.25)" strokeWidth="0.8" />
+              <circle cx="845" cy="220" r="8" stroke="rgba(0, 217, 255, 0.15)" strokeWidth="0.5" />
 
-            {/* 2. Lens Bounding Frame */}
-            <path
-              d="M 80,500 Q 500,140 920,500 Q 500,860 80,500 Z"
-              stroke="rgba(0, 217, 255, 0.2)"
-              strokeWidth="1"
-              fill="none"
-            />
-            {/* Secondary concentric lens outline */}
-            <path
-              d="M 94,500 Q 500,160 906,500 Q 500,840 94,500 Z"
-              stroke="rgba(0, 217, 255, 0.12)"
-              strokeWidth="0.8"
-              fill="none"
-            />
+              {/* Bottom active oscilloscope waveforms */}
+              <path d={generateWavePath(120, 880, 160)} stroke="#00d9ff" strokeWidth="1.2" fill="none" style={{ filter: 'drop-shadow(0 0 4px rgba(0, 217, 255, 0.6))' }} />
+              <text x="120" y="904" fill="rgba(0, 217, 255, 0.4)" fontSize="7" tracking-wider>OSCILLOSCOPE_01_INPUT</text>
 
-            {/* Vertex triangles on the far edges */}
-            <polygon points="90,495 90,505 98,500" fill="rgba(0, 217, 255, 0.6)" />
-            <polygon points="910,495 910,505 902,500" fill="rgba(0, 217, 255, 0.6)" />
+              <path d={generateWavePath(720, 880, 160)} stroke="#00d9ff" strokeWidth="1.2" fill="none" style={{ filter: 'drop-shadow(0 0 4px rgba(0, 217, 255, 0.6))' }} />
+              <text x="720" y="904" fill="rgba(0, 217, 255, 0.4)" fontSize="7" tracking-wider>OSCILLOSCOPE_02_INPUT</text>
+            </g>
 
-            {/* Decorative ticks on top/bottom of lens */}
-            <path d="M 500,172 L 525,182 M 500,172 L 475,182" stroke="rgba(0, 217, 255, 0.45)" strokeWidth="1.5" />
-            <path d="M 500,828 L 525,818 M 500,828 L 475,818" stroke="rgba(0, 217, 255, 0.45)" strokeWidth="1.5" />
+            {/* 2. Lens Bounding Frame (translateZ=0px) */}
+            <g style={{ transform: 'translateZ(0px)' }}>
+              <path
+                d="M 80,500 Q 500,140 920,500 Q 500,860 80,500 Z"
+                stroke="rgba(0, 217, 255, 0.2)"
+                strokeWidth="1"
+                fill="none"
+              />
+              <path
+                d="M 94,500 Q 500,160 906,500 Q 500,840 94,500 Z"
+                stroke="rgba(0, 217, 255, 0.1)"
+                strokeWidth="0.8"
+                fill="none"
+              />
 
-            {/* 3. Skewed Loading Bar Container (0-99% progress) */}
-            <g style={{ display: phase === 'loading' ? 'block' : 'none' }}>
+              <polygon points="90,495 90,505 98,500" fill="rgba(0, 217, 255, 0.6)" />
+              <polygon points="910,495 910,505 902,500" fill="rgba(0, 217, 255, 0.6)" />
+
+              <path d="M 500,172 L 525,182 M 500,172 L 475,182" stroke="rgba(0, 217, 255, 0.4)" strokeWidth="1.5" />
+              <path d="M 500,828 L 525,818 M 500,828 L 475,818" stroke="rgba(0, 217, 255, 0.4)" strokeWidth="1.5" />
+            </g>
+
+            {/* 3. Skewed Loading Bar Container (translateZ=15px) */}
+            <g style={{ display: phase === 'loading' ? 'block' : 'none', transform: 'translateZ(15px)' }}>
               
-              {/* Outer stadium outline */}
               <polygon
                 points="218,446 782,446 816,554 184,554"
                 stroke="rgba(0, 217, 255, 0.35)"
@@ -337,7 +382,6 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                 fill="none"
               />
 
-              {/* Inner stadium outline */}
               <polygon
                 points="224,452 776,452 808,548 192,548"
                 stroke="#00d9ff"
@@ -346,10 +390,9 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                 style={{ filter: 'drop-shadow(0 0 6px rgba(0, 217, 255, 0.5))' }}
               />
 
-              {/* Slanted Blocks */}
               {renderSlantedBlocks()}
 
-              {/* Hexagon core mask container */}
+              {/* Hexagon core mask */}
               <polygon
                 points="500,432 555,465 555,535 500,568 445,535 445,465"
                 fill="black"
@@ -358,7 +401,6 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                 style={{ filter: 'drop-shadow(0 0 10px rgba(0, 217, 255, 0.75))' }}
               />
               
-              {/* Charging text */}
               <text
                 x="500"
                 y="505"
@@ -386,10 +428,10 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
               </text>
             </g>
 
-            {/* 4. Highly Complex Concentric Dial Assembly (Assembled Phase) */}
-            <g style={{ display: phase !== 'loading' ? 'block' : 'none' }}>
+            {/* 4. Highly Complex Orbital Ring Assembly (translateZ=25px) */}
+            <g style={{ display: phase !== 'loading' ? 'block' : 'none', transform: 'translateZ(25px)' }}>
               
-              {/* Outermost dotted circular boundary */}
+              {/* Orbital Ring 1: Dotted boundary */}
               <circle
                 cx="500"
                 cy="500"
@@ -399,18 +441,16 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                 strokeDasharray="4 8"
               />
 
-              {/* Compass ticks circle */}
-              <circle
-                cx="500"
-                cy="500"
-                r="225"
-                stroke="rgba(0, 217, 255, 0.2)"
-                strokeWidth="1"
-                strokeDasharray="2 38"
-                style={{ transformOrigin: '500px 500px', animation: 'spin-clockwise 30s linear infinite' }}
-              />
+              {/* Orbital Ring 2: Rotating Compass Degree Markings */}
+              <g style={{ transformOrigin: '500px 500px' }} className="animate-[spin-clockwise_35s_linear_infinite]">
+                <circle cx="500" cy="500" r="225" stroke="rgba(0, 217, 255, 0.15)" strokeWidth="0.8" strokeDasharray="1 19" />
+                <text x="500" y="282" fill="rgba(0, 217, 255, 0.35)" fontSize="5.5" textAnchor="middle">000°</text>
+                <text x="718" y="502" fill="rgba(0, 217, 255, 0.35)" fontSize="5.5" textAnchor="middle">090°</text>
+                <text x="500" y="722" fill="rgba(0, 217, 255, 0.35)" fontSize="5.5" textAnchor="middle">180°</text>
+                <text x="282" y="502" fill="rgba(0, 217, 255, 0.35)" fontSize="5.5" textAnchor="middle">270°</text>
+              </g>
 
-              {/* Concentric Circle 1: Notched Dial */}
+              {/* Orbital Ring 3: Rotating Notched Dial */}
               <circle
                 cx="500"
                 cy="500"
@@ -421,7 +461,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                 style={{ transformOrigin: '500px 500px', animation: 'spin-clockwise 20s linear infinite' }}
               />
 
-              {/* Concentric Circle 2: Fine ruler scales */}
+              {/* Orbital Ring 4: Fine ticks scale circle */}
               <circle
                 cx="500"
                 cy="500"
@@ -448,7 +488,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                 style={{ filter: 'drop-shadow(0 0 5px rgba(0, 217, 255, 0.6))' }}
               />
 
-              {/* Inner dials */}
+              {/* Orbital Ring 5: Rotating Inner Dial */}
               <circle
                 cx="500"
                 cy="500"
@@ -467,18 +507,17 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                 strokeWidth="0.8"
               />
 
-              {/* Triangles surrounding dials */}
+              {/* Triangles */}
               <polygon points="500,324 493,313 507,313" fill="#00d9ff" />
               <polygon points="500,676 493,687 507,687" fill="#00d9ff" />
               <polygon points="324,500 313,493 313,507" fill="#00d9ff" />
               <polygon points="676,500 687,493 687,507" fill="#00d9ff" />
 
-              {/* ROTATING HAZARD SYMBOL CORE */}
+              {/* CORE HAZARD CORE (translateZ=40px) */}
               <g 
-                style={{ transformOrigin: '500px 500px' }}
+                style={{ transformOrigin: '500px 500px', transform: 'translateZ(40px)' }}
                 className="animate-[spin-clockwise_18s_linear_infinite]"
               >
-                {/* Core solid center node */}
                 <circle 
                   cx="500" 
                   cy="500" 
@@ -487,14 +526,12 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                   style={{ filter: 'drop-shadow(0 0 6px rgba(0, 217, 255, 0.95))' }}
                 />
 
-                {/* Highly-accurate nuclear wedges */}
                 <g fill="#00d9ff" style={{ filter: 'drop-shadow(0 0 8px rgba(0, 217, 255, 0.85))' }}>
                   <path d="M 490,468 L 510,468 L 522,406 L 478,406 Z" />
                   <path d="M 490,468 L 510,468 L 522,406 L 478,406 Z" transform="rotate(120, 500, 500)" />
                   <path d="M 490,468 L 510,468 L 522,406 L 478,406 Z" transform="rotate(240, 500, 500)" />
                 </g>
 
-                {/* Nested safety ring */}
                 <circle 
                   cx="500" 
                   cy="500" 
@@ -506,7 +543,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
               </g>
 
               {/* NUK3D Core Tag Overlay */}
-              <g transform="translate(500, 596)">
+              <g transform="translate(500, 596)" style={{ transform: 'translateZ(45px)' }}>
                 <rect 
                   x="-35" 
                   y="-9" 
@@ -533,12 +570,14 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
         </div>
 
         {/* BOTTOM SECTION: CONSOLE LOGGER AND DATA LADDERS */}
-        <div className="w-full max-w-[850px] flex flex-col items-center gap-4">
+        <div 
+          className="w-full max-w-[850px] flex flex-col items-center gap-4"
+          style={{ transform: 'translateZ(25px)' }}
+        >
           
           {/* Dynamic Music/Telemetry Equalizer Ladders next to Core */}
           {phase === 'assembled' && (
             <div className="flex gap-24 justify-center items-center h-8 z-25">
-              {/* Left Ladder */}
               <div className="flex gap-1 h-6 items-end">
                 {leftLadder.map((val, idx) => (
                   <div key={idx} className="w-2 flex flex-col gap-0.5">
@@ -556,12 +595,10 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                 ))}
               </div>
 
-              {/* Status Header Badge */}
               <span className="shadow-[0_0_15px_rgba(0,217,255,0.4)] bg-arc-blue/15 px-4 py-1.5 border border-arc-blue/30 rounded-xl text-arc-blue text-[9px] md:text-[11px] font-bold tracking-[0.25em] animate-pulse">
                 CORE STATUS: FULLY ASSEMBLED
               </span>
 
-              {/* Right Ladder */}
               <div className="flex gap-1 h-6 items-end">
                 {rightLadder.map((val, idx) => (
                   <div key={idx} className="w-2 flex flex-col gap-0.5">
@@ -616,17 +653,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
 
         </div>
 
-      </div>
-
-      {/* Screen flash transition warp */}
-      {phase === 'transition' && (
-        <motion.div
-          className="absolute inset-0 bg-arc-blue z-50 mix-blend-screen"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 0.95, 0] }}
-          transition={{ duration: 0.9, ease: 'easeInOut' }}
-        />
-      )}
+      </motion.div>
     </div>
   );
 }
