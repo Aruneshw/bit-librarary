@@ -1,4 +1,5 @@
-import { type Subject, type Question } from '@/types';
+import { type Subject, type Question, type Event } from '@/types';
+
 
 export const MOCK_SUBJECTS: Subject[] = [
   {
@@ -416,3 +417,95 @@ export const MOCK_QUESTIONS: Question[] = [
     order_index: 5,
   },
 ];
+
+export const MOCK_EVENTS: Event[] = [
+  {
+    id: 'e1000000-0000-0000-0000-000000000001',
+    name: 'The AI Hack',
+    organizer: 'Department of Computer Science and Engineering',
+    registration_deadline: 'Jun 01, 2026',
+    event_dates: 'May 09 - Jun 01, 2026',
+    prizes: '5 non-cash prizes',
+    registration_link: 'https://the-ai-hack.devpost.com/',
+    status: 'NEW - [2026-06-01]',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'e1000000-0000-0000-0000-000000000002',
+    name: 'AI Season of Code',
+    organizer: 'Vertex Coding Club',
+    registration_deadline: 'Jun 01, 2026',
+    event_dates: 'May 30 - Jun 01, 2026',
+    prizes: '5 non-cash prizes',
+    registration_link: 'https://ai-season-of-code.devpost.com/',
+    status: 'NEW - [2026-06-01]',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'e1000000-0000-0000-0000-000000000003',
+    name: 'NACOS x GDG AI Hackathon',
+    organizer: 'Google Developer Group LMU',
+    registration_deadline: 'Jun 30, 2026',
+    event_dates: 'Apr 01 - Jun 30, 2026',
+    prizes: '3 non-cash prizes',
+    registration_link: 'https://nacos-x-gdg-ai-hackathon.devpost.com/',
+    status: 'NEW - [2026-06-01]',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'e1000000-0000-0000-0000-000000000004',
+    name: 'Global AI Hackathon Series with Qwen Cloud',
+    organizer: 'Alibaba Cloud',
+    registration_deadline: 'Jul 09, 2026',
+    event_dates: 'May 26 - Jul 09, 2026',
+    prizes: '$45,000',
+    registration_link: 'https://qwencloud-hackathon.devpost.com/',
+    status: 'NEW - [2026-06-01]',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'e1000000-0000-0000-0000-000000000005',
+    name: 'Build the Future with AI - From Code to No-Code',
+    organizer: 'Innovation Hacks',
+    registration_deadline: 'Jun 30, 2026',
+    event_dates: 'May 31 - Jun 30, 2026',
+    prizes: '7 non-cash prizes',
+    registration_link: 'https://build-the-future-with-ai.devpost.com/',
+    status: 'NEW - [2026-06-01]',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'e1000000-0000-0000-0000-000000000006',
+    name: 'Google Cloud Rapid Agent Hackathon',
+    organizer: 'Google',
+    registration_deadline: 'Jun 11, 2026',
+    event_dates: 'May 05 - Jun 11, 2026',
+    prizes: '$50,000',
+    registration_link: 'https://rapid-agent.devpost.com/',
+    status: 'NEW - [2026-06-01]',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'e1000000-0000-0000-0000-000000000007',
+    name: 'Build with Gemini XPRIZE',
+    organizer: 'XPRIZE',
+    registration_deadline: 'Aug 17, 2026',
+    event_dates: 'May 19 - Aug 17, 2026',
+    prizes: '$2,000,000',
+    registration_link: 'https://xprize.devpost.com/',
+    status: 'NEW - [2026-06-01]',
+    created_at: new Date().toISOString()
+  },
+  {
+    id: 'e1000000-0000-0000-0000-000000000008',
+    name: 'AI Nexus',
+    organizer: 'SRM Connects',
+    registration_deadline: 'Ongoing',
+    event_dates: 'Ongoing',
+    prizes: 'Not specified',
+    registration_link: 'https://unstop.com/hackathons/ai-nexus-srm-connects',
+    status: 'NEW - [2026-06-01]',
+    created_at: new Date().toISOString()
+  }
+];
+

@@ -111,3 +111,16 @@ export const SUBJECT_ICONS: Record<string, string> = {
   'Digital Computer Electronics': '🖥',
   'Tamils and Technology': '🏛',
 };
+
+export interface Event {
+  id: string;
+  name: string;
+  organizer: string | null;
+  registration_deadline: string | null;
+  event_dates: string | null;
+  prizes: string | null;
+  registration_link: string | null;
+  status: string | null;
+  created_at: string;
+}
+

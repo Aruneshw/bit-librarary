@@ -285,6 +285,12 @@ export default function DashboardPage() {
                 {user.department}
               </span>
             )}
+            <button
+              onClick={() => router.push('/events')}
+              className="font-rajdhani text-[10px] sm:text-xs text-arc-blue uppercase tracking-wider hover:text-white transition-colors border border-arc-blue/30 px-2 py-0.5 rounded bg-arc-blue/10"
+            >
+              Events
+            </button>
             {isAdmin && (
               <button
                 onClick={() => router.push('/admin')}

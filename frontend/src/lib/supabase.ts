@@ -1,5 +1,6 @@
 import { createBrowserClient } from '@supabase/ssr';
-import { MOCK_SUBJECTS, MOCK_QUESTIONS } from './mockData';
+import { MOCK_SUBJECTS, MOCK_QUESTIONS, MOCK_EVENTS } from './mockData';
+
 
 // Determine if we should use Mock Mode
 const hasValidEnv =
@@ -120,6 +121,9 @@ class MockQueryBuilder {
       data = [...MOCK_SUBJECTS];
     } else if (this.table === 'questions') {
       data = [...MOCK_QUESTIONS];
+    } else if (this.table === 'events') {
+      data = [...MOCK_EVENTS];
+
     } else if (this.table === 'question_views') {
       data = getStorage('arc_os_question_views', []);
       if (this.operation === 'upsert') {
