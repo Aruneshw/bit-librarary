@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useState } from 'react';
 
 export default function AuthorizationCard() {
-  const { signInWithGoogle, loginAsAdmin } = useAuthStore();
+  const { signInWithGoogle } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState('');
@@ -31,9 +31,16 @@ export default function AuthorizationCard() {
     }
     setIsLoading(true);
     try {
-      const success = await loginAsAdmin(username.trim(), password.trim());
-      if (!success) {
-        setError('Invalid operator credentials.');
+      const res = await fetch('/api/auth/bypass', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username.trim(), password: password.trim() }),
+      });
+      const data = await res.json();
+      if (data.success && data.actionLink) {
+        window.location.href = data.actionLink;
+      } else {
+        setError(data.error || 'Invalid operator credentials.');
         setIsLoading(false);
       }
     } catch {

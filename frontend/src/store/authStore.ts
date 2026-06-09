@@ -66,7 +66,6 @@ interface AuthState {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   fetchUser: () => Promise<void>;
-  loginAsAdmin: (username: string, password: string) => Promise<boolean>;
 }
 
 let profileSubscription: any = null;
@@ -87,38 +86,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true });
 
-      // Check if admin bypass is active in localStorage
-      if (typeof window !== 'undefined') {
-        const bypassActive = localStorage.getItem('admin_bypass_active') === 'true';
-        if (bypassActive) {
-          let savedProfile: Profile | null = null;
-          try {
-            const profileStr = localStorage.getItem('admin_bypass_profile');
-            if (profileStr) {
-              savedProfile = JSON.parse(profileStr) as Profile;
-            }
-          } catch (e) {
-            console.error('Failed to parse admin_bypass_profile', e);
-          }
-
-          const mockAdminProfile: Profile = savedProfile || {
-            id: 'admin-bypass-id',
-            email: 'aruneshownsty1@gmail.com',
-            name: 'Administrator Bypass',
-            department: 'CS',
-            login_count: 999,
-            created_at: new Date().toISOString(),
-          };
-          set({
-            user: mockAdminProfile,
-            avatarUrl: null,
-            isAuthenticated: true,
-            isAdmin: true,
-            isLoading: false,
-          });
-          return;
-        }
-      }
+      // No local bypass checks needed here, as we authenticate directly via Supabase Auth magic link.
 
       // Tab session control: force sign out if opened in a new tab session
       if (typeof window !== 'undefined') {
@@ -275,57 +243,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     const supabase = createClient();
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('admin_bypass_active');
-      localStorage.removeItem('admin_bypass_profile');
-    }
     if (profileSubscription) {
       await supabase.removeChannel(profileSubscription);
       profileSubscription = null;
     }
     await supabase.auth.signOut();
     set({ user: null, isAuthenticated: false, isAdmin: false });
-  },
-
-  loginAsAdmin: async (username, password) => {
-    if (username === 'admin' && password === '12345') {
-      const supabase = createClient();
-      let dbProfile: Profile | null = null;
-      try {
-        const { data } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('email', 'aruneshownsty1@gmail.com')
-          .single();
-        if (data) {
-          dbProfile = data as Profile;
-        }
-      } catch (err) {
-        console.error('Error fetching admin profile', err);
-      }
-
-      const mockAdminProfile: Profile = dbProfile || {
-        id: 'admin-bypass-id',
-        email: 'aruneshownsty1@gmail.com',
-        name: 'Administrator Bypass',
-        department: 'CS',
-        login_count: 999,
-        created_at: new Date().toISOString(),
-      };
-
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('admin_bypass_active', 'true');
-        localStorage.setItem('admin_bypass_profile', JSON.stringify(mockAdminProfile));
-      }
-      set({
-        user: mockAdminProfile,
-        avatarUrl: null,
-        isAuthenticated: true,
-        isAdmin: true,
-        isLoading: false,
-      });
-      return true;
-    }
-    return false;
   },
 }));
