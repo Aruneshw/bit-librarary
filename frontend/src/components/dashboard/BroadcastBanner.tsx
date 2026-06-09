@@ -86,17 +86,19 @@ export default function BroadcastBanner() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -30 }}
-        className="w-full bg-gradient-to-r from-warning-red/20 via-warning-red/10 to-warning-red/20 border-b border-warning-red/40 backdrop-blur-md relative z-[60] flex items-center justify-between px-6 py-2.5 shadow-[0_4px_20px_rgba(255,75,75,0.15)]"
+        className="w-full bg-gradient-to-r from-warning-red/20 via-warning-red/10 to-warning-red/20 border-b border-warning-red/40 backdrop-blur-md relative z-[60] px-4 py-2.5 sm:px-6 shadow-[0_4px_20px_rgba(255,75,75,0.15)]"
       >
-        <div className="flex items-center gap-3 flex-1 mr-8">
-          <span className="shrink-0 w-2 h-2 rounded-full bg-warning-red animate-ping" />
-          <span className="font-orbitron text-[10px] sm:text-xs font-bold text-warning-red tracking-[3px] uppercase">
-            Broadcast:
-          </span>
-          <p className="font-mono text-xs text-text-white/95 leading-tight truncate">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 mr-8 sm:mr-10">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="w-2 h-2 rounded-full bg-warning-red animate-ping" />
+            <span className="font-orbitron text-[10px] sm:text-xs font-bold text-warning-red tracking-[3px] uppercase">
+              Broadcast:
+            </span>
+          </div>
+          <p className="font-mono text-[11px] sm:text-xs text-text-white/95 leading-normal break-words whitespace-normal">
             {latestBroadcast.message}
             {latestBroadcast.reply && (
-              <span className="text-terminal-green/90 ml-2 font-bold">
+              <span className="text-terminal-green/90 ml-2 font-bold whitespace-normal inline-block">
                 (Response: {latestBroadcast.reply})
               </span>
             )}
@@ -105,7 +107,7 @@ export default function BroadcastBanner() {
 
         <button
           onClick={handleDismiss}
-          className="text-text-white/60 hover:text-white transition-colors p-1"
+          className="absolute right-3 top-2 text-text-white/60 hover:text-white transition-colors p-1"
           aria-label="Dismiss Announcement"
         >
           <svg
