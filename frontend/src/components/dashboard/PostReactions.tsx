@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 
@@ -20,6 +20,7 @@ export default function PostReactions({ postId }: Props) {
   const { user, isAuthenticated } = useAuthStore();
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [showPicker, setShowPicker] = useState(false);
+  const pendingRef = useRef(false);
 
   const fetchReactions = async () => {
     const supabase = createClient();
@@ -32,31 +33,33 @@ export default function PostReactions({ postId }: Props) {
   };
 
   const toggleReaction = async (type: string) => {
-    if (!user) return;
+    if (!user || pendingRef.current) return;
+    pendingRef.current = true;
 
-    const supabase = createClient();
-    const current = reactions.find((r) => r.user_id === user.id);
+    try {
+      const supabase = createClient();
+      const myReaction = reactions.find((r) => r.user_id === user.id);
+      const sameType = myReaction?.reaction_type === type;
 
-    // Tapping same reaction → remove it
-    if (current?.reaction_type === type) {
-      await supabase.from('post_reactions').delete().eq('id', current.id);
+      // Tapping same reaction → remove it
+      if (sameType) {
+        await supabase.from('post_reactions').delete().eq('id', myReaction!.id);
+      } else {
+        // Remove old reaction if exists, then insert new one
+        if (myReaction) {
+          await supabase.from('post_reactions').delete().eq('id', myReaction.id);
+        }
+        await supabase.from('post_reactions').insert({
+          post_id: postId,
+          user_id: user.id,
+          reaction_type: type,
+        });
+      }
+
       fetchReactions();
-      return;
+    } finally {
+      pendingRef.current = false;
     }
-
-    // Has a different reaction → replace it
-    if (current) {
-      await supabase.from('post_reactions').delete().eq('id', current.id);
-    }
-
-    // Insert the new reaction
-    await supabase.from('post_reactions').insert({
-      post_id: postId,
-      user_id: user.id,
-      reaction_type: type,
-    });
-
-    fetchReactions();
   };
 
   useEffect(() => {

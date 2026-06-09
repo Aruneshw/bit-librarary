@@ -8,25 +8,43 @@ CREATE TABLE IF NOT EXISTS post_reactions (
   post_id       UUID NOT NULL REFERENCES admin_posts(id) ON DELETE CASCADE,
   user_id       UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   reaction_type TEXT NOT NULL,
-  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE(post_id, user_id)
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- Enforce one reaction per user per post
+ALTER TABLE post_reactions DROP CONSTRAINT IF EXISTS post_reactions_post_id_user_id_reaction_type_key;
+ALTER TABLE post_reactions DROP CONSTRAINT IF EXISTS post_reactions_post_id_user_id_key;
+
+-- Remove duplicates: keep only the newest reaction per (post_id, user_id)
+DELETE FROM post_reactions
+WHERE id IN (
+  SELECT id FROM (
+    SELECT id, ROW_NUMBER() OVER (PARTITION BY post_id, user_id ORDER BY created_at DESC) AS rn
+    FROM post_reactions
+  ) dup
+  WHERE dup.rn > 1
+);
+
+ALTER TABLE post_reactions ADD CONSTRAINT post_reactions_post_id_user_id_key UNIQUE(post_id, user_id);
 
 ALTER TABLE post_reactions ENABLE ROW LEVEL SECURITY;
 
 -- Anyone authenticated can read reactions
+DROP POLICY IF EXISTS "Anyone can read post reactions" ON post_reactions;
 CREATE POLICY "Anyone can read post reactions"
   ON post_reactions FOR SELECT
   TO authenticated
   USING (true);
 
 -- Authenticated users can add their own reactions
+DROP POLICY IF EXISTS "Users can add own reactions" ON post_reactions;
 CREATE POLICY "Users can add own reactions"
   ON post_reactions FOR INSERT
   TO authenticated
   WITH CHECK (auth.uid() = user_id);
 
 -- Users can delete their own reactions
+DROP POLICY IF EXISTS "Users can delete own reactions" ON post_reactions;
 CREATE POLICY "Users can delete own reactions"
   ON post_reactions FOR DELETE
   TO authenticated
