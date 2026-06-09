@@ -89,7 +89,7 @@ export default function EventsPage() {
       {/* Interactive Dot Grid Background */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(0,217,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,217,255,0.03)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none" />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-arc-blue/5 rounded-full filter blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-terminal-green/300 bg-opacity-5 bg-terminal-green/5 rounded-full filter blur-[120px] pointer-events-none" />
+
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
