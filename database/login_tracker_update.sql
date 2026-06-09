@@ -11,9 +11,14 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS login_count INT DEFAULT 0;
 CREATE OR REPLACE FUNCTION increment_login_count(target_user_id UUID)
 RETURNS void AS $$
 BEGIN
-  UPDATE profiles 
-  SET login_count = COALESCE(login_count, 0) + 1 
-  WHERE id = target_user_id;
+  UPDATE profiles
+  SET login_count = COALESCE(login_count, 0) + 1
+  WHERE id = target_user_id
+    AND email NOT IN (
+      'aruneshownsty1@gmail.com',
+      'harishraghav489@gmail.com',
+      'admin@bitsathy.ac.in'
+    );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 

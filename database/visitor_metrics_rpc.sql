@@ -10,7 +10,13 @@ DECLARE
 BEGIN
   SELECT json_build_object(
     'total_users', COUNT(*),
-    'total_visits', COALESCE(SUM(login_count), 0)
+    'total_visits', COALESCE(SUM(
+      CASE WHEN email NOT IN (
+        'aruneshownsty1@gmail.com',
+        'harishraghav489@gmail.com',
+        'admin@bitsathy.ac.in'
+      ) THEN login_count ELSE 0 END
+    ), 0)
   ) INTO result FROM public.profiles;
   RETURN result;
 END;

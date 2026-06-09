@@ -2,6 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { getSupabasePublishableKey } from '@/lib/supabase';
+import { isAdminEmail } from '@/lib/adminEmails';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
 
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser();
-      if (user?.id) {
+      if (user?.id && !isAdminEmail(user.email)) {
         await supabase.rpc('increment_login_count', { target_user_id: user.id });
       }
       return NextResponse.redirect(`${origin}${next}`);
@@ -54,7 +55,10 @@ export async function GET(request: Request) {
   if (code) {
     const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error && sessionData?.session?.user?.id) {
-      await supabase.rpc('increment_login_count', { target_user_id: sessionData.session.user.id });
+      const authUser = sessionData.session.user;
+      if (!isAdminEmail(authUser.email)) {
+        await supabase.rpc('increment_login_count', { target_user_id: authUser.id });
+      }
       return NextResponse.redirect(`${origin}${next}`);
     } else {
       console.error('Exchange code error:', error?.message);

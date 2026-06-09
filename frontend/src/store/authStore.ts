@@ -2,11 +2,10 @@ import { create } from 'zustand';
 import { type User } from '@supabase/supabase-js';
 import { type Profile, type Department } from '@/types';
 import { createClient } from '@/lib/supabase';
+import { isAdminEmail } from '@/lib/adminEmails';
 
 const ALLOWED_EMAIL_DOMAIN = '@bitsathy.ac.in';
 const ALLOWED_DEPARTMENTS: Department[] = ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
-const ADMIN_EMAILS = ['aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'];
-const isAdminEmail = (email?: string | null) => email ? ADMIN_EMAILS.includes(email) : false;
 
 type AuthUser = User & {
   raw_user_meta_data?: Record<string, unknown>;

@@ -15,6 +15,7 @@ import NotificationCenter from '@/components/dashboard/NotificationCenter';
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner';
 import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
 import { createClient } from '@/lib/supabase';
+import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 
 function SystemClock() {
   const [time, setTime] = useState<string>('');
@@ -56,12 +57,11 @@ function VisitorCount() {
     }
 
     // Fallback: If RPC is not created yet, query profiles table directly.
-    const { data: profiles } = await supabase.from('profiles').select('login_count');
+    const { data: profiles } = await supabase.from('profiles').select('email, login_count');
     if (profiles) {
-      const total = profiles.reduce((acc: number, p: any) => acc + (p.login_count || 0), 0);
       setMetrics({
         totalUsers: profiles.length,
-        totalVisits: total
+        totalVisits: sumNonAdminLoginCount(profiles)
       });
     }
   }, []);

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
+import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 
 interface UserProfile {
   id: string;
@@ -53,11 +54,11 @@ export default function AdminDashboard() {
       return;
     }
 
-    const { data: profiles } = await supabase.from('profiles').select('login_count');
+    const { data: profiles } = await supabase.from('profiles').select('email, login_count');
     if (profiles) {
       setSystemMetrics({
         totalUsers: profiles.length,
-        totalVisits: profiles.reduce((acc: number, p: { login_count?: number }) => acc + (p.login_count || 0), 0),
+        totalVisits: sumNonAdminLoginCount(profiles),
       });
     }
   }, []);
