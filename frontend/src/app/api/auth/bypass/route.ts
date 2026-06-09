@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
 
-    if (username === 'admin' && password === '12345') {
+    if (username === 'adminah' && password === '12345') {
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!,
