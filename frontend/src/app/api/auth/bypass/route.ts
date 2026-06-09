@@ -18,24 +18,9 @@ export async function POST(request: Request) {
       );
 
       const origin = new URL(request.url).origin;
-      const targetEmail = 'admin@bitsathy.ac.in';
+      const targetEmail = 'aruneshownsty1@gmail.com';
 
-      // 1. Auto-create/ensure the admin@bitsathy.ac.in user exists in Supabase Auth
-      try {
-        await supabase.auth.admin.createUser({
-          email: targetEmail,
-          password: '12345',
-          email_confirm: true,
-          user_metadata: {
-            full_name: 'Main Admin',
-          },
-        });
-      } catch (e) {
-        // User might already exist, which is fine and expected after first run.
-        console.log('User admin@bitsathy.ac.in already exists or could not be created:', e);
-      }
-
-      // 2. Generate verification magic link for admin@bitsathy.ac.in
+      // Generate verification magic link for the main admin email
       const { data, error } = await supabase.auth.admin.generateLink({
         type: 'magiclink',
         email: targetEmail,

@@ -163,8 +163,15 @@ export default function DashboardPage() {
         setIntroComplete(true);
       }
       setIsSessionLoaded(true);
+
+      // Auto-heal old mock bypass session if present
+      if (localStorage.getItem('admin_bypass_active') === 'true') {
+        localStorage.removeItem('admin_bypass_active');
+        localStorage.removeItem('admin_bypass_profile');
+        signOut();
+      }
     }
-  }, []);
+  }, [signOut]);
 
   // Check viewport
   useEffect(() => {
