@@ -36,11 +36,6 @@ postsRouter.get('/', authMiddleware, async (_req: AuthRequest, res: Response) =>
 
 // POST /posts
 postsRouter.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
-  if (!isAdminEmail(req.userEmail)) {
-    res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Admin access required', status: 403 } });
-    return;
-  }
-
   const { title, body, video_url, image_url } = req.body;
   if (!body?.trim()) {
     res.status(400).json({ error: { code: 'BAD_REQUEST', message: 'Post body is required', status: 400 } });

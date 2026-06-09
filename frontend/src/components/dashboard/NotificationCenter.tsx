@@ -46,8 +46,9 @@ export default function NotificationCenter({ mobileInline }: Props) {
     fetchNotifications();
 
     const supabase = createClient();
+    const channelId = `user-feedbacks-own-${Math.random().toString(36).substring(2, 9)}`;
     const channel = supabase
-      .channel('user-feedbacks-own')
+      .channel(channelId)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'user_feedbacks', filter: `user_id=eq.${user.id}` },

@@ -14,6 +14,8 @@ import MobileActionDock from '@/components/dashboard/MobileActionDock';
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner';
 import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
 import AdminPostFeed from '@/components/dashboard/AdminPostFeed';
+import MediaFeed from '@/components/dashboard/MediaFeed';
+import PostComposer from '@/components/dashboard/PostComposer';
 import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 
@@ -153,6 +155,8 @@ export default function DashboardPage() {
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [activeFeedTab, setActiveFeedTab] = useState<'posts' | 'media'>('posts');
+  const [showPostComposer, setShowPostComposer] = useState(false);
 
   // Check if intro has already been completed in this browser session
   useEffect(() => {
@@ -332,10 +336,47 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* Director posts feed */}
+        {/* Feed tabs */}
         {!subjectsLoading && introComplete && (
           <div className="w-full max-w-2xl mx-auto px-4 pt-4">
-            <AdminPostFeed />
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex gap-1 bg-arc-blue/5 border border-arc-blue/20 rounded-lg p-1">
+                <button
+                  onClick={() => setActiveFeedTab('posts')}
+                  className={`px-3 py-1.5 font-orbitron text-xs tracking-wider rounded-md transition-all ${
+                    activeFeedTab === 'posts'
+                      ? 'bg-arc-blue/20 text-arc-blue shadow-[0_0_8px_rgba(0,217,255,0.2)]'
+                      : 'text-text-white/50 hover:text-text-white/80'
+                  }`}
+                >
+                  Posts
+                </button>
+                <button
+                  onClick={() => setActiveFeedTab('media')}
+                  className={`px-3 py-1.5 font-orbitron text-xs tracking-wider rounded-md transition-all ${
+                    activeFeedTab === 'media'
+                      ? 'bg-arc-blue/20 text-arc-blue shadow-[0_0_8px_rgba(0,217,255,0.2)]'
+                      : 'text-text-white/50 hover:text-text-white/80'
+                  }`}
+                >
+                  Media
+                </button>
+              </div>
+              {isAdmin && (
+                <button
+                  onClick={() => setShowPostComposer(true)}
+                  className="w-8 h-8 rounded-full bg-arc-blue/10 border border-arc-blue/30 flex items-center justify-center text-arc-blue hover:bg-arc-blue/20 transition-all"
+                  aria-label="Create post"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              )}
+            </div>
+
+            {activeFeedTab === 'posts' ? <AdminPostFeed /> : <MediaFeed />}
           </div>
         )}
 
@@ -382,6 +423,7 @@ export default function DashboardPage() {
         </footer>
 
         {isAuthenticated && introComplete && <MobileActionDock />}
+        <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
       </div>
     </main>
   );
