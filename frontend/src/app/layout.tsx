@@ -6,11 +6,17 @@ export const metadata: Metadata = {
   title: "BIT LIBRARY — Academic Nexus",
   description: "Elite AI-powered knowledge system for BIT Sathy students. Access your academic subjects, track progress, and achieve mastery.",
   keywords: "BIT Sathy, academic, study, BIT Library, knowledge system",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "BIT LIBRARY",
+  },
 };
 
 import MatrixBackground from "@/components/animations/MatrixBackground";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
 import GoogleTranslatePatch from "@/components/providers/GoogleTranslatePatch";
+import PwaRegister from "@/components/providers/PwaRegister";
 
 export default function RootLayout({
   children,
@@ -21,6 +27,7 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col notranslate">
         <GoogleTranslatePatch />
+        <PwaRegister />
         <PostHogProvider>
           <MatrixBackground />
           <div className="app-container flex-1 flex flex-col">
