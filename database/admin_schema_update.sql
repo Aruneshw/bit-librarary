@@ -21,8 +21,8 @@ CREATE POLICY "Anyone can read active system notices"
 -- Allow only the admin to insert/update/delete notices
 CREATE POLICY "Admin can manage system notices"
   ON system_notices FOR ALL
-  USING (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'))
-  WITH CHECK (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'));
+  USING (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com');
 
 -- Insert initial default notice if table is empty
 INSERT INTO system_notices (message)
@@ -33,23 +33,23 @@ WHERE NOT EXISTS (SELECT 1 FROM system_notices);
 -- Allow admin to read all profiles
 CREATE POLICY "Admin can read all profiles"
   ON profiles FOR SELECT
-  USING (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'));
+  USING (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com');
 
 -- Allow admin to delete profiles (if needed for user management)
 CREATE POLICY "Admin can delete profiles"
   ON profiles FOR DELETE
-  USING (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'));
+  USING (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com');
 
 -- 3. Update Questions RLS for Admin
 -- Allow admin to insert, update, and delete questions
 CREATE POLICY "Admin can manage questions"
   ON questions FOR ALL
-  USING (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'))
-  WITH CHECK (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'));
+  USING (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com');
 
 -- Note: The subjects table already allows "Authenticated users read subjects". 
 -- If you need admin to add subjects, you can run:
 CREATE POLICY "Admin can manage subjects"
   ON subjects FOR ALL
-  USING (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'))
-  WITH CHECK (auth.jwt() ->> 'email' IN ('aruneshownsty1@gmail.com', 'harishraghav489@gmail.com'));
+  USING (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'aruneshownsty1@gmail.com');

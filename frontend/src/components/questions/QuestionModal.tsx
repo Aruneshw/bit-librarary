@@ -12,6 +12,10 @@ interface QuestionModalProps {
   question: QuestionWithStatus | null;
   onClose: () => void;
   theme?: 'blue' | 'green';
+  onNext?: () => void;
+  onPrev?: () => void;
+  hasNext?: boolean;
+  hasPrev?: boolean;
 }
 
 const Mermaid = ({ chart }: { chart: string }) => {
@@ -79,10 +83,57 @@ const Mermaid = ({ chart }: { chart: string }) => {
   return <div ref={ref} className="flex justify-center w-full my-6 overflow-x-auto overflow-y-hidden" />;
 };
 
-export default function QuestionModal({ question, onClose, theme = 'blue' }: QuestionModalProps) {
+export default function QuestionModal({
+  question,
+  onClose,
+  theme = 'blue',
+  onNext,
+  onPrev,
+  hasNext = false,
+  hasPrev = false,
+}: QuestionModalProps) {
   const doubleClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clickCountRef = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+  const touchEndY = useRef<number | null>(null);
+
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+    touchStartY.current = e.targetTouches[0].clientY;
+    touchEndX.current = e.targetTouches[0].clientX;
+    touchEndY.current = e.targetTouches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+    touchEndY.current = e.targetTouches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchStartY.current || !touchEndX.current || !touchEndY.current) return;
+    
+    const deltaX = touchStartX.current - touchEndX.current;
+    const deltaY = touchStartY.current - touchEndY.current;
+    
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX > 0 && onNext && hasNext) {
+        onNext();
+      } else if (deltaX < 0 && onPrev && hasPrev) {
+        onPrev();
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+    touchEndX.current = null;
+    touchEndY.current = null;
+  };
 
   const isGreen = theme === 'green';
   const panelClass = isGreen ? 'glass-panel-green' : 'glass-panel-blue';
@@ -90,14 +141,20 @@ export default function QuestionModal({ question, onClose, theme = 'blue' }: Que
   const borderClass = isGreen ? 'border-terminal-green/30' : 'border-glass-border';
   const gradientClass = isGreen ? 'from-terminal-green/30' : 'from-arc-blue/30';
 
-  // ESC key to close
+  // ESC and Arrow keys keydown
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+      } else if (e.key === 'ArrowRight' && onNext && hasNext) {
+        onNext();
+      } else if (e.key === 'ArrowLeft' && onPrev && hasPrev) {
+        onPrev();
+      }
     };
     if (question) window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [question, onClose]);
+  }, [question, onClose, onNext, onPrev, hasNext, hasPrev]);
 
   // Double-click to close
   const handleOverlayClick = useCallback(() => {
@@ -128,133 +185,165 @@ export default function QuestionModal({ question, onClose, theme = 'blue' }: Que
           onClick={handleOverlayClick}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black" />
+          <div className="absolute inset-0 bg-black/80" />
 
-          {/* Modal */}
-          <motion.div
-            ref={contentRef}
-            className={`relative ${panelClass} p-6 md:p-8 w-full max-w-[600px] max-h-[80vh] overflow-y-auto`}
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.85, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            style={{ borderRadius: 'var(--radius-modal)' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-text-white/40 hover:text-text-white hover:bg-white/5 transition-all"
-              id="question-modal-close"
+          {/* Wrapper */}
+          <div className="relative w-full max-w-[600px] z-10 flex items-center">
+            {/* Left Chevron */}
+            {hasPrev && onPrev && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onPrev(); }}
+                className="hidden md:flex absolute -left-16 w-12 h-12 items-center justify-center rounded-full border border-arc-blue/30 bg-black/60 text-text-white/60 hover:text-white hover:border-arc-blue transition-all"
+                title="Previous Question (Left Arrow)"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+
+            {/* Modal */}
+            <motion.div
+              ref={contentRef}
+              className={`relative ${panelClass} p-6 md:p-8 w-full max-h-[80vh] overflow-y-auto`}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              style={{ borderRadius: 'var(--radius-modal)', backgroundColor: '#070707' }}
+              onClick={(e) => e.stopPropagation()}
             >
-              ×
-            </button>
+              {/* Close Button */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-text-white/40 hover:text-text-white hover:bg-white/5 transition-all"
+                id="question-modal-close"
+              >
+                ×
+              </button>
 
-            {/* QUESTION */}
-            <div className="mb-6">
-              <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
-                Question
-              </h3>
-              <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
-              <div className="font-exo2 text-sm font-bold text-terminal-green leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-terminal-green prose-p:font-bold max-w-none translate">
-                <ReactMarkdown
-                  remarkPlugins={[remarkMath, remarkGfm]}
-                  rehypePlugins={[rehypeKatex]}
-                  components={{
-                    pre({ children, ...props }: any) {
-                      const child = Array.isArray(children) ? children[0] : children;
-                      if (child?.props?.['data-mermaid']) {
-                        return <div className="w-full my-6">{children}</div>;
-                      }
-                      return <pre {...props}>{children}</pre>;
-                    },
-                    code({ node, inline, className, children, ...props }: any) {
-                      const match = /language-(\w+)/.exec(className || '');
-                      const language = match ? match[1] : '';
-
-                      if (!inline && language === 'mermaid') {
-                        return <Mermaid chart={String(children).replace(/\n$/, '')} data-mermaid />;
-                      }
-                      return <code className={className} {...props}>{children}</code>;
-                    }
-                  }}
-                >
-                  {question.question}
-                </ReactMarkdown>
-              </div>
-            </div>
-
-            {/* ANSWER */}
-            <div className="mb-6">
-              <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
-                Answer
-              </h3>
-              <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
-              <div className="font-exo2 text-sm text-text-white leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-text-white max-w-none translate">
-                <ReactMarkdown
-                  remarkPlugins={[remarkMath, remarkGfm]}
-                  rehypePlugins={[rehypeKatex]}
-                  components={{
-                    pre({ children, ...props }: any) {
-                      const child = Array.isArray(children) ? children[0] : children;
-                      if (child?.props?.['data-mermaid']) {
-                        return <div className="w-full my-6">{children}</div>;
-                      }
-                      return <pre {...props}>{children}</pre>;
-                    },
-                    code({ node, inline, className, children, ...props }: any) {
-                      const match = /language-(\w+)/.exec(className || '');
-                      const language = match ? match[1] : '';
-
-                      if (!inline && language === 'mermaid') {
-                        return <Mermaid chart={String(children).replace(/\n$/, '')} data-mermaid />;
-                      }
-                      return <code className={className} {...props}>{children}</code>;
-                    }
-                  }}
-                >
-                  {question.answer}
-                </ReactMarkdown>
-              </div>
-            </div>
-
-            {/* IMAGE */}
-            {question.image_url && (
-              <div className="mb-6">
-                <img
-                  src={question.image_url}
-                  alt="Question illustration"
-                  className={`w-full rounded-lg border ${borderClass}`}
-                />
-              </div>
-            )}
-
-            {/* REFERENCES */}
-            {question.references && (
+              {/* QUESTION */}
               <div className="mb-6">
                 <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
-                  References
+                  Question
                 </h3>
                 <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
-                <p className="font-mono text-xs text-text-white/60 leading-relaxed">
-                  {question.references}
-                </p>
-              </div>
-            )}
+                <div className="font-exo2 text-sm font-bold text-terminal-green leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-terminal-green prose-p:font-bold max-w-none translate">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkMath, remarkGfm]}
+                    rehypePlugins={[rehypeKatex]}
+                    components={{
+                      pre({ children, ...props }: any) {
+                        const child = Array.isArray(children) ? children[0] : children;
+                        if (child?.props?.['data-mermaid']) {
+                          return <div className="w-full my-6">{children}</div>;
+                        }
+                        return <pre {...props}>{children}</pre>;
+                      },
+                      code({ node, inline, className, children, ...props }: any) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        const language = match ? match[1] : '';
 
-            {/* NOTES */}
-            {question.notes && (
-              <div>
+                        if (!inline && language === 'mermaid') {
+                          return <Mermaid chart={String(children).replace(/\n$/, '')} data-mermaid />;
+                        }
+                        return <code className={className} {...props}>{children}</code>;
+                      }
+                    }}
+                  >
+                    {question.question}
+                  </ReactMarkdown>
+                </div>
+              </div>
+
+              {/* ANSWER */}
+              <div className="mb-6">
                 <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
-                  Notes
+                  Answer
                 </h3>
                 <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
-                <p className="font-exo2 text-xs text-text-white/50 leading-relaxed italic">
-                  {question.notes}
-                </p>
+                <div className="font-exo2 text-sm text-text-white leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-text-white max-w-none translate">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkMath, remarkGfm]}
+                    rehypePlugins={[rehypeKatex]}
+                    components={{
+                      pre({ children, ...props }: any) {
+                        const child = Array.isArray(children) ? children[0] : children;
+                        if (child?.props?.['data-mermaid']) {
+                          return <div className="w-full my-6">{children}</div>;
+                        }
+                        return <pre {...props}>{children}</pre>;
+                      },
+                      code({ node, inline, className, children, ...props }: any) {
+                        const match = /language-(\w+)/.exec(className || '');
+                        const language = match ? match[1] : '';
+
+                        if (!inline && language === 'mermaid') {
+                          return <Mermaid chart={String(children).replace(/\n$/, '')} data-mermaid />;
+                        }
+                        return <code className={className} {...props}>{children}</code>;
+                      }
+                    }}
+                  >
+                    {question.answer}
+                  </ReactMarkdown>
+                </div>
               </div>
+
+              {/* IMAGE */}
+              {question.image_url && (
+                <div className="mb-6">
+                  <img
+                    src={question.image_url}
+                    alt="Question illustration"
+                    className={`w-full rounded-lg border ${borderClass}`}
+                  />
+                </div>
+              )}
+
+              {/* REFERENCES */}
+              {question.references && (
+                <div className="mb-6">
+                  <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
+                    References
+                  </h3>
+                  <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
+                  <p className="font-mono text-xs text-text-white/60 leading-relaxed">
+                    {question.references}
+                  </p>
+                </div>
+              )}
+
+              {/* NOTES */}
+              {question.notes && (
+                <div>
+                  <h3 className={`font-rajdhani text-xs ${textClass} uppercase tracking-[3px] mb-3`}>
+                    Notes
+                  </h3>
+                  <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
+                  <p className="font-exo2 text-xs text-text-white/50 leading-relaxed italic">
+                    {question.notes}
+                  </p>
+                </div>
+              )}
+            </motion.div>
+
+            {/* Right Chevron */}
+            {hasNext && onNext && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onNext(); }}
+                className="hidden md:flex absolute -right-16 w-12 h-12 items-center justify-center rounded-full border border-arc-blue/30 bg-black/60 text-text-white/60 hover:text-white hover:border-arc-blue transition-all"
+                title="Next Question (Right Arrow)"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             )}
-          </motion.div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

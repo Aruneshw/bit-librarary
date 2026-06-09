@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 import MatrixBackground from "@/components/animations/MatrixBackground";
-import { PostHogProvider } from "@/components/providers/PostHogProvider";
 
 export default function RootLayout({
   children,
@@ -19,12 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col notranslate">
-        <PostHogProvider>
-          <MatrixBackground />
-          <div className="app-container flex-1 flex flex-col">
-            {children}
-          </div>
-        </PostHogProvider>
+        <MatrixBackground />
+        <div className="app-container flex-1 flex flex-col">
+          {children}
+        </div>
       </body>
     </html>
   );

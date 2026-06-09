@@ -1,11 +1,45 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function MatrixBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pathname = usePathname();
+  const colorRef = useRef('rgba(0, 217, 255, 0.4)');
+  const [shouldShow, setShouldShow] = useState(false);
 
   useEffect(() => {
+    const isSubjectPage = pathname?.startsWith('/subject/');
+    colorRef.current = isSubjectPage ? 'rgba(0, 255, 65, 0.4)' : 'rgba(0, 217, 255, 0.4)';
+  }, [pathname]);
+
+  // Check display conditions
+  useEffect(() => {
+    const checkConditions = () => {
+      if (typeof window === 'undefined') return;
+      const isIntroActive = document.documentElement.classList.contains('intro-active');
+      const isLoginPage = pathname === '/login' || pathname === '/' || pathname?.startsWith('/auth');
+
+      setShouldShow(!isIntroActive && !isLoginPage);
+    };
+
+    // Initial check
+    checkConditions();
+
+    // Mutation observer to watch class changes on html element
+    const observer = new MutationObserver(checkConditions);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!shouldShow) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -32,8 +66,8 @@ export default function MatrixBackground() {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Arc Blue color with slight opacity for the characters
-      ctx.fillStyle = 'rgba(0, 217, 255, 0.4)';
+      // Character color based on current active route
+      ctx.fillStyle = colorRef.current;
       ctx.font = `${fontSize}px "Share Tech Mono", monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -78,13 +112,13 @@ export default function MatrixBackground() {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [shouldShow]);
 
   return (
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none opacity-40 mix-blend-screen"
-      style={{ zIndex: 0 }}
+      style={{ zIndex: 0, display: shouldShow ? 'block' : 'none' }}
     />
   );
 }

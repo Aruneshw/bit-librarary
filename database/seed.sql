@@ -11,7 +11,7 @@ INSERT INTO subjects (id, department, subject_name, icon) VALUES
   ('a1000000-0000-0000-0000-000000000004', ARRAY['CS','IT','AL','AD','EEE','EIE','ME','MZ','AG','BT'], 'Computational Problem Solving', '<>'),
   ('a1000000-0000-0000-0000-000000000005', ARRAY['CS','IT','AL','AD'], 'Digital Computer Electronics', '🖥'),
   ('a1000000-0000-0000-0000-000000000006', ARRAY['CS','IT','AL','AD','AG','BT'], 'Tamils and Technology', '🏛'),
-  ('a1000000-0000-0000-0000-000000000007', ARRAY[]::TEXT[], 'Basics of Electrical Engineering', '⚡'),
+  ('a1000000-0000-0000-0000-000000000007', ARRAY['CS','IT','AL','AD','EEE','EIE','ME','MZ','AG','BT'], 'Basics of Electrical Engineering', '⚡'),
   ('a1000000-0000-0000-0000-000000000008', ARRAY['EEE','EIE','ME','MZ','AG','BT'], 'Basics of Electronics Engineering', '🔌')
 ON CONFLICT (id) DO UPDATE SET
   department = EXCLUDED.department,

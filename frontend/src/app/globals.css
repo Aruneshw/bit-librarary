@@ -29,13 +29,13 @@
   --font-exo2: 'Exo 2', sans-serif;
   --font-mono: 'Share Tech Mono', monospace;
 
-  --color-arc-blue: #00D9FF;
-  --color-terminal-green: #00FF41;
-  --color-warning-red: #FF3D3D;
-  --color-void: #000000;
-  --color-text-white: #FFFFFF;
-  --color-glass-surface: rgba(255, 255, 255, 0.04);
-  --color-glass-border: rgba(0, 217, 255, 0.18);
+  --color-arc-blue: var(--arc-blue);
+  --color-terminal-green: var(--terminal-green);
+  --color-warning-red: var(--warning-red);
+  --color-void: var(--bg-void);
+  --color-text-white: var(--text-white);
+  --color-glass-surface: var(--glass-surface);
+  --color-glass-border: var(--glass-border);
   
   --animate-spin-slow: spin 20s linear infinite;
   --animate-spin-reverse-slow: spin-reverse 25s linear infinite;
@@ -59,7 +59,7 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background-color: #000000;
+  background-color: var(--bg-void);
   color: var(--text-white);
   font-family: 'Exo 2', sans-serif;
   min-height: 100vh;
@@ -71,7 +71,7 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 40%, #000000 100%);
+  background: radial-gradient(ellipse at center, transparent 40%, var(--bg-void) 100%);
   pointer-events: none;
   z-index: 1;
 }
@@ -88,12 +88,13 @@ body::after {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-color: #000000;
-  background-image: radial-gradient(
+  background-color: var(--bg-void);
+  /* Removed dot grid background lines */
+  /* background-image: radial-gradient(
     rgba(0, 217, 255, 0.15) 1px,
     transparent 1px
-  );
-  background-size: 28px 28px;
+  ); */
+  /* background-size: 28px 28px; */
 }
 
 .arc-bg::after {
@@ -103,7 +104,7 @@ body::after {
   background: radial-gradient(
     ellipse at center,
     transparent 40%,
-    #000000 100%
+    var(--bg-void) 100%
   );
   pointer-events: none;
 }
@@ -244,6 +245,13 @@ body::after {
   50% { transform: translateY(-6px); }
 }
 
+@keyframes hud-rain-fall {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
 @keyframes ring-rotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -304,23 +312,3 @@ body::after {
   background: rgba(0, 217, 255, 0.3);
   color: var(--text-white);
 }
-
-/* ═══════════════════════════════════════════
-   Google Translate UI Override (Hiding Tooltips)
-   ═══════════════════════════════════════════ */
-#goog-gt-tt, 
-.goog-te-balloon-frame, 
-.goog-tooltip, 
-.goog-tooltip:hover {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-.goog-text-highlight {
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-

@@ -286,6 +286,35 @@ export function createClient() {
       from: (table: string) => {
         return new MockQueryBuilder(table);
       },
+      rpc: (fn: string) => {
+        if (fn === 'get_system_metrics') {
+          return Promise.resolve({ data: { total_users: 12, total_visits: 148 }, error: null });
+        }
+        return Promise.resolve({ data: null, error: null });
+      },
+      channel: (name: string) => {
+        const mockChan: any = {
+          on: (event: string, filter: any, callback?: () => void) => {
+            const cb = typeof filter === 'function' ? filter : callback;
+            if (cb) {
+              setTimeout(cb, 20);
+            }
+            return mockChan;
+          },
+          subscribe: (callback?: (status: string) => void) => {
+            if (callback) {
+              setTimeout(() => callback('SUBSCRIBED'), 10);
+            }
+            return mockChan;
+          },
+          track: async () => {},
+          presenceState: () => {
+            return { 'mock-operator-uuid': [{ name: 'Iron Man Operator' }] };
+          }
+        };
+        return mockChan;
+      },
+      removeChannel: (channel: any) => {},
     } as any;
   }
 

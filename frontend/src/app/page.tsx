@@ -1,18 +1,26 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
+import HudFrontPage from '@/components/animations/HudFrontPage';
 
 export default function HomePage() {
   const router = useRouter();
   const { fetchUser, isAuthenticated, user, isLoading } = useAuthStore();
+  const [showHud, setShowHud] = useState(true);
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
 
+  const handleEnter = useCallback(() => {
+    setShowHud(false);
+  }, []);
+
+  // Navigate after HUD is dismissed
   useEffect(() => {
+    if (showHud) return;
     if (isLoading) return;
 
     if (isAuthenticated && user?.department) {
@@ -20,8 +28,14 @@ export default function HomePage() {
     } else {
       router.push('/login');
     }
-  }, [isLoading, isAuthenticated, user, router]);
+  }, [showHud, isLoading, isAuthenticated, user, router]);
 
+  // Show the HUD front page
+  if (showHud) {
+    return <HudFrontPage onEnter={handleEnter} />;
+  }
+
+  // Loading state while redirecting
   return (
     <div className="min-h-screen flex items-center justify-center bg-black">
       <div className="arc-bg" />

@@ -47,11 +47,11 @@ export default function QuestionList({ questions, onSelect, onDelete }: Question
               onClick={() => toggleGroup(group)}
               className="w-full flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
             >
-              <h2 className="font-orbitron text-sm text-arc-blue tracking-wider uppercase">
+              <h2 className="font-orbitron text-sm text-terminal-green tracking-wider uppercase">
                 {group} <span className="text-text-white/30 text-xs ml-2">({groupQs.length})</span>
               </h2>
               <svg
-                className={cn("w-4 h-4 text-arc-blue transition-transform duration-300", isExpanded ? "rotate-180" : "")}
+                className={cn("w-4 h-4 text-terminal-green transition-transform duration-300", isExpanded ? "rotate-180" : "")}
                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -72,12 +72,12 @@ export default function QuestionList({ questions, onSelect, onDelete }: Question
                       'transition-all duration-200 backdrop-blur-xl bg-glass-surface border',
                       q.viewed
                         ? 'border-terminal-green/20 hover:border-terminal-green/40'
-                        : 'border-glass-border hover:border-arc-blue/40 hover:shadow-[0_0_12px_rgba(0,217,255,0.15)]'
+                        : 'border-glass-border hover:border-terminal-green/40 hover:shadow-[0_0_12px_rgba(0,255,65,0.15)]'
                     )}
                     id={`question-${q.id}`}
                   >
                     {/* Question ID */}
-                    <span className="font-mono text-sm text-arc-blue flex-shrink-0 w-12">
+                    <span className="font-mono text-sm text-terminal-green flex-shrink-0 w-12">
                       {formatQuestionId(q.order_index)}
                     </span>
 

@@ -20,6 +20,10 @@ interface UserFeedback {
   user_id: string;
   message: string;
   created_at: string;
+  reply?: string | null;
+  replied_at?: string | null;
+  reply_read?: boolean;
+  is_broadcast?: boolean;
   profiles?: {
     name: string | null;
     email: string;
@@ -34,6 +38,8 @@ export default function AdminDashboard() {
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
   const [onlineUserIds, setOnlineUserIds] = useState<string[]>([]);
+  const [replyingFeedbackId, setReplyingFeedbackId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
 
   useEffect(() => {
     fetchUser();
@@ -112,6 +118,53 @@ export default function AdminDashboard() {
     const supabase = createClient();
     await supabase.from('user_feedbacks').delete().eq('id', id);
     setFeedbacks(feedbacks.filter(f => f.id !== id));
+  };
+
+  const handleSendReply = async (e: React.FormEvent, feedbackId: string) => {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('user_feedbacks')
+      .update({
+        reply: replyText.trim(),
+        replied_at: new Date().toISOString(),
+        reply_read: false,
+      })
+      .eq('id', feedbackId);
+
+    if (!error) {
+      setFeedbacks(feedbacks.map(f => f.id === feedbackId ? {
+        ...f,
+        reply: replyText.trim(),
+        replied_at: new Date().toISOString(),
+        reply_read: false,
+      } : f));
+      setReplyingFeedbackId(null);
+      setReplyText('');
+    } else {
+      console.error('Failed to save reply:', error);
+    }
+  };
+
+  const handleToggleBroadcast = async (feedbackId: string, currentBroadcast: boolean) => {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('user_feedbacks')
+      .update({
+        is_broadcast: !currentBroadcast
+      })
+      .eq('id', feedbackId);
+
+    if (!error) {
+      setFeedbacks(feedbacks.map(f => f.id === feedbackId ? {
+        ...f,
+        is_broadcast: !currentBroadcast
+      } : f));
+    } else {
+      console.error('Failed to toggle broadcast:', error);
+    }
   };
 
   if (isLoading || !isAdmin) {
@@ -268,9 +321,72 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                     <p className="font-mono text-white/80 text-sm whitespace-pre-wrap">{f.message}</p>
-                    <div className="mt-3 font-mono text-white/30 text-[10px] uppercase">
-                      Transmitted: {new Date(f.created_at).toLocaleString()}
-                    </div>
+                    
+                    {f.reply && (
+                      <div className="mt-3 p-3 border-l-2 border-terminal-green bg-terminal-green/5 rounded font-mono text-sm">
+                        <span className="text-terminal-green text-xs font-bold uppercase tracking-wider block mb-1">Reply Transmitted:</span>
+                        <p className="text-white/80">{f.reply}</p>
+                      </div>
+                    )}
+
+                    {replyingFeedbackId === f.id ? (
+                      <form onSubmit={(e) => handleSendReply(e, f.id)} className="mt-3 flex flex-col gap-2">
+                        <textarea
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder="Type reply to user..."
+                          className="w-full bg-black/60 border border-arc-blue/30 rounded p-2 text-white font-mono text-sm focus:outline-none focus:border-arc-blue"
+                          rows={2}
+                          required
+                        />
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            type="button"
+                            onClick={() => { setReplyingFeedbackId(null); setReplyText(''); }}
+                            className="px-3 py-1 text-xs border border-white/20 text-white/50 rounded hover:text-white"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-3 py-1 text-xs bg-arc-blue/10 border border-arc-blue text-arc-blue rounded hover:bg-arc-blue/20"
+                          >
+                            Transmit Reply
+                          </button>
+                        </div>
+                      </form>
+                    ) : (
+                      <div className="mt-3 flex justify-between items-center">
+                        <div className="font-mono text-white/30 text-[10px] uppercase">
+                          Transmitted: {new Date(f.created_at).toLocaleString()}
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleToggleBroadcast(f.id, f.is_broadcast || false)}
+                            className={`px-3 py-1 text-xs border rounded flex items-center gap-1.5 transition-all ${
+                              f.is_broadcast
+                                ? 'border-terminal-green text-terminal-green bg-terminal-green/10 shadow-[0_0_8px_rgba(0,255,65,0.2)]'
+                                : 'border-white/20 text-white/50 hover:text-white hover:border-white/40'
+                            }`}
+                            title="Broadcast this announcement to all users"
+                          >
+                            <span>📢</span>
+                            {f.is_broadcast ? 'Broadcasted' : 'Broadcast'}
+                          </button>
+                          
+                          <button
+                            onClick={() => {
+                              setReplyingFeedbackId(f.id);
+                              setReplyText(f.reply || '');
+                            }}
+                            className="px-3 py-1 text-xs border border-arc-blue/30 text-arc-blue rounded hover:bg-arc-blue/10 flex items-center gap-1.5 transition-colors"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
+                            {f.reply ? 'Edit Reply' : 'Reply'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </motion.div>
                 ))}
               </div>

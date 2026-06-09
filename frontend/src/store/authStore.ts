@@ -172,7 +172,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             }
           )
           .subscribe();
-
       } else {
         set({ user: null, avatarUrl: null, isAuthenticated: false, isAdmin: false, isLoading: false });
       }
