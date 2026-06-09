@@ -16,6 +16,8 @@ import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
 import AdminPostFeed from '@/components/dashboard/AdminPostFeed';
 import MediaFeed from '@/components/dashboard/MediaFeed';
 import PostComposer from '@/components/dashboard/PostComposer';
+import FeedbackForm from '@/components/dashboard/FeedbackForm';
+import NotificationCenter from '@/components/dashboard/NotificationCenter';
 import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 
@@ -423,6 +425,8 @@ export default function DashboardPage() {
         </footer>
 
         {isAuthenticated && introComplete && <MobileActionDock />}
+        {isAuthenticated && introComplete && <NotificationCenter />}
+        {isAuthenticated && introComplete && <FeedbackForm />}
         <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
       </div>
     </main>
