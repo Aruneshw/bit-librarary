@@ -13,6 +13,7 @@ import TutorialModal from '@/components/tutorial/TutorialModal';
 import FeedbackForm from '@/components/dashboard/FeedbackForm';
 import NotificationCenter from '@/components/dashboard/NotificationCenter';
 import BroadcastBanner from '@/components/dashboard/BroadcastBanner';
+import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
 import { createClient } from '@/lib/supabase';
 
 function SystemClock() {
@@ -231,6 +232,7 @@ export default function DashboardPage() {
     <main className="relative min-h-screen overflow-x-hidden">
       <BroadcastBanner />
       <AINoticeBoard />
+      <PwaInstallBanner />
 
       {/* Intro Animation */}
       {showIntro && (
