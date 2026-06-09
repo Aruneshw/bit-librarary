@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS post_reactions (
   user_id       UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   reaction_type TEXT NOT NULL,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE(post_id, user_id, reaction_type)
+  UNIQUE(post_id, user_id)
 );
 
 ALTER TABLE post_reactions ENABLE ROW LEVEL SECURITY;

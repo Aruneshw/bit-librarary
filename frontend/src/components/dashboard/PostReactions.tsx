@@ -34,21 +34,27 @@ export default function PostReactions({ postId }: Props) {
   const toggleReaction = async (type: string) => {
     if (!user) return;
 
-    const existing = reactions.find((r) => r.user_id === user.id && r.reaction_type === type);
     const supabase = createClient();
+    const current = reactions.find((r) => r.user_id === user.id);
 
-    if (existing) {
-      await supabase
-        .from('post_reactions')
-        .delete()
-        .eq('id', existing.id);
-    } else {
-      const { error } = await supabase
-        .from('post_reactions')
-        .insert({ post_id: postId, user_id: user.id, reaction_type: type });
-
-      if (error && error.code === '23505') return;
+    // Tapping same reaction → remove it
+    if (current?.reaction_type === type) {
+      await supabase.from('post_reactions').delete().eq('id', current.id);
+      fetchReactions();
+      return;
     }
+
+    // Has a different reaction → replace it
+    if (current) {
+      await supabase.from('post_reactions').delete().eq('id', current.id);
+    }
+
+    // Insert the new reaction
+    await supabase.from('post_reactions').insert({
+      post_id: postId,
+      user_id: user.id,
+      reaction_type: type,
+    });
 
     fetchReactions();
   };
