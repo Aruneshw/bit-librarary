@@ -312,7 +312,7 @@ export default function QuestionModal({
                   </h3>
                   <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
                   <p className="font-mono text-xs text-text-white/60 leading-relaxed">
-                    {question.references}
+                    <span>{question.references}</span>
                   </p>
                 </div>
               )}
@@ -325,7 +325,7 @@ export default function QuestionModal({
                   </h3>
                   <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
                   <p className="font-exo2 text-xs text-text-white/50 leading-relaxed italic">
-                    {question.notes}
+                    <span>{question.notes}</span>
                   </p>
                 </div>
               )}
