@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
+import PostReactions from './PostReactions';
 
 interface MediaPost {
   id: string;
@@ -146,6 +147,7 @@ export default function MediaFeed() {
                   </button>
                 )}
               </div>
+              <PostReactions postId={post.id} />
             </motion.article>
           );
         })

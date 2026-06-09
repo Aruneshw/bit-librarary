@@ -21,7 +21,7 @@ const hasValidEnv =
 
 class MockQueryBuilder {
   private table: string;
-  private operation: 'select' | 'insert' | 'update' | 'upsert' = 'select';
+  private operation: 'select' | 'insert' | 'update' | 'upsert' | 'delete' = 'select';
   private filters: { type: string; column: string; value: any }[] = [];
   private orderVal: { column: string; ascending: boolean } | null = null;
   private insertValues: any = null;
@@ -56,6 +56,11 @@ class MockQueryBuilder {
   upsert(values: any, options?: any) {
     this.operation = 'upsert';
     this.updateValues = values;
+    return this;
+  }
+
+  delete() {
+    this.operation = 'delete';
     return this;
   }
 
@@ -186,6 +191,30 @@ class MockQueryBuilder {
         posts.unshift(newPost);
         setStorage('arc_os_admin_posts', posts);
         data = newPost;
+      }
+    } else if (this.table === 'post_reactions') {
+      const reactions = getStorage('arc_os_post_reactions', []);
+      if (this.operation === 'select') {
+        data = [...reactions];
+      } else if (this.operation === 'insert') {
+        const exists = reactions.some(
+          (r: any) => r.post_id === this.insertValues.post_id && r.user_id === this.insertValues.user_id && r.reaction_type === this.insertValues.reaction_type
+        );
+        if (exists) {
+          error = { code: '23505', message: 'Already reacted' };
+        } else {
+          const newReaction = { id: Math.random().toString(36).substring(2), created_at: new Date().toISOString(), ...this.insertValues };
+          reactions.push(newReaction);
+          setStorage('arc_os_post_reactions', reactions);
+          data = newReaction;
+        }
+      } else if (this.operation === 'delete') {
+        const idFilter = this.filters.find((f) => f.column === 'id');
+        if (idFilter) {
+          const filtered = reactions.filter((r: any) => r.id !== idFilter.value);
+          setStorage('arc_os_post_reactions', filtered);
+          data = { success: true };
+        }
       }
     } else if (this.table === 'settings') {
       const settings = getStorage('arc_os_settings', []);

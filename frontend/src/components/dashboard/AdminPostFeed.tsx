@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
+import PostReactions from './PostReactions';
 
 interface AdminPost {
   id: string;
@@ -157,6 +158,7 @@ export default function AdminPostFeed() {
                 </button>
               )}
             </div>
+            <PostReactions postId={post.id} />
           </motion.article>
         );
       })}
