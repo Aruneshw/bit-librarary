@@ -53,7 +53,7 @@ export default function AdminPostFeed() {
 
     const { data } = await supabase
       .from('admin_posts')
-      .select('id, title, body, video_url, image_url, pdf_url, created_at')
+      .select('id, title, body, video_url, image_url, pdf_url, created_at, view_count')
       .eq('is_active', true)
       .order('created_at', { ascending: false })
       .limit(10);

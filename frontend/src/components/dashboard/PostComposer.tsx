@@ -254,9 +254,9 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                         </button>
                       </div>
                     )}
-                    {/* Vercel storage bar */}
-                    {storageMode === 'vercel' && liveBlobStats && (
-                      <div className="space-y-0.5 mb-1 px-0.5">
+                    {/* Vercel Blob — always shown when configured */}
+                    {liveBlobStats && (
+                      <div className="space-y-0.5 mb-1.5 px-0.5">
                         <div className="flex items-center justify-between">
                           <span className="font-mono text-[8px] text-amber-400/60">Vercel Blob (1 GB)</span>
                           <span className="font-mono text-[8px] text-white/30">
@@ -270,9 +270,9 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                         </div>
                       </div>
                     )}
-                    {/* Supabase per-bucket bars */}
-                    {storageMode === 'supabase' && liveSupabaseStats?.details && (
-                      <div className="space-y-1 mb-1 px-0.5">
+                    {/* Supabase per-bucket bars — always shown */}
+                    {liveSupabaseStats?.details && (
+                      <div className="space-y-1 mb-1 px-0.5 pt-1 border-t border-amber-400/10">
                         {Object.entries(liveSupabaseStats.details).map(([name, data]) => {
                           const limit = data.limit || 200 * 1024 * 1024;
                           const usedPercent = data.size > 0 ? Math.round((data.size / limit) * 100) : 0;

@@ -76,7 +76,7 @@ export default function MediaFeed() {
 
     const { data } = await supabase
       .from('admin_posts')
-      .select('id, title, body, video_url, image_url, pdf_url, downloadable, created_at')
+      .select('id, title, body, video_url, image_url, pdf_url, downloadable, created_at, view_count')
       .eq('is_active', true)
       .or('image_url.neq.,video_url.neq.,pdf_url.neq.')
       .order('created_at', { ascending: false })

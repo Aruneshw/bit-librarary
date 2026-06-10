@@ -462,32 +462,21 @@ export default function AdminDashboard() {
             <p className="font-mono text-[10px] text-white/40 mt-1">Currently active on the platform</p>
           </div>
           <div className="bg-black/40 border border-amber-400/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.05)]">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-3">
               <p className="font-orbitron text-[10px] text-amber-400/60 tracking-widest uppercase flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                 Storage
               </p>
               {hasBlobToken && (
-                <div className="flex gap-1 bg-black/60 border border-amber-400/20 rounded-lg p-0.5">
-                  <button
-                    onClick={() => { setStorageMode('vercel'); localStorage.setItem('admin_storage_mode', 'vercel'); }}
-                    className={`px-2 py-0.5 font-orbitron text-[8px] tracking-wider rounded-md transition-all ${storageMode === 'vercel' ? 'bg-amber-400/20 text-amber-400' : 'text-white/50 hover:text-white/80'}`}
-                  >
-                    Vercel
-                  </button>
-                  <button
-                    onClick={() => { setStorageMode('supabase'); localStorage.setItem('admin_storage_mode', 'supabase'); }}
-                    className={`px-2 py-0.5 font-orbitron text-[8px] tracking-wider rounded-md transition-all ${storageMode === 'supabase' ? 'bg-arc-blue/20 text-arc-blue' : 'text-white/50 hover:text-white/80'}`}
-                  >
-                    Supabase
-                  </button>
-                </div>
+                <span className="font-orbitron text-[8px] text-white/30 tracking-wider">
+                  Upload: {storageMode === 'vercel' ? 'Vercel Blob' : 'Supabase'}
+                </span>
               )}
             </div>
 
-            {/* Vercel Blob storage */}
-            {storageMode === 'vercel' && blobStats && (
-              <div className="space-y-1.5">
+            {/* Vercel Blob — always shown when configured */}
+            {blobStats && (
+              <div className="mb-2">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[10px] text-amber-400/80">Vercel Blob (1 GB)</span>
                   <span className="font-mono text-[9px] text-white/40">
@@ -500,15 +489,15 @@ export default function AdminDashboard() {
                       : `${(blobStats.remaining / (1024 * 1024)).toFixed(1)} MB free`}
                   </span>
                 </div>
-                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mt-0.5">
                   <div className={`h-full rounded-full transition-all duration-500 ${blobStats.usedPercent > 80 ? 'bg-warning-red' : blobStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(blobStats.usedPercent, 100)}%` }} />
                 </div>
               </div>
             )}
 
-            {/* Supabase per-bucket storage */}
-            {storageMode === 'supabase' && supabaseStats?.details && (
-              <div className="space-y-2">
+            {/* Supabase per-bucket — always shown */}
+            {supabaseStats?.details && (
+              <div className="space-y-2 pt-2 border-t border-amber-400/10">
                 {Object.entries(supabaseStats.details).map(([name, data]) => {
                   const limit = data.limit || 200 * 1024 * 1024;
                   const usedPercent = data.size > 0 ? Math.round((data.size / limit) * 100) : 0;
@@ -534,27 +523,13 @@ export default function AdminDashboard() {
                     </div>
                   );
                 })}
-                {supabaseStats.totalSize > 0 && (
-                  <div className="pt-1 border-t border-amber-400/10">
-                    <span className="font-mono text-[9px] text-white/30">
-                      Total: {supabaseStats.totalSize >= 1024 * 1024 * 1024
-                        ? `${(supabaseStats.totalSize / (1024 * 1024 * 1024)).toFixed(2)} GB`
-                        : `${(supabaseStats.totalSize / (1024 * 1024)).toFixed(1)} MB`}
-                      {' / '}
-                      {supabaseStats.totalLimit >= 1024 * 1024 * 1024
-                        ? `${(supabaseStats.totalLimit / (1024 * 1024 * 1024)).toFixed(0)} GB`
-                        : `${(supabaseStats.totalLimit / (1024 * 1024)).toFixed(0)} MB`}
-                      {' total'}
-                    </span>
-                  </div>
-                )}
               </div>
             )}
 
             {/* Fallback when no data */}
-            {(storageMode === 'vercel' && !blobStats) || (storageMode === 'supabase' && !supabaseStats) ? (
+            {!blobStats && !supabaseStats && (
               <p className="font-mono text-[10px] text-white/30 mt-2">Loading storage data...</p>
-            ) : null}
+            )}
           </div>
         </motion.div>
 
