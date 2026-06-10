@@ -696,7 +696,7 @@ function DeviceSlide({ data }: { data: DeviceStats | null }) {
       <div className="h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={chartData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, percentage }) => `${name} ${percentage}%`}>
+            <Pie data={chartData} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, percent = 0 }) => `${name} ${(percent * 100).toFixed(0)}%`}>
               {chartData.map((entry, i) => (
                 <Cell key={i} fill={DEVICE_COLORS[entry.name] || '#666'} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
               ))}
