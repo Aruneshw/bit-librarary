@@ -63,10 +63,13 @@ export async function fetchAccessData(range: AccessRange): Promise<DailyAccessPo
   return data as DailyAccessPoint[];
 }
 
-export async function logAccess(userId: string): Promise<void> {
+export async function logAccess(userId: string, userAgent?: string): Promise<void> {
   try {
     const supabase = createClient();
-    await supabase.rpc('log_daily_access', { target_user_id: userId });
+    await supabase.rpc('log_daily_access', {
+      target_user_id: userId,
+      p_user_agent: userAgent || null,
+    });
   } catch {
     // silently fail – analytics should never block UX
   }

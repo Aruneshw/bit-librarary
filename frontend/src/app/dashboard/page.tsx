@@ -293,7 +293,7 @@ export default function DashboardPage() {
     if (!user?.id) return;
     const logged = sessionStorage.getItem('access_logged_today');
     if (!logged) {
-      logAccess(user.id);
+      logAccess(user.id, navigator.userAgent);
       sessionStorage.setItem('access_logged_today', 'true');
     }
   }, [user?.id]);

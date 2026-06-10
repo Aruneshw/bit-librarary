@@ -33,6 +33,14 @@ function getDownloadUrl(url: string): string {
   return url + (url.includes('?') ? '&' : '?') + 'download=1';
 }
 
+function trackDownload(fileUrl: string) {
+  fetch('/api/files/track-download', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fileUrl }),
+  }).catch(() => {});
+}
+
 export default function MediaFeed() {
   const { isAuthenticated, isAdmin, user } = useAuthStore();
   const [posts, setPosts] = useState<MediaPost[]>([]);
@@ -285,6 +293,7 @@ export default function MediaFeed() {
                     <a
                       href={getDownloadUrl(post.image_url)}
                       download
+                      onClick={() => trackDownload(post.image_url!)}
                       className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 border border-arc-blue/30 flex items-center justify-center text-arc-blue opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-arc-blue/20"
                       title="Download image"
                     >
@@ -341,6 +350,7 @@ export default function MediaFeed() {
                       <a
                         href={getDownloadUrl(post.pdf_url!)}
                         download
+                        onClick={() => trackDownload(post.pdf_url!)}
                         className="flex items-center gap-1 px-2 py-1 text-xs font-mono text-arc-blue border border-arc-blue/30 rounded hover:bg-arc-blue/10 transition-colors"
                         title="Download PDF"
                       >
@@ -374,6 +384,7 @@ export default function MediaFeed() {
                     <a
                       href={getDownloadUrl(post.image_url)}
                       download
+                      onClick={() => trackDownload(post.image_url!)}
                       className="text-arc-blue/50 hover:text-arc-blue transition-colors p-1 sm:hidden"
                       title="Download"
                     >
