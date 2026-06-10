@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
+import DailyAccessChart from '@/components/admin/DailyAccessChart';
 
 interface UserProfile {
   id: string;
@@ -338,11 +339,21 @@ export default function AdminDashboard() {
           </div>
         </motion.div>
 
-        <motion.div 
+        {/* Daily Access Analytics Chart */}
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-black/40 border border-arc-blue/20 rounded-xl backdrop-blur-md overflow-hidden shadow-[0_0_30px_rgba(0,217,255,0.05)]"
+          className="mt-8"
+        >
+          <DailyAccessChart />
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mt-8 bg-black/40 border border-arc-blue/20 rounded-xl backdrop-blur-md overflow-hidden shadow-[0_0_30px_rgba(0,217,255,0.05)]"
         >
           <div className="p-6 border-b border-arc-blue/20 bg-arc-blue/5">
             <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center gap-3">

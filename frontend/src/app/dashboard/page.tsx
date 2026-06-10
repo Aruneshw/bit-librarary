@@ -23,6 +23,7 @@ import NotificationSync from '@/components/dashboard/NotificationSync';
 import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import { useNotification } from '@/hooks/useNotification';
+import { logAccess } from '@/lib/dailyAccess';
 
 function SystemClock() {
   const [time, setTime] = useState<string>('');
@@ -299,6 +300,16 @@ export default function DashboardPage() {
       fetchSubjects('ALL');
     }
   }, [user?.department, isAdmin, fetchSubjects]);
+
+  // Log daily access (once per browser session)
+  useEffect(() => {
+    if (!user?.id) return;
+    const logged = sessionStorage.getItem('access_logged_today');
+    if (!logged) {
+      logAccess(user.id);
+      sessionStorage.setItem('access_logged_today', 'true');
+    }
+  }, [user?.id]);
 
   // Check tutorial status
   useEffect(() => {
