@@ -39,7 +39,37 @@ export default function MediaFeed() {
   const knownIds = useRef(new Set<string>());
 
   const fetchPosts = async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const supabase = createClient();
+
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const res = await fetch(`${apiUrl}/posts`, {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+          if (res.ok) {
+            const result = await res.json();
+            const posts = result.posts.filter((p: MediaPost) => p.image_url || p.video_url || p.pdf_url);
+            posts.forEach((p: MediaPost) => {
+              if (!knownIds.current.has(p.id)) {
+                knownIds.current.add(p.id);
+                addNotification({
+                  type: 'media',
+                  title: p.title || 'New Media',
+                  body: p.body.slice(0, 120),
+                  data: { url: '/dashboard' },
+                });
+              }
+            });
+            setPosts(posts);
+            return;
+          }
+        }
+      } catch { /* fallback to direct query */ }
+    }
+
     const { data } = await supabase
       .from('admin_posts')
       .select('id, title, body, video_url, image_url, pdf_url, downloadable, created_at')
@@ -148,6 +178,8 @@ export default function MediaFeed() {
                     alt={post.title || 'Media'}
                     className="rounded-lg border border-arc-blue/20 max-h-96 w-full object-cover"
                     draggable={post.downloadable}
+                    loading="lazy"
+                    decoding="async"
                     onContextMenu={post.downloadable ? undefined : (e) => e.preventDefault()}
                   />
                   {post.downloadable && (

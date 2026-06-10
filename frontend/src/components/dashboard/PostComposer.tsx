@@ -187,17 +187,25 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                     <label className="font-mono text-[10px] text-white/40 uppercase tracking-wider">
                       Upload Media (PDF, JPG, PNG — optional)
                     </label>
-                    <input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-                      onChange={(e) => setMediaFile(e.target.files?.[0] || null)}
-                      className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-2.5 text-text-white font-mono text-base sm:text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-arc-blue/20 file:text-arc-blue file:text-xs file:font-orbitron hover:file:bg-arc-blue/30 focus:outline-none focus:border-arc-blue cursor-pointer placeholder:text-text-white/20"
-                    />
-                    {mediaFile && (
-                      <p className="font-mono text-[10px] text-terminal-green">
-                        Selected: {mediaFile.name} ({(mediaFile.size / 1024).toFixed(1)} KB)
-                      </p>
-                    )}
+      <input
+        type="file"
+        accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+        onChange={(e) => {
+          const file = e.target.files?.[0] || null;
+          if (file && file.size > 200 * 1024 * 1024) {
+            setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is 200MB.`);
+            e.target.value = '';
+            return;
+          }
+          setMediaFile(file);
+        }}
+        className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-2.5 text-text-white font-mono text-base sm:text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-arc-blue/20 file:text-arc-blue file:text-xs file:font-orbitron hover:file:bg-arc-blue/30 focus:outline-none focus:border-arc-blue cursor-pointer placeholder:text-text-white/20"
+      />
+      {mediaFile && (
+        <p className="font-mono text-[10px] text-terminal-green">
+          Selected: {mediaFile.name} ({(mediaFile.size / 1024 / 1024).toFixed(2)} MB)
+        </p>
+      )}
                     <label className="flex items-center gap-2 cursor-pointer mt-1">
                       <button
                         type="button"

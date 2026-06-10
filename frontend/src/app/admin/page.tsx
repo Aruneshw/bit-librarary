@@ -15,6 +15,16 @@ interface UserProfile {
   department: string;
   login_count: number;
   created_at: string;
+  app_installed?: boolean;
+}
+
+interface StorageStats {
+  pdfs: { size: number; count: number };
+  media: { size: number; count: number };
+  totalSize: number;
+  totalLimit: number;
+  usedPercent: number;
+  remaining: number;
 }
 
 interface UserFeedback {
@@ -51,6 +61,8 @@ export default function AdminDashboard() {
   const [postDownloadable, setPostDownloadable] = useState(true);
   const [posting, setPosting] = useState(false);
   const [postMessage, setPostMessage] = useState('');
+  const [storageStats, setStorageStats] = useState<StorageStats | null>(null);
+  const [userSearch, setUserSearch] = useState('');
 
   const fetchSystemMetrics = useCallback(async () => {
     const supabase = createClient();
@@ -72,6 +84,50 @@ export default function AdminDashboard() {
     }
   }, []);
 
+  const fetchStorageStats = useCallback(async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const supabase = createClient();
+
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const res = await fetch(`${apiUrl}/posts/storage-stats`, {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+          if (res.ok) {
+            const result = await res.json();
+            setStorageStats(result.stats);
+            return;
+          }
+        }
+      } catch { /* fallback */ }
+    }
+
+    try {
+      const { data: buckets } = await supabase.storage.listBuckets();
+      if (buckets) {
+        let totalSize = 0;
+        const stats: any = { pdfs: { size: 0, count: 0 }, media: { size: 0, count: 0 } };
+        for (const bucket of ['pdfs', 'media'] as const) {
+          const { data: files } = await supabase.storage.from(bucket).list('', { limit: 1000 });
+          if (files) {
+            const filtered = files.filter((f: any) => !f.id?.endsWith('/'));
+            stats[bucket].count = filtered.length;
+            stats[bucket].size = filtered.reduce((acc: number, f: any) => acc + ((f.metadata?.size as number) || 0), 0);
+            totalSize += stats[bucket].size;
+          }
+        }
+        const planLimit = 500 * 1024 * 1024;
+        stats.totalSize = totalSize;
+        stats.totalLimit = planLimit;
+        stats.usedPercent = totalSize > 0 ? Math.round((totalSize / planLimit) * 100) : 0;
+        stats.remaining = Math.max(0, planLimit - totalSize);
+        setStorageStats(stats);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
@@ -84,6 +140,7 @@ export default function AdminDashboard() {
         fetchUsers();
         fetchFeedbacks();
         fetchSystemMetrics();
+        fetchStorageStats();
       }
     }
   }, [isAdmin, isLoading, router, fetchSystemMetrics]);
@@ -128,11 +185,14 @@ export default function AdminDashboard() {
         }
       });
 
+    const storageInterval = setInterval(() => fetchStorageStats(), 30000);
+
     return () => {
       supabase.removeChannel(metricsChannel);
       supabase.removeChannel(presenceChannel);
+      clearInterval(storageInterval);
     };
-  }, [isAdmin, user, fetchSystemMetrics]);
+  }, [isAdmin, user, fetchSystemMetrics, fetchStorageStats]);
 
   const fetchUsers = async () => {
     const supabase = createClient();
@@ -396,6 +456,33 @@ export default function AdminDashboard() {
             </p>
             <p className="font-mono text-[10px] text-white/40 mt-1">Currently active on the platform</p>
           </div>
+          <div className="bg-black/40 border border-amber-400/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.05)]">
+            <p className="font-orbitron text-[10px] text-amber-400/60 tracking-widest uppercase mb-2 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+              Storage
+            </p>
+            <p className="font-orbitron text-3xl text-amber-400 font-bold" style={{ textShadow: '0 0 12px rgba(251,191,36,0.4)' }}>
+              {storageStats ? `${(storageStats.totalSize / (1024 * 1024)).toFixed(1)} MB` : '—'}
+            </p>
+            <div className="mt-2">
+              {storageStats && (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        storageStats.usedPercent > 80 ? 'bg-warning-red' : storageStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'
+                      }`}
+                      style={{ width: `${Math.min(storageStats.usedPercent, 100)}%` }}
+                    />
+                  </div>
+                  <span className="font-mono text-[10px] text-white/40">{storageStats.usedPercent}%</span>
+                </div>
+              )}
+              <p className="font-mono text-[10px] text-white/40 mt-1">
+                {storageStats ? `${(storageStats.remaining / (1024 * 1024)).toFixed(1)} MB remaining` : 'Supabase storage usage'}
+              </p>
+            </div>
+          </div>
         </motion.div>
 
         {/* Daily Access Analytics Chart */}
@@ -419,6 +506,18 @@ export default function AdminDashboard() {
               <span className="w-2 h-2 rounded-full bg-arc-blue shadow-[0_0_8px_rgba(0,217,255,1)] animate-pulse" />
               Registered Personnel Directory
             </h2>
+            <div className="mt-4 relative">
+              <input
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                placeholder="Search by name or email..."
+                className="w-full max-w-md bg-black/60 border border-arc-blue/30 rounded p-2.5 pl-9 text-white font-mono text-sm focus:outline-none focus:border-arc-blue"
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-arc-blue/50">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
           </div>
           
           <div className="overflow-x-auto">
@@ -429,55 +528,96 @@ export default function AdminDashboard() {
                   <th className="p-4">Email</th>
                   <th className="p-4">Department</th>
                   <th className="p-4">Logins</th>
+                  <th className="p-4">App</th>
                   <th className="p-4">Joined Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-arc-blue/10">
                 {loadingUsers ? (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-white/50 font-mono animate-pulse">Loading personnel data...</td>
-                  </tr>
-                ) : users.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="p-8 text-center text-white/50 font-mono">No personnel records found.</td>
+                    <td colSpan={6} className="p-8 text-center text-white/50 font-mono animate-pulse">Loading personnel data...</td>
                   </tr>
                 ) : (
-                  users.map((u, i) => (
-                    <motion.tr 
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.05 * i }}
-                      key={u.id} 
-                      className="hover:bg-arc-blue/5 transition-colors group"
-                    >
-                      <td className="p-4 pl-6 text-white group-hover:text-arc-blue transition-colors">
-                        <div className="flex items-center gap-2">
-                          {onlineUserIds.includes(u.id) && (
-                            <span 
-                              className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-terminal-green shadow-[0_0_6px_rgba(0,255,65,0.8)] animate-pulse shrink-0" 
-                              title="Online"
-                            />
-                          )}
-                          <span>{u.name || 'Unknown'}</span>
-                        </div>
-                      </td>
-                      <td className="p-4 text-white/70 font-mono text-sm">{u.email}</td>
-                      <td className="p-4">
-                        <span className="px-2 py-1 text-xs font-mono border border-arc-blue/30 rounded bg-arc-blue/10 text-arc-blue">
-                          {u.department || 'N/A'}
-                        </span>
-                      </td>
-                      <td className="p-4 text-white/70 font-mono text-sm">
-                        {u.login_count || 0}
-                      </td>
-                      <td className="p-4 text-white/50 font-mono text-xs">
-                        {new Date(u.created_at).toLocaleDateString()} {new Date(u.created_at).toLocaleTimeString()}
-                      </td>
-                    </motion.tr>
-                  ))
+                  (() => {
+                    const filtered = userSearch
+                      ? users.filter(u =>
+                          (u.name || '').toLowerCase().includes(userSearch.toLowerCase()) ||
+                          u.email.toLowerCase().includes(userSearch.toLowerCase())
+                        )
+                      : users;
+                    return filtered.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="p-8 text-center text-white/50 font-mono">
+                          {userSearch ? 'No personnel matching search.' : 'No personnel records found.'}
+                        </td>
+                      </tr>
+                    ) : (
+                      filtered.map((u, i) => (
+                        <motion.tr 
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.03 * i }}
+                          key={u.id} 
+                          className="hover:bg-arc-blue/5 transition-colors group"
+                        >
+                          <td className="p-4 pl-6 text-white group-hover:text-arc-blue transition-colors">
+                            <div className="flex items-center gap-2">
+                              {onlineUserIds.includes(u.id) && (
+                                <span 
+                                  className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-terminal-green shadow-[0_0_6px_rgba(0,255,65,0.8)] animate-pulse shrink-0" 
+                                  title="Online"
+                                />
+                              )}
+                              <span>{u.name || 'Unknown'}</span>
+                            </div>
+                          </td>
+                          <td className="p-4 text-white/70 font-mono text-sm">{u.email}</td>
+                          <td className="p-4">
+                            <span className="px-2 py-1 text-xs font-mono border border-arc-blue/30 rounded bg-arc-blue/10 text-arc-blue">
+                              {u.department || 'N/A'}
+                            </span>
+                          </td>
+                          <td className="p-4 text-white/70 font-mono text-sm">
+                            {u.login_count || 0}
+                          </td>
+                          <td className="p-4">
+                            <button
+                              onClick={async () => {
+                                const supabase = createClient();
+                                const { error } = await supabase
+                                  .from('profiles')
+                                  .update({ app_installed: !u.app_installed })
+                                  .eq('id', u.id);
+                                if (!error) {
+                                  setUsers(users.map(usr => usr.id === u.id ? { ...usr, app_installed: !usr.app_installed } : usr));
+                                }
+                              }}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono rounded cursor-pointer transition-all ${
+                                u.app_installed
+                                  ? 'text-terminal-green border border-terminal-green/30 bg-terminal-green/10 hover:bg-terminal-green/20'
+                                  : 'text-white/40 border border-white/10 bg-white/5 hover:bg-arc-blue/10 hover:text-arc-blue'
+                              }`}
+                              title={u.app_installed ? 'Mark as not installed' : 'Mark as installed'}
+                            >
+                              {u.app_installed ? 'Installed' : 'Not Installed'}
+                            </button>
+                          </td>
+                          <td className="p-4 text-white/50 font-mono text-xs">
+                            {new Date(u.created_at).toLocaleDateString()} {new Date(u.created_at).toLocaleTimeString()}
+                          </td>
+                        </motion.tr>
+                      ))
+                    );
+                  })()
                 )}
               </tbody>
             </table>
+            <div className="px-6 py-3 border-t border-arc-blue/10 flex justify-between items-center">
+              <span className="font-mono text-[10px] text-white/30">
+                Total: {users.length} personnel
+                {userSearch && ` (${users.filter(u => (u.name || '').toLowerCase().includes(userSearch.toLowerCase()) || u.email.toLowerCase().includes(userSearch.toLowerCase())).length} matching)`}
+              </span>
+            </div>
           </div>
         </motion.div>
 
@@ -529,12 +669,20 @@ export default function AdminDashboard() {
               <input
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
-                onChange={(e) => setPostMediaFile(e.target.files?.[0] || null)}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  if (file && file.size > 200 * 1024 * 1024) {
+                    setPostMessage(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum is 200MB.`);
+                    e.target.value = '';
+                    return;
+                  }
+                  setPostMediaFile(file);
+                }}
                 className="w-full bg-black/60 border border-arc-blue/30 rounded p-2.5 text-white font-mono text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-arc-blue/20 file:text-arc-blue file:text-xs file:font-orbitron hover:file:bg-arc-blue/30 focus:outline-none focus:border-arc-blue cursor-pointer"
               />
               {postMediaFile && (
                 <p className="font-mono text-[10px] text-terminal-green">
-                  Selected: {postMediaFile.name} ({(postMediaFile.size / 1024).toFixed(1)} KB)
+                  Selected: {postMediaFile.name} ({(postMediaFile.size / 1024 / 1024).toFixed(2)} MB)
                 </p>
               )}
             </div>
