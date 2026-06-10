@@ -15,7 +15,7 @@ export default function PushNotificationDemo() {
   }, [swReady, askPermission]);
 
   return (
-    <div className="fixed bottom-20 right-4 z-50">
+    <div className="fixed bottom-20 left-4 z-50">
       <button
         onClick={() => {
           if (permission === 'granted') {
