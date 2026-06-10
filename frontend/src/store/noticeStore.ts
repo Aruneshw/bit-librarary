@@ -46,7 +46,7 @@ export const useNoticeStore = create<NoticeState>((set, get) => ({
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (data && !error) {
         const parsed = data as SystemNotice;
