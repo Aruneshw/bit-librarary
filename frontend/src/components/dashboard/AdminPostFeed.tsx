@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import PostReactions from './PostReactions';
 import PollCard from './PollCard';
+import PollComposer from '@/components/admin/PollComposer';
 import type { PollData } from './PollCard';
 
 interface AdminPost {
@@ -30,6 +31,7 @@ export default function AdminPostFeed() {
   const [polls, setPolls] = useState<PollData[]>([]);
   const [liveViewers, setLiveViewers] = useState<Record<string, number>>({});
   const [trackedViews, setTrackedViews] = useState<Set<string>>(new Set());
+  const [editingPoll, setEditingPoll] = useState<PollData | null>(null);
   const visiblePostRef = useRef<string | null>(null);
 
   const fetchPosts = async () => {
@@ -245,7 +247,14 @@ export default function AdminPostFeed() {
       </h2>
       {mergedFeed.map((item) => {
         if (item.type === 'poll') {
-          return <PollCard key={`poll-${item.id}`} poll={item.data as PollData} />;
+          return (
+            <PollCard
+              key={`poll-${item.id}`}
+              poll={item.data as PollData}
+              onEdit={(p) => setEditingPoll(p)}
+              onDelete={(id) => setPolls((prev) => prev.filter((pl) => pl.id !== id))}
+            />
+          );
         }
         const post = item.data as AdminPost;
         const embedUrl = post.video_url ? getYouTubeEmbedUrl(post.video_url) : null;
@@ -304,6 +313,13 @@ export default function AdminPostFeed() {
           </motion.article>
         );
       })}
+
+      <PollComposer
+        isOpen={!!editingPoll}
+        onClose={() => setEditingPoll(null)}
+        onCreated={() => setEditingPoll(null)}
+        editPoll={editingPoll}
+      />
     </div>
   );
 }

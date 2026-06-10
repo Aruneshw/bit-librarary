@@ -1,18 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
+import type { PollData, PollOption } from '@/components/dashboard/PollCard';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onCreated?: () => void;
+  editPoll?: PollData | null;
 }
 
-export default function PollComposer({ isOpen, onClose, onCreated }: Props) {
+export default function PollComposer({ isOpen, onClose, onCreated, editPoll }: Props) {
   const { user } = useAuthStore();
+  const isEditing = !!editPoll;
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState<string[]>(['', '']);
   const [endDate, setEndDate] = useState('');
@@ -23,6 +26,26 @@ export default function PollComposer({ isOpen, onClose, onCreated }: Props) {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (editPoll && isOpen) {
+      setQuestion(editPoll.question);
+      setOptions(editPoll.options.sort((a, b) => a.sort_order - b.sort_order).map((o) => o.option_text));
+      setMultipleChoice(editPoll.multiple_choice);
+      setAnonymous(editPoll.anonymous);
+      setShowLiveResults(editPoll.show_live_results);
+      if (editPoll.end_date) {
+        const d = new Date(editPoll.end_date);
+        setEndDate(d.toISOString().split('T')[0]);
+        setEndTime(d.toTimeString().slice(0, 5));
+      } else {
+        setEndDate('');
+        setEndTime('');
+      }
+    } else if (!isOpen) {
+      reset();
+    }
+  }, [editPoll, isOpen]);
 
   const addOption = () => {
     if (options.length >= 20) return;
@@ -62,41 +85,69 @@ export default function PollComposer({ isOpen, onClose, onCreated }: Props) {
     setError('');
 
     try {
-      const supabase = createClient();
-
       const endDateTime = endDate && endTime
         ? new Date(`${endDate}T${endTime}`).toISOString()
         : null;
 
-      const { data: poll, error: pollErr } = await supabase
-        .from('polls')
-        .insert({
-          question: question.trim(),
-          created_by: user?.id || null,
-          end_date: endDateTime,
-          multiple_choice: multipleChoice,
-          anonymous,
-          show_live_results: showLiveResults,
-          status: 'active',
-        })
-        .select()
-        .single();
+      if (isEditing && editPoll) {
+        // Edit existing poll
+        const res = await fetch('/api/polls/edit', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pollId: editPoll.id,
+            question: question.trim(),
+            endDate: endDateTime,
+            multipleChoice,
+            anonymous,
+            showLiveResults,
+            options: options
+              .filter((o) => o.trim())
+              .map((text, i) => ({
+                id: editPoll.options[i]?.id || null,
+                option_text: text.trim(),
+              })),
+          }),
+        });
 
-      if (pollErr || !poll) {
-        throw new Error(pollErr?.message || 'Failed to create poll');
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || 'Failed to update poll');
+        }
+      } else {
+        // Create new poll
+        const supabase = createClient();
+
+        const { data: poll, error: pollErr } = await supabase
+          .from('polls')
+          .insert({
+            question: question.trim(),
+            created_by: user?.id || null,
+            end_date: endDateTime,
+            multiple_choice: multipleChoice,
+            anonymous,
+            show_live_results: showLiveResults,
+            status: 'active',
+          })
+          .select()
+          .single();
+
+        if (pollErr || !poll) {
+          throw new Error(pollErr?.message || 'Failed to create poll');
+        }
+
+        const validOptions = options.filter((o) => o.trim()).map((text, i) => ({
+          poll_id: poll.id,
+          option_text: text.trim(),
+          sort_order: i,
+        }));
+
+        const { error: optErr } = await supabase
+          .from('poll_options')
+          .insert(validOptions);
+
+        if (optErr) throw new Error(optErr.message);
       }
-
-      const validOptions = options.filter((o) => o.trim()).map((text, i) => ({
-        poll_id: poll.id,
-        option_text: text.trim(),
-        sort_order: i,
-      }));
-
-      const { error: optErr } = await supabase
-        .from('poll_options')
-        .insert(validOptions);
-
-      if (optErr) throw new Error(optErr.message);
 
       setSuccess(true);
       onCreated?.();
@@ -144,13 +195,17 @@ export default function PollComposer({ isOpen, onClose, onCreated }: Props) {
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00FF41" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </motion.div>
-                <p className="font-orbitron text-sm text-terminal-green">Poll Created!</p>
+                <p className="font-orbitron text-sm text-terminal-green">
+                  {isEditing ? 'Poll Updated!' : 'Poll Created!'}
+                </p>
               </div>
             ) : (
               <form onSubmit={handleCreate} className="space-y-4">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-lg">📊</span>
-                  <h2 className="font-orbitron text-sm text-amber-400 tracking-widest uppercase">Create Poll</h2>
+                  <h2 className="font-orbitron text-sm text-amber-400 tracking-widest uppercase">
+                    {isEditing ? 'Edit Poll' : 'Create Poll'}
+                  </h2>
                 </div>
 
                 {/* Question */}
@@ -262,7 +317,9 @@ export default function PollComposer({ isOpen, onClose, onCreated }: Props) {
                   disabled={creating || !question.trim() || options.filter((o) => o.trim()).length < 2}
                   className="w-full py-2.5 bg-amber-400/10 border border-amber-400 text-amber-400 font-orbitron text-xs tracking-widest uppercase rounded-lg hover:bg-amber-400/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  {creating ? 'Creating...' : 'Create Poll'}
+                  {creating
+                    ? (isEditing ? 'Updating...' : 'Creating...')
+                    : (isEditing ? 'Update Poll' : 'Create Poll')}
                 </button>
               </form>
             )}

@@ -9,6 +9,7 @@ import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import FileManager from '@/components/admin/FileManager';
 import AnalyticsCarousel from '@/components/admin/AnalyticsCarousel';
 import PollComposer from '@/components/admin/PollComposer';
+import FeatureNoticeEditor from '@/components/admin/FeatureNoticeEditor';
 
 interface UserProfile {
   id: string;
@@ -887,6 +888,16 @@ export default function AdminDashboard() {
           className="mt-8"
         >
           <FileManager />
+        </motion.div>
+
+        {/* Feature Notice Editor */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.19 }}
+          className="mt-8"
+        >
+          <FeatureNoticeEditor />
         </motion.div>
 
         {/* Feedback Section */}

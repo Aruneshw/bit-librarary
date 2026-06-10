@@ -8,12 +8,11 @@ import { useSubjectStore } from '@/store/subjectStore';
 import SubjectOrbit from '@/components/dashboard/SubjectOrbit';
 import SubjectCardStack from '@/components/dashboard/SubjectCardStack';
 import ArcReactor from '@/components/dashboard/ArcReactor';
-import AINoticeBoard from '@/components/dashboard/AINoticeBoard';
 import HudFrontPage from '@/components/animations/HudFrontPage';
 import TutorialModal from '@/components/tutorial/TutorialModal';
 import MobileActionDock from '@/components/dashboard/MobileActionDock';
-import BroadcastBanner from '@/components/dashboard/BroadcastBanner';
 import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
+import FeatureNotice from '@/components/dashboard/FeatureNotice';
 import AdminPostFeed from '@/components/dashboard/AdminPostFeed';
 import MediaFeed from '@/components/dashboard/MediaFeed';
 import PostComposer from '@/components/dashboard/PostComposer';
@@ -394,8 +393,7 @@ export default function DashboardPage() {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden">
-      <BroadcastBanner />
-      <AINoticeBoard />
+      <FeatureNotice />
       <PwaInstallBanner />
 
       {/* HUD Front Page / Boot sequence */}

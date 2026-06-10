@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useNotificationStore } from '@/store/notificationStore';
 import PostReactions from './PostReactions';
 import PollCard from './PollCard';
+import PollComposer from '@/components/admin/PollComposer';
 import type { PollData, PollOption } from './PollCard';
 
 interface MediaPost {
@@ -54,6 +55,7 @@ export default function MediaFeed() {
   const [polls, setPolls] = useState<PollData[]>([]);
   const [liveViewers, setLiveViewers] = useState<Record<string, number>>({});
   const [trackedViews, setTrackedViews] = useState<Set<string>>(new Set());
+  const [editingPoll, setEditingPoll] = useState<PollData | null>(null);
   const addNotification = useNotificationStore((s) => s.addNotification);
   const knownIds = useRef(new Set<string>());
   const visiblePostRef = useRef<string | null>(null);
@@ -315,7 +317,14 @@ export default function MediaFeed() {
       ) : (
         mergedFeed.map((item) => {
           if (item.type === 'poll') {
-            return <PollCard key={`poll-${item.id}`} poll={item.data as PollData} />;
+            return (
+              <PollCard
+                key={`poll-${item.id}`}
+                poll={item.data as PollData}
+                onEdit={(p) => setEditingPoll(p)}
+                onDelete={(id) => setPolls((prev) => prev.filter((pl) => pl.id !== id))}
+              />
+            );
           }
           const post = item.data as MediaPost;
           const embedUrl = post.video_url ? getYouTubeEmbedUrl(post.video_url) : null;
@@ -471,6 +480,13 @@ export default function MediaFeed() {
           );
         })
       )}
+
+      <PollComposer
+        isOpen={!!editingPoll}
+        onClose={() => setEditingPoll(null)}
+        onCreated={() => setEditingPoll(null)}
+        editPoll={editingPoll}
+      />
     </div>
   );
 }

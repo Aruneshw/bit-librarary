@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 
@@ -37,15 +37,20 @@ interface PollResults {
 
 interface Props {
   poll: PollData;
+  onEdit?: (poll: PollData) => void;
+  onDelete?: (pollId: string) => void;
 }
 
-export default function PollCard({ poll }: Props) {
+export default function PollCard({ poll, onEdit, onDelete }: Props) {
   const { user, isAdmin } = useAuthStore();
   const [results, setResults] = useState<PollResults | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
   const [voting, setVoting] = useState(false);
   const [voted, setVoted] = useState(false);
   const [error, setError] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [managing, setManaging] = useState(false);
 
   const isClosed = poll.status === 'closed' || (poll.end_date ? new Date(poll.end_date) < new Date() : false);
 
@@ -122,6 +127,49 @@ export default function PollCard({ poll }: Props) {
     }
   };
 
+  const handleClose = async () => {
+    setManaging(true);
+    try {
+      await fetch('/api/polls/manage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'close', pollId: poll.id }),
+      });
+      poll.status = 'closed';
+    } finally {
+      setManaging(false);
+    }
+  };
+
+  const handleReopen = async () => {
+    setManaging(true);
+    try {
+      await fetch('/api/polls/manage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reopen', pollId: poll.id }),
+      });
+      poll.status = 'active';
+    } finally {
+      setManaging(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      await fetch('/api/polls/manage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete', pollId: poll.id }),
+      });
+      onDelete?.(poll.id);
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   const showResults = voted || isClosed || !poll.show_live_results;
 
   const totalVotes = results?.total_votes ?? 0;
@@ -133,8 +181,85 @@ export default function PollCard({ poll }: Props) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-panel p-4 border border-amber-400/20"
+      className="glass-panel p-4 border border-amber-400/20 relative"
     >
+      {/* Admin controls */}
+      {isAdmin && (
+        <div className="absolute top-3 right-3 flex items-center gap-1">
+          <button
+            onClick={() => onEdit?.(poll)}
+            className="p-1.5 rounded bg-white/5 hover:bg-arc-blue/20 border border-white/10 hover:border-arc-blue/30 transition-all group"
+            title="Edit poll"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/40 group-hover:text-arc-blue transition-colors">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="p-1.5 rounded bg-white/5 hover:bg-warning-red/20 border border-white/10 hover:border-warning-red/30 transition-all group"
+            title="Delete poll"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white/40 group-hover:text-warning-red transition-colors">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              <line x1="10" y1="11" x2="10" y2="17"/>
+              <line x1="14" y1="11" x2="14" y2="17"/>
+            </svg>
+          </button>
+          {poll.status === 'active' ? (
+            <button
+              onClick={handleClose}
+              disabled={managing}
+              className="px-1.5 py-1 rounded bg-white/5 hover:bg-warning-red/20 border border-white/10 hover:border-warning-red/30 text-[8px] font-mono text-white/40 hover:text-warning-red transition-all disabled:opacity-50"
+            >
+              Close
+            </button>
+          ) : (
+            <button
+              onClick={handleReopen}
+              disabled={managing}
+              className="px-1.5 py-1 rounded bg-white/5 hover:bg-terminal-green/20 border border-white/10 hover:border-terminal-green/30 text-[8px] font-mono text-white/40 hover:text-terminal-green transition-all disabled:opacity-50"
+            >
+              Reopen
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Delete confirmation */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-10 bg-black/80 backdrop-blur-sm rounded-xl flex items-center justify-center"
+          >
+            <div className="text-center p-6">
+              <p className="font-orbitron text-xs text-warning-red mb-2">Delete this poll?</p>
+              <p className="font-mono text-[10px] text-white/40 mb-4">This action cannot be undone.</p>
+              <div className="flex gap-2 justify-center">
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="px-3 py-1.5 bg-warning-red/10 border border-warning-red text-warning-red font-orbitron text-[10px] tracking-wider rounded-lg hover:bg-warning-red/20 disabled:opacity-50 transition-all"
+                >
+                  {deleting ? 'Deleting...' : 'Delete'}
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-3 py-1.5 bg-white/5 border border-white/10 text-white/60 font-orbitron text-[10px] tracking-wider rounded-lg hover:bg-white/10 transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">📊</span>
@@ -194,7 +319,6 @@ export default function PollCard({ poll }: Props) {
 
               <div className="relative flex items-center justify-between">
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                  {/* Radio / Checkbox indicator */}
                   <span className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
                     isSelected ? 'border-amber-400 bg-amber-400' : 'border-white/30'
                   }`}>
