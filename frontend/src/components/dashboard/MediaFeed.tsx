@@ -16,6 +16,7 @@ interface MediaPost {
   pdf_url: string | null;
   downloadable: boolean;
   created_at: string;
+  view_count?: number;
 }
 
 function getYouTubeEmbedUrl(url: string): string | null {
@@ -33,10 +34,13 @@ function getDownloadUrl(url: string): string {
 }
 
 export default function MediaFeed() {
-  const { isAuthenticated, isAdmin } = useAuthStore();
+  const { isAuthenticated, isAdmin, user } = useAuthStore();
   const [posts, setPosts] = useState<MediaPost[]>([]);
+  const [liveViewers, setLiveViewers] = useState<Record<string, number>>({});
+  const [trackedViews, setTrackedViews] = useState<Set<string>>(new Set());
   const addNotification = useNotificationStore((s) => s.addNotification);
   const knownIds = useRef(new Set<string>());
+  const visiblePostRef = useRef<string | null>(null);
 
   const fetchPosts = async () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -95,6 +99,31 @@ export default function MediaFeed() {
     }
   };
 
+  const trackView = async (postId: string) => {
+    if (trackedViews.has(postId) || !user) return;
+    setTrackedViews((prev) => new Set(prev).add(postId));
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const supabase = createClient();
+
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await fetch(`${apiUrl}/posts/${postId}/view`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+          return;
+        }
+      } catch {}
+    }
+
+    try {
+      await supabase.rpc('increment_post_view', { post_id: postId, user_id: user.id });
+    } catch {}
+  };
+
   const handleDelete = async (postId: string) => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const supabase = createClient();
@@ -130,15 +159,76 @@ export default function MediaFeed() {
     fetchPosts();
 
     const supabase = createClient();
-    const channel = supabase
+
+    // Realtime post changes
+    const feedChannel = supabase
       .channel('media-feed')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_posts' }, () => fetchPosts())
       .subscribe();
 
+    // Live viewer presence
+    const presenceChannel = supabase.channel('post-live', {
+      config: { presence: { key: user?.id || 'anon' } },
+    });
+
+    presenceChannel
+      .on('presence', { event: 'sync' }, () => {
+        const state = presenceChannel.presenceState();
+        const counts: Record<string, number> = {};
+        for (const key of Object.keys(state)) {
+          const presences = state[key] as any[];
+          for (const p of presences) {
+            const pid = p.currentPostId;
+            if (pid) {
+              counts[pid] = (counts[pid] || 0) + 1;
+            }
+          }
+        }
+        setLiveViewers(counts);
+      })
+      .subscribe(async (status: string) => {
+        if (status === 'SUBSCRIBED') {
+          await presenceChannel.track({ currentPostId: null });
+        }
+      });
+
+    // IntersectionObserver to detect visible post and track views
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let mostVisible: string | null = null;
+        let maxRatio = 0;
+
+        for (const entry of entries) {
+          if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio;
+            mostVisible = entry.target.getAttribute('data-post-id');
+          }
+        }
+
+        if (mostVisible) {
+          visiblePostRef.current = mostVisible;
+          presenceChannel.track({ currentPostId: mostVisible });
+          trackView(mostVisible);
+        } else {
+          visiblePostRef.current = null;
+          presenceChannel.track({ currentPostId: null });
+        }
+      },
+      { threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    // Observe all post cards after render
+    const timer = setTimeout(() => {
+      document.querySelectorAll('[data-post-id]').forEach((el) => observer.observe(el));
+    }, 100);
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(feedChannel);
+      supabase.removeChannel(presenceChannel);
+      observer.disconnect();
+      clearTimeout(timer);
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user?.id]);
 
   if (!isAuthenticated) return null;
 
@@ -161,6 +251,7 @@ export default function MediaFeed() {
           return (
             <motion.article
               key={post.id}
+              data-post-id={post.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               className="glass-panel p-4 border border-arc-blue/20"
@@ -265,9 +356,26 @@ export default function MediaFeed() {
               )}
 
               <div className="flex items-center justify-between mt-2">
-                <p className="font-mono text-[10px] text-text-white/30">
-                  {new Date(post.created_at).toLocaleString()}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="font-mono text-[10px] text-text-white/30">
+                    {new Date(post.created_at).toLocaleString()}
+                  </p>
+                  {(post.view_count ?? 0) > 0 && (
+                    <span className="flex items-center gap-1 font-mono text-[10px] text-arc-blue/50">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      {post.view_count}
+                    </span>
+                  )}
+                  {(liveViewers[post.id] || 0) > 0 && (
+                    <span className="flex items-center gap-1 font-mono text-[10px] text-terminal-green animate-pulse">
+                      <span className="w-1.5 h-1.5 rounded-full bg-terminal-green" />
+                      {liveViewers[post.id]} watching
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-center gap-2">
                   {post.downloadable && post.image_url && !isPdf && (
                     <a

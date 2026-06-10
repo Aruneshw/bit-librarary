@@ -44,7 +44,7 @@ const POSTS_CACHE_KEY = 'admin_posts:recent';
 async function fetchActivePosts() {
   const { data, error } = await supabaseAdmin
     .from('admin_posts')
-    .select('id, title, body, video_url, image_url, pdf_url, downloadable, created_at, created_by')
+    .select('id, title, body, video_url, image_url, pdf_url, downloadable, created_at, created_by, view_count')
     .eq('is_active', true)
     .order('created_at', { ascending: false })
     .limit(20);
@@ -159,6 +159,30 @@ postsRouter.get('/storage-stats', authMiddleware, async (_req: AuthRequest, res:
     res.json({ stats });
   } catch (err: any) {
     res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: err?.message || 'Failed to fetch storage stats', status: 500 } });
+  }
+});
+
+// POST /posts/:id/view
+postsRouter.post('/:id/view', authMiddleware, async (req: AuthRequest, res: Response) => {
+  if (!req.userId) {
+    res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Not authenticated', status: 401 } });
+    return;
+  }
+
+  try {
+    const { error } = await supabaseAdmin.rpc('increment_post_view', {
+      post_id: req.params.id,
+      user_id: req.userId,
+    });
+
+    if (error) {
+      res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: error.message, status: 500 } });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Server error', status: 500 } });
   }
 });
 

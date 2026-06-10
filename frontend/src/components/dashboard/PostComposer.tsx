@@ -24,7 +24,10 @@ export default function PostComposer({ isOpen, onClose }: Props) {
   const [storageMode, setStorageMode] = useState<'supabase' | 'vercel'>('supabase');
   const [hasBlobToken, setHasBlobToken] = useState(false);
   const [liveBlobStats, setLiveBlobStats] = useState<{ totalSize: number; totalLimit: number; usedPercent: number; remaining: number } | null>(null);
-  const [liveSupabaseStats, setLiveSupabaseStats] = useState<{ totalSize: number; totalLimit: number; usedPercent: number; remaining: number } | null>(null);
+  const [liveSupabaseStats, setLiveSupabaseStats] = useState<{
+    totalSize: number; totalLimit: number; usedPercent: number; remaining: number;
+    details?: Record<string, { size: number; count: number; limit: number }>
+  } | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -251,25 +254,46 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                         </button>
                       </div>
                     )}
-                    {(storageMode === 'vercel' ? liveBlobStats : liveSupabaseStats) && (
-                      <div className="flex items-center gap-2 mb-1 px-0.5">
-                        <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full transition-all duration-1000 ${
-                              (storageMode === 'vercel' ? liveBlobStats!.usedPercent : liveSupabaseStats!.usedPercent) > 80
-                                ? 'bg-warning-red'
-                                : (storageMode === 'vercel' ? liveBlobStats!.usedPercent : liveSupabaseStats!.usedPercent) > 50
-                                  ? 'bg-amber-400'
-                                  : 'bg-terminal-green'
-                            }`}
-                            style={{ width: `${Math.min(storageMode === 'vercel' ? liveBlobStats!.usedPercent : liveSupabaseStats!.usedPercent, 100)}%` }}
-                          />
+                    {/* Vercel storage bar */}
+                    {storageMode === 'vercel' && liveBlobStats && (
+                      <div className="space-y-0.5 mb-1 px-0.5">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-[8px] text-amber-400/60">Vercel Blob (1 GB)</span>
+                          <span className="font-mono text-[8px] text-white/30">
+                            {liveBlobStats.remaining >= 1024 * 1024 * 1024
+                              ? `${(liveBlobStats.remaining / (1024 * 1024 * 1024)).toFixed(1)} GB left`
+                              : `${(liveBlobStats.remaining / (1024 * 1024)).toFixed(0)} MB left`}
+                          </span>
                         </div>
-                        <span className="font-mono text-[9px] text-white/40 whitespace-nowrap">
-                          {(storageMode === 'vercel' ? liveBlobStats!.remaining : liveSupabaseStats!.remaining) >= 1024 * 1024 * 1024
-                            ? `${((storageMode === 'vercel' ? liveBlobStats!.remaining : liveSupabaseStats!.remaining) / (1024 * 1024 * 1024)).toFixed(1)} GB left`
-                            : `${((storageMode === 'vercel' ? liveBlobStats!.remaining : liveSupabaseStats!.remaining) / (1024 * 1024)).toFixed(0)} MB left`}
-                        </span>
+                        <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full transition-all duration-1000 ${liveBlobStats.usedPercent > 80 ? 'bg-warning-red' : liveBlobStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(liveBlobStats.usedPercent, 100)}%` }} />
+                        </div>
+                      </div>
+                    )}
+                    {/* Supabase per-bucket bars */}
+                    {storageMode === 'supabase' && liveSupabaseStats?.details && (
+                      <div className="space-y-1 mb-1 px-0.5">
+                        {Object.entries(liveSupabaseStats.details).map(([name, data]) => {
+                          const limit = data.limit || 200 * 1024 * 1024;
+                          const usedPercent = data.size > 0 ? Math.round((data.size / limit) * 100) : 0;
+                          const remaining = Math.max(0, limit - data.size);
+                          const label = name === 'pdfs' ? 'PDFs' : 'Media';
+                          return (
+                            <div key={name}>
+                              <div className="flex items-center justify-between">
+                                <span className="font-mono text-[8px] text-arc-blue/60">{label} (200 MB)</span>
+                                <span className="font-mono text-[8px] text-white/30">
+                                  {remaining >= 1024 * 1024
+                                    ? `${(remaining / (1024 * 1024)).toFixed(0)} MB left`
+                                    : `${(remaining / 1024).toFixed(0)} KB left`}
+                                </span>
+                              </div>
+                              <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                                <div className={`h-full rounded-full transition-all duration-1000 ${usedPercent > 80 ? 'bg-warning-red' : usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(usedPercent, 100)}%` }} />
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
         <input

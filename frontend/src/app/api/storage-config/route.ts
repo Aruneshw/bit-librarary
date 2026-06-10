@@ -12,26 +12,29 @@ async function getSupabaseStats() {
     });
 
     let totalSize = 0;
-    const buckets = ['pdfs', 'media'] as const;
-    const details: Record<string, { size: number; count: number }> = {};
+    const buckets: { name: string; limit: number }[] = [
+      { name: 'pdfs', limit: 200 * 1024 * 1024 },
+      { name: 'media', limit: 200 * 1024 * 1024 },
+    ];
+    const details: Record<string, { size: number; count: number; limit: number }> = {};
 
-    for (const bucket of buckets) {
-      const { data: files } = await supabaseAdmin.storage.from(bucket).list('', { limit: 1000 });
+    for (const { name, limit } of buckets) {
+      const { data: files } = await supabaseAdmin.storage.from(name).list('', { limit: 1000 });
       if (files) {
         const filtered = files.filter((f: any) => !f.id?.endsWith('/'));
         const size = filtered.reduce((acc: number, f: any) => acc + ((f.metadata?.size as number) || 0), 0);
-        details[bucket] = { size, count: filtered.length };
+        details[name] = { size, count: filtered.length, limit };
         totalSize += size;
       }
     }
 
-    const planLimit = 1024 * 1024 * 1024; // 1GB Supabase free plan
+    const totalLimit = buckets.reduce((acc, b) => acc + b.limit, 0);
     return {
       details,
       totalSize,
-      totalLimit: planLimit,
-      usedPercent: totalSize > 0 ? Math.round((totalSize / planLimit) * 100) : 0,
-      remaining: Math.max(0, planLimit - totalSize),
+      totalLimit,
+      usedPercent: totalSize > 0 ? Math.round((totalSize / totalLimit) * 100) : 0,
+      remaining: Math.max(0, totalLimit - totalSize),
     };
   } catch {
     return null;

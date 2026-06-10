@@ -19,8 +19,8 @@ interface UserProfile {
 }
 
 interface StorageStats {
-  pdfs: { size: number; count: number };
-  media: { size: number; count: number };
+  pdfs: { size: number; count: number; limit?: number };
+  media: { size: number; count: number; limit?: number };
   totalSize: number;
   totalLimit: number;
   usedPercent: number;
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
   const [blobStats, setBlobStats] = useState<{ totalSize: number; count: number; totalLimit: number; usedPercent: number; remaining: number } | null>(null);
   const [supabaseStats, setSupabaseStats] = useState<{
     totalSize: number; count: number; totalLimit: number; usedPercent: number; remaining: number;
-    details?: Record<string, { size: number; count: number }>
+    details?: Record<string, { size: number; count: number; limit: number }>
   } | null>(null);
   const [storageMode, setStorageMode] = useState<'supabase' | 'vercel'>('supabase');
   const [hasBlobToken, setHasBlobToken] = useState(false);
@@ -462,58 +462,99 @@ export default function AdminDashboard() {
             <p className="font-mono text-[10px] text-white/40 mt-1">Currently active on the platform</p>
           </div>
           <div className="bg-black/40 border border-amber-400/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.05)]">
-            <p className="font-orbitron text-[10px] text-amber-400/60 tracking-widest uppercase mb-2 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              Storage: {storageMode === 'vercel' ? 'Vercel' : 'Supabase'}
-            </p>
-            <p className="font-orbitron text-3xl text-amber-400 font-bold" style={{ textShadow: '0 0 12px rgba(251,191,36,0.4)' }}>
-              {storageMode === 'vercel' && blobStats
-                ? blobStats.totalSize >= 1024 * 1024 * 1024
-                  ? `${(blobStats.totalSize / (1024 * 1024 * 1024)).toFixed(2)} GB`
-                  : `${(blobStats.totalSize / (1024 * 1024)).toFixed(1)} MB`
-                : supabaseStats
-                  ? supabaseStats.totalSize >= 1024 * 1024 * 1024
-                    ? `${(supabaseStats.totalSize / (1024 * 1024 * 1024)).toFixed(2)} GB`
-                    : `${(supabaseStats.totalSize / (1024 * 1024)).toFixed(1)} MB`
-                  : '—'}
-            </p>
-            <div className="mt-2">
-              {(storageMode === 'vercel' ? blobStats : supabaseStats) && (
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-500 ${(storageMode === 'vercel' ? blobStats!.usedPercent : supabaseStats!.usedPercent) > 80 ? 'bg-warning-red' : (storageMode === 'vercel' ? blobStats!.usedPercent : supabaseStats!.usedPercent) > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(storageMode === 'vercel' ? blobStats!.usedPercent : supabaseStats!.usedPercent, 100)}%` }} />
-                  </div>
-                  <span className="font-mono text-[10px] text-white/40">{storageMode === 'vercel' ? blobStats!.usedPercent : supabaseStats!.usedPercent}%</span>
-                </div>
-              )}
-              <p className="font-mono text-[10px] text-white/40 mt-1">
-                {storageMode === 'vercel' && blobStats
-                  ? blobStats.remaining >= 1024 * 1024 * 1024
-                    ? `${(blobStats.remaining / (1024 * 1024 * 1024)).toFixed(2)} GB remaining`
-                    : `${(blobStats.remaining / (1024 * 1024)).toFixed(1)} MB remaining`
-                  : supabaseStats
-                    ? supabaseStats.remaining >= 1024 * 1024 * 1024
-                      ? `${(supabaseStats.remaining / (1024 * 1024 * 1024)).toFixed(2)} GB remaining`
-                      : `${(supabaseStats.remaining / (1024 * 1024)).toFixed(1)} MB remaining`
-                    : 'Storage usage'}
+            <div className="flex items-center justify-between mb-2">
+              <p className="font-orbitron text-[10px] text-amber-400/60 tracking-widest uppercase flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                Storage
               </p>
               {hasBlobToken && (
-                <div className="mt-3 flex gap-1 bg-black/60 border border-amber-400/20 rounded-lg p-0.5">
+                <div className="flex gap-1 bg-black/60 border border-amber-400/20 rounded-lg p-0.5">
                   <button
                     onClick={() => { setStorageMode('vercel'); localStorage.setItem('admin_storage_mode', 'vercel'); }}
-                    className={`flex-1 px-2 py-1 font-orbitron text-[9px] tracking-wider rounded-md transition-all ${storageMode === 'vercel' ? 'bg-amber-400/20 text-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.2)]' : 'text-white/50 hover:text-white/80'}`}
+                    className={`px-2 py-0.5 font-orbitron text-[8px] tracking-wider rounded-md transition-all ${storageMode === 'vercel' ? 'bg-amber-400/20 text-amber-400' : 'text-white/50 hover:text-white/80'}`}
                   >
-                    Vercel Blob
+                    Vercel
                   </button>
                   <button
                     onClick={() => { setStorageMode('supabase'); localStorage.setItem('admin_storage_mode', 'supabase'); }}
-                    className={`flex-1 px-2 py-1 font-orbitron text-[9px] tracking-wider rounded-md transition-all ${storageMode === 'supabase' ? 'bg-amber-400/20 text-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.2)]' : 'text-white/50 hover:text-white/80'}`}
+                    className={`px-2 py-0.5 font-orbitron text-[8px] tracking-wider rounded-md transition-all ${storageMode === 'supabase' ? 'bg-arc-blue/20 text-arc-blue' : 'text-white/50 hover:text-white/80'}`}
                   >
                     Supabase
                   </button>
                 </div>
               )}
             </div>
+
+            {/* Vercel Blob storage */}
+            {storageMode === 'vercel' && blobStats && (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] text-amber-400/80">Vercel Blob (1 GB)</span>
+                  <span className="font-mono text-[9px] text-white/40">
+                    {blobStats.totalSize >= 1024 * 1024 * 1024
+                      ? `${(blobStats.totalSize / (1024 * 1024 * 1024)).toFixed(2)} GB`
+                      : `${(blobStats.totalSize / (1024 * 1024)).toFixed(1)} MB`}
+                    {' / '}
+                    {blobStats.remaining >= 1024 * 1024 * 1024
+                      ? `${(blobStats.remaining / (1024 * 1024 * 1024)).toFixed(2)} GB free`
+                      : `${(blobStats.remaining / (1024 * 1024)).toFixed(1)} MB free`}
+                  </span>
+                </div>
+                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full transition-all duration-500 ${blobStats.usedPercent > 80 ? 'bg-warning-red' : blobStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(blobStats.usedPercent, 100)}%` }} />
+                </div>
+              </div>
+            )}
+
+            {/* Supabase per-bucket storage */}
+            {storageMode === 'supabase' && supabaseStats?.details && (
+              <div className="space-y-2">
+                {Object.entries(supabaseStats.details).map(([name, data]) => {
+                  const limit = data.limit || 200 * 1024 * 1024;
+                  const usedPercent = data.size > 0 ? Math.round((data.size / limit) * 100) : 0;
+                  const remaining = Math.max(0, limit - data.size);
+                  const label = name === 'pdfs' ? 'PDFs (200 MB)' : 'Media (200 MB)';
+                  return (
+                    <div key={name}>
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[10px] text-arc-blue/80">{label}</span>
+                        <span className="font-mono text-[9px] text-white/40">
+                          {data.size >= 1024 * 1024
+                            ? `${(data.size / (1024 * 1024)).toFixed(1)} MB`
+                            : `${(data.size / 1024).toFixed(0)} KB`}
+                          {' / '}
+                          {remaining >= 1024 * 1024
+                            ? `${(remaining / (1024 * 1024)).toFixed(1)} MB free`
+                            : `${(remaining / 1024).toFixed(0)} KB free`}
+                        </span>
+                      </div>
+                      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mt-0.5">
+                        <div className={`h-full rounded-full transition-all duration-500 ${usedPercent > 80 ? 'bg-warning-red' : usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(usedPercent, 100)}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+                {supabaseStats.totalSize > 0 && (
+                  <div className="pt-1 border-t border-amber-400/10">
+                    <span className="font-mono text-[9px] text-white/30">
+                      Total: {supabaseStats.totalSize >= 1024 * 1024 * 1024
+                        ? `${(supabaseStats.totalSize / (1024 * 1024 * 1024)).toFixed(2)} GB`
+                        : `${(supabaseStats.totalSize / (1024 * 1024)).toFixed(1)} MB`}
+                      {' / '}
+                      {supabaseStats.totalLimit >= 1024 * 1024 * 1024
+                        ? `${(supabaseStats.totalLimit / (1024 * 1024 * 1024)).toFixed(0)} GB`
+                        : `${(supabaseStats.totalLimit / (1024 * 1024)).toFixed(0)} MB`}
+                      {' total'}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Fallback when no data */}
+            {(storageMode === 'vercel' && !blobStats) || (storageMode === 'supabase' && !supabaseStats) ? (
+              <p className="font-mono text-[10px] text-white/30 mt-2">Loading storage data...</p>
+            ) : null}
           </div>
         </motion.div>
 
