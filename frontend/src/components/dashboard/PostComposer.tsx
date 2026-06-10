@@ -21,7 +21,7 @@ export default function PostComposer({ isOpen, onClose }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
-  const [storageMode, setStorageMode] = useState<'supabase' | 'vercel'>('supabase');
+  const [storageProvider, setStorageProvider] = useState<'supabase' | 'vercel_blob'>('supabase');
   const [hasBlobToken, setHasBlobToken] = useState(false);
   const [liveBlobStats, setLiveBlobStats] = useState<{ totalSize: number; totalLimit: number; usedPercent: number; remaining: number } | null>(null);
   const [liveSupabaseStats, setLiveSupabaseStats] = useState<{
@@ -37,8 +37,8 @@ export default function PostComposer({ isOpen, onClose }: Props) {
         if (res.ok) {
           const config = await res.json();
           setHasBlobToken(config.hasBlobToken);
-          const saved = localStorage.getItem('admin_storage_mode') as 'supabase' | 'vercel' | null;
-          setStorageMode(config.hasBlobToken && saved === 'vercel' ? 'vercel' : 'supabase');
+          const saved = localStorage.getItem('admin_storage_provider') as 'supabase' | 'vercel_blob' | null;
+          setStorageProvider(saved || 'supabase');
           if (config.blobStats) setLiveBlobStats(config.blobStats);
           if (config.supabaseStats) setLiveSupabaseStats(config.supabaseStats);
         }
@@ -60,12 +60,12 @@ export default function PostComposer({ isOpen, onClose }: Props) {
     setError('');
   };
 
-  const getStorageMode = (): 'supabase' | 'vercel' => storageMode;
+  const getStorageProvider = (): 'supabase' | 'vercel_blob' => storageProvider;
 
   const uploadMedia = async (): Promise<{ url: string | null; type: 'image' | 'pdf' | null }> => {
     if (!mediaFile) return { url: null, type: null };
     const isPdf = mediaFile.type === 'application/pdf';
-    const mode = getStorageMode();
+    const mode = getStorageProvider();
     const maxFallbackSize = 10 * 1024 * 1024;
     const vercelMaxSize = 50 * 1024 * 1024; // Vercel Blob max file size
 
@@ -80,7 +80,7 @@ export default function PostComposer({ isOpen, onClose }: Props) {
     };
 
     // Auto-route: if Vercel selected but file too large, fall through to Supabase
-    if (mode === 'vercel' && mediaFile.size <= vercelMaxSize) {
+    if (mode === 'vercel_blob' && mediaFile.size <= vercelMaxSize) {
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 120000);
@@ -126,7 +126,7 @@ export default function PostComposer({ isOpen, onClose }: Props) {
       const { url: mediaUrl, type: mediaType } = await uploadMedia();
       const finalImageUrl = mediaType === 'image' ? mediaUrl : (imageUrl.trim() || null);
       const finalPdfUrl = mediaType === 'pdf' ? mediaUrl : null;
-      const usedProvider = mediaFile ? storageMode : null;
+      const usedProvider = mediaFile ? storageProvider : null;
 
       const { error: err } = await supabase.from('admin_posts').insert({
         title: title.trim() || null,
@@ -153,8 +153,8 @@ export default function PostComposer({ isOpen, onClose }: Props) {
         await supabase.from('file_metadata').insert({
           file_name: mediaFile.name,
           file_url: mediaUrl,
-          storage_provider: storageMode === 'vercel' ? 'vercel_blob' : 'supabase',
-          bucket: storageMode === 'supabase' ? (mediaFile.type === 'application/pdf' ? 'pdfs' : 'media') : null,
+          storage_provider: storageProvider,
+          bucket: storageProvider === 'supabase' ? (mediaFile.type === 'application/pdf' ? 'pdfs' : 'media') : null,
           blob_path: mediaUrl,
           file_size: mediaFile.size,
           mime_type: mediaFile.type,
@@ -259,15 +259,15 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                       <div className="flex gap-1 bg-black/60 border border-amber-400/20 rounded-lg p-0.5 mb-1">
                         <button
                           type="button"
-                          onClick={() => { setStorageMode('vercel'); localStorage.setItem('admin_storage_mode', 'vercel'); }}
-                          className={`flex-1 px-2 py-1 font-orbitron text-[9px] tracking-wider rounded-md transition-all ${storageMode === 'vercel' ? 'bg-amber-400/20 text-amber-400' : 'text-white/50 hover:text-white/80'}`}
+                          onClick={() => { setStorageProvider('vercel_blob'); localStorage.setItem('admin_storage_provider', 'vercel_blob'); }}
+                          className={`flex-1 px-2 py-1 font-orbitron text-[9px] tracking-wider rounded-md transition-all ${storageProvider === 'vercel_blob' ? 'bg-amber-400/20 text-amber-400' : 'text-white/50 hover:text-white/80'}`}
                         >
                           Vercel Blob
                         </button>
                         <button
                           type="button"
-                          onClick={() => { setStorageMode('supabase'); localStorage.setItem('admin_storage_mode', 'supabase'); }}
-                          className={`flex-1 px-2 py-1 font-orbitron text-[9px] tracking-wider rounded-md transition-all ${storageMode === 'supabase' ? 'bg-arc-blue/20 text-arc-blue' : 'text-white/50 hover:text-white/80'}`}
+                          onClick={() => { setStorageProvider('supabase'); localStorage.setItem('admin_storage_provider', 'supabase'); }}
+                          className={`flex-1 px-2 py-1 font-orbitron text-[9px] tracking-wider rounded-md transition-all ${storageProvider === 'supabase' ? 'bg-arc-blue/20 text-arc-blue' : 'text-white/50 hover:text-white/80'}`}
                         >
                           Supabase
                         </button>
@@ -321,9 +321,9 @@ export default function PostComposer({ isOpen, onClose }: Props) {
         onChange={(e) => {
           const file = e.target.files?.[0] || null;
           if (file) {
-            const maxSize = storageMode === 'vercel' ? 50 * 1024 * 1024 : 200 * 1024 * 1024;
+            const maxSize = storageProvider === 'vercel_blob' ? 50 * 1024 * 1024 : 200 * 1024 * 1024;
             if (file.size > maxSize) {
-              setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). ${storageMode === 'vercel' ? 'Vercel Blob max is 50MB. Switch to Supabase for larger files.' : 'Maximum is 200MB.'}`);
+              setError(`File too large (${(file.size / 1024 / 1024).toFixed(1)}MB). ${storageProvider === 'vercel_blob' ? 'Vercel Blob max is 50MB. Switch to Supabase for larger files.' : 'Maximum is 200MB.'}`);
               e.target.value = '';
               return;
             }
@@ -335,9 +335,9 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                     {mediaFile && (
                       <div className="flex flex-col gap-0.5">
                         <p className={`font-mono text-[10px] ${mediaFile.size > 50 * 1024 * 1024 ? 'text-warning-red' : 'text-terminal-green'}`}>
-                          Selected: {mediaFile.name} ({(mediaFile.size / 1024 / 1024).toFixed(2)} MB) → {storageMode === 'vercel' ? 'Vercel Blob' : 'Supabase'}
+                          Selected: {mediaFile.name} ({(mediaFile.size / 1024 / 1024).toFixed(2)} MB) → {storageProvider === 'vercel_blob' ? 'Vercel Blob' : 'Supabase'}
                         </p>
-                        {mediaFile.size > 50 * 1024 * 1024 && storageMode === 'vercel' && (
+                        {mediaFile.size > 50 * 1024 * 1024 && storageProvider === 'vercel_blob' && (
                           <p className="font-mono text-[9px] text-warning-red/70">
                             Large file — switch to Supabase for permanent storage or upload may fail on Vercel Blob.
                           </p>
