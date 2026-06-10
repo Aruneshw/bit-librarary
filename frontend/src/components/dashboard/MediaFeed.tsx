@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
+import { useNotificationStore } from '@/store/notificationStore';
 import PostReactions from './PostReactions';
 
 interface MediaPost {
@@ -23,6 +24,8 @@ function getYouTubeEmbedUrl(url: string): string | null {
 export default function MediaFeed() {
   const { isAuthenticated, isAdmin } = useAuthStore();
   const [posts, setPosts] = useState<MediaPost[]>([]);
+  const addNotification = useNotificationStore((s) => s.addNotification);
+  const knownIds = useRef(new Set<string>());
 
   const fetchPosts = async () => {
     const supabase = createClient();
@@ -34,7 +37,21 @@ export default function MediaFeed() {
       .order('created_at', { ascending: false })
       .limit(20);
 
-    if (data) setPosts(data as MediaPost[]);
+    if (data) {
+      const posts = data as MediaPost[];
+      posts.forEach((p) => {
+        if (!knownIds.current.has(p.id)) {
+          knownIds.current.add(p.id);
+          addNotification({
+            type: 'media',
+            title: p.title || 'New Media',
+            body: p.body.slice(0, 120),
+            data: { url: '/dashboard' },
+          });
+        }
+      });
+      setPosts(posts);
+    }
   };
 
   const handleDelete = async (postId: string) => {

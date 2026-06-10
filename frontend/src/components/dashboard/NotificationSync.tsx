@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
+import { useNotificationStore } from '@/store/notificationStore';
 import { requestNotificationPermission, showLocalNotification } from '@/lib/notify';
 
 interface PostgresPayload {
@@ -16,6 +17,7 @@ interface PostgresPayload {
 export default function NotificationSync() {
   const { user, isAuthenticated } = useAuthStore();
   const permitted = useRef(false);
+  const addNotification = useNotificationStore((s) => s.addNotification);
 
   useEffect(() => {
     if (!isAuthenticated || !user) return;
@@ -33,13 +35,15 @@ export default function NotificationSync() {
           'postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'user_feedbacks', filter: 'is_broadcast=eq.true' },
           (payload: PostgresPayload) => {
-            if (!permitted.current) return;
             const msg = payload.new as { message?: string; reply?: string; id: string };
-            showLocalNotification(
-              'Broadcast',
-              msg.reply ? `${msg.message} — ${msg.reply}` : (msg.message || 'New announcement'),
-              { url: '/dashboard', tag: `broadcast-${msg.id}` }
-            );
+            const title = 'Broadcast';
+            const body = msg.reply ? `${msg.message} — ${msg.reply}` : (msg.message || 'New announcement');
+
+            addNotification({ type: 'broadcast', title, body, data: { url: '/dashboard' } });
+
+            if (permitted.current) {
+              showLocalNotification(title, body, { url: '/dashboard', tag: `broadcast-${msg.id}` });
+            }
           }
         )
         .subscribe(),
@@ -50,13 +54,17 @@ export default function NotificationSync() {
           'postgres_changes',
           { event: 'INSERT', schema: 'public', table: 'admin_posts' },
           (payload: PostgresPayload) => {
-            if (!permitted.current) return;
-            const post = payload.new as { title?: string; body?: string; id: string };
-            showLocalNotification(
-              post.title || 'New Post',
-              post.body?.slice(0, 120) || '',
-              { url: '/dashboard', tag: `post-${post.id}` }
-            );
+            const post = payload.new as { title?: string; body?: string; id: string; image_url?: string; video_url?: string };
+            const hasMedia = !!(post.image_url || post.video_url);
+            const type = hasMedia ? 'media' : 'post';
+            const title = post.title || (hasMedia ? 'New Media' : 'New Post');
+            const body = post.body?.slice(0, 120) || '';
+
+            addNotification({ type, title, body, data: { url: '/dashboard' } });
+
+            if (permitted.current) {
+              showLocalNotification(title, body, { url: '/dashboard', tag: `post-${post.id}` });
+            }
           }
         )
         .subscribe(),
@@ -67,14 +75,16 @@ export default function NotificationSync() {
           'postgres_changes',
           { event: 'UPDATE', schema: 'public', table: 'user_feedbacks', filter: `user_id=eq.${user.id}` },
           (payload: PostgresPayload) => {
-            if (!permitted.current) return;
             const fb = payload.new as { reply?: string | null; message?: string; id: string };
             if (fb.reply) {
-              showLocalNotification(
-                'Admin Replied',
-                `"${(fb.message || '').slice(0, 80)}" — ${fb.reply}`,
-                { url: '/dashboard', tag: `reply-${fb.id}` }
-              );
+              const title = 'Admin Replied';
+              const body = `"${(fb.message || '').slice(0, 80)}" — ${fb.reply}`;
+
+              addNotification({ type: 'feedback_reply', title, body, data: { url: '/dashboard' } });
+
+              if (permitted.current) {
+                showLocalNotification(title, body, { url: '/dashboard', tag: `reply-${fb.id}` });
+              }
             }
           }
         )
@@ -84,7 +94,7 @@ export default function NotificationSync() {
     return () => {
       channels.forEach((c) => supabase.removeChannel(c));
     };
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, addNotification]);
 
   return null;
 }

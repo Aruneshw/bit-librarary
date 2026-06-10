@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
+import { useNotificationStore } from '@/store/notificationStore';
 
 interface BroadcastMessage {
   id: string;
@@ -20,6 +21,8 @@ export default function BroadcastBanner() {
   const [broadcasts, setBroadcasts] = useState<BroadcastMessage[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const addNotification = useNotificationStore((s) => s.addNotification);
+  const seenIds = useRef(new Set<string>());
 
   const getVisibleBroadcasts = useCallback((items: BroadcastMessage[]) => {
     const dismissed = JSON.parse(localStorage.getItem('dismissed_broadcasts') || '[]');
@@ -36,7 +39,19 @@ export default function BroadcastBanner() {
       .limit(MAX_BROADCASTS);
 
     if (data && !error) {
-      const visible = getVisibleBroadcasts(data as BroadcastMessage[]);
+      const all = data as BroadcastMessage[];
+      all.forEach((b) => {
+        if (!seenIds.current.has(b.id)) {
+          seenIds.current.add(b.id);
+          addNotification({
+            type: 'broadcast',
+            title: 'Broadcast',
+            body: b.reply ? `${b.message} — ${b.reply}` : b.message,
+            data: { url: '/dashboard' },
+          });
+        }
+      });
+      const visible = getVisibleBroadcasts(all);
       setBroadcasts(visible);
       setActiveIndex(0);
       setIsVisible(visible.length > 0);
@@ -44,7 +59,7 @@ export default function BroadcastBanner() {
       setBroadcasts([]);
       setIsVisible(false);
     }
-  }, [getVisibleBroadcasts]);
+  }, [getVisibleBroadcasts, addNotification]);
 
   useEffect(() => {
     if (!isAuthenticated) return;

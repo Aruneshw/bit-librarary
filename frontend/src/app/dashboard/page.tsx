@@ -149,25 +149,48 @@ function VisitorCount() {
 }
 
 
+const NOTIF_DISMISS_KEY = 'notification_status_dismissed';
+const NOTIF_COOLDOWN = 24 * 60 * 60 * 1000;
+
+function isNotifDismissed(): boolean {
+  if (typeof window === 'undefined') return false;
+  const raw = localStorage.getItem(NOTIF_DISMISS_KEY);
+  if (!raw) return false;
+  return Date.now() - Number(raw) < NOTIF_COOLDOWN;
+}
+
 function NotificationStatus() {
   const { permission, askPermission, swReady } = useNotification();
+  const [dismissed, setDismissed] = useState(false);
   const askedRef = useRef(false);
 
   useEffect(() => {
-    if (!askedRef.current && swReady) {
+    const d = isNotifDismissed();
+    setDismissed(d);
+    if (!askedRef.current && swReady && permission === 'default' && !d) {
       askedRef.current = true;
       askPermission();
     }
-  }, [swReady, askPermission]);
+  }, [swReady, askPermission, permission]);
 
   const enabled = permission === 'granted';
   const hex = enabled ? '#00FF41' : '#FF3D3D';
   const rgb = enabled ? '0, 255, 65' : '255, 61, 61';
   const label = enabled ? 'Notifications On' : 'Notifications Off';
 
+  const handleClick = async () => {
+    if (!enabled) {
+      const granted = await askPermission();
+      if (!granted) {
+        localStorage.setItem(NOTIF_DISMISS_KEY, String(Date.now()));
+        setDismissed(true);
+      }
+    }
+  };
+
   return (
     <button
-      onClick={() => { if (!enabled) askPermission(); }}
+      onClick={handleClick}
       className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 rounded-lg transition-all pointer-events-auto"
       style={{
         border: `1px solid rgba(${rgb}, 0.3)`,

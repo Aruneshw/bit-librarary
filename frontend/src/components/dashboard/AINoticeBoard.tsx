@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNoticeStore } from '@/store/noticeStore';
 import { useAuthStore } from '@/store/authStore';
 import { createClient } from '@/lib/supabase';
+import { useNotificationStore } from '@/store/notificationStore';
 
 export default function AINoticeBoard() {
   const [isVisible, setIsVisible] = useState(false);
@@ -13,18 +14,31 @@ export default function AINoticeBoard() {
   
   const { notice, fetchNotice, updateNotice, isLoading } = useNoticeStore();
   const { isAdmin } = useAuthStore();
+  const addNotification = useNotificationStore((s) => s.addNotification);
+  const lastNoticeRef = useRef<string | null>(null);
 
   useEffect(() => {
     fetchNotice();
+  }, [fetchNotice]);
 
-    // Show notice board only once on login/first load in the current session
+  useEffect(() => {
+    if (!notice || notice === lastNoticeRef.current) return;
+    lastNoticeRef.current = notice;
+    addNotification({
+      type: 'system_notice',
+      title: 'System Notice',
+      body: notice,
+      data: { url: '/dashboard' },
+    });
+  }, [notice, addNotification]);
+
+  useEffect(() => {
     const hasBeenShown = sessionStorage.getItem('notice_shown');
     if (!hasBeenShown) {
       setIsVisible(true);
       sessionStorage.setItem('notice_shown', 'true');
     }
 
-    // Subscribe to system notice updates in real-time
     const supabase = createClient();
     const channel = supabase
       .channel('system-notices-realtime')
@@ -34,7 +48,6 @@ export default function AINoticeBoard() {
         (payload: any) => {
           if (payload.new && payload.new.message) {
             fetchNotice();
-            // Pop open the notice board because it was updated while online!
             setIsVisible(true);
           }
         }
@@ -49,7 +62,6 @@ export default function AINoticeBoard() {
   useEffect(() => {
     if (!isVisible) return;
 
-    // Only auto-hide if not admin, or wait longer. Admins might want to edit it.
     const timer = setTimeout(() => {
       if (!isEditing && !isAdmin) setIsVisible(false);
     }, 12000); 
@@ -80,10 +92,8 @@ export default function AINoticeBoard() {
             className="relative overflow-hidden group border border-arc-blue/30 bg-black/60 backdrop-blur-xl rounded-xl shadow-[0_0_30px_rgba(0,217,255,0.15)] px-5 py-4 flex items-center gap-4 cursor-pointer" 
             onClick={() => !isEditing && setIsVisible(false)}
           >
-            {/* Animated Gradient Border Overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-arc-blue/0 via-arc-blue/10 to-arc-blue/0 translate-x-[-100%] animate-[shimmer_2s_infinite]" />
             
-            {/* AI Icon */}
             <div className="shrink-0 w-10 h-10 rounded-full bg-arc-blue/10 border border-arc-blue/40 flex items-center justify-center shadow-[0_0_15px_rgba(0,217,255,0.4)]">
               <svg className="w-5 h-5 text-arc-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -142,7 +152,6 @@ export default function AINoticeBoard() {
               )}
             </div>
 
-            {/* Close hint */}
             {!isEditing && (
               <div className="absolute top-2 right-2 opacity-50 group-hover:opacity-100 transition-opacity">
                 <span className="text-text-white/40 hover:text-text-white text-sm px-1 z-10 relative">×</span>
