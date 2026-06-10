@@ -20,6 +20,7 @@ import PostComposer from '@/components/dashboard/PostComposer';
 import FeedbackForm from '@/components/dashboard/FeedbackForm';
 import NotificationCenter from '@/components/dashboard/NotificationCenter';
 import NotificationSync from '@/components/dashboard/NotificationSync';
+import { useNotificationStore } from '@/store/notificationStore';
 import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import { useNotification } from '@/hooks/useNotification';
@@ -151,71 +152,57 @@ function VisitorCount() {
 }
 
 
-const NOTIF_DISMISS_KEY = 'notification_status_dismissed';
-const NOTIF_COOLDOWN = 24 * 60 * 60 * 1000;
-
-function isNotifDismissed(): boolean {
-  if (typeof window === 'undefined') return false;
-  const raw = localStorage.getItem(NOTIF_DISMISS_KEY);
-  if (!raw) return false;
-  return Date.now() - Number(raw) < NOTIF_COOLDOWN;
-}
-
-function NotificationStatus() {
-  const { permission, askPermission, swReady } = useNotification();
-  const [dismissed, setDismissed] = useState(false);
+function PushToggle() {
+  const pushEnabled = useNotificationStore((s) => s.pushEnabled);
+  const setPushEnabled = useNotificationStore((s) => s.setPushEnabled);
+  const { permission, askPermission } = useNotification();
   const [showTip, setShowTip] = useState(false);
-  const askedRef = useRef(false);
   const tipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    const d = isNotifDismissed();
-    setDismissed(d);
-    if (!askedRef.current && swReady && permission === 'default' && !d) {
-      askedRef.current = true;
-      askPermission();
+  const handleToggle = async () => {
+    if (!pushEnabled) {
+      if (permission === 'denied') {
+        setShowTip(true);
+        if (tipTimer.current) clearTimeout(tipTimer.current);
+        tipTimer.current = setTimeout(() => setShowTip(false), 4000);
+        return;
+      }
+      if (permission === 'default') {
+        const granted = await askPermission();
+        if (!granted) return;
+      }
     }
-  }, [swReady, askPermission, permission]);
-
-  const enabled = permission === 'granted';
-  const denied = permission === 'denied';
-  const hex = enabled ? '#00FF41' : '#FF3D3D';
-  const rgb = enabled ? '0, 255, 65' : '255, 61, 61';
-  const label = enabled ? 'Notifications On' : denied ? 'Notifications Blocked' : 'Notifications Off';
-
-  const handleClick = async () => {
-    if (enabled) return;
-    if (denied) {
-      setShowTip(true);
-      if (tipTimer.current) clearTimeout(tipTimer.current);
-      tipTimer.current = setTimeout(() => setShowTip(false), 4000);
-      return;
-    }
-    await askPermission();
+    setPushEnabled(!pushEnabled);
   };
 
   return (
     <div className="relative pointer-events-auto">
       <button
-        onClick={handleClick}
-        className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 rounded-lg transition-all"
+        onClick={handleToggle}
+        className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 rounded-lg transition-all cursor-pointer"
         style={{
-          border: `1px solid rgba(${rgb}, 0.3)`,
-          backgroundColor: `rgba(${rgb}, 0.1)`,
+          border: `1px solid ${pushEnabled ? 'rgba(0, 255, 65, 0.3)' : 'rgba(255, 61, 61, 0.3)'}`,
+          backgroundColor: pushEnabled ? 'rgba(0, 255, 65, 0.1)' : 'rgba(255, 61, 61, 0.1)',
         }}
       >
         <div
-          className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse"
+          className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-sm border transition-all duration-200 flex items-center justify-center"
           style={{
-            backgroundColor: hex,
-            boxShadow: `0 0 6px ${hex}`,
+            borderColor: pushEnabled ? '#00FF41' : '#FF3D3D',
+            backgroundColor: pushEnabled ? '#00FF41' : 'transparent',
           }}
-        />
+        >
+          {pushEnabled && (
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          )}
+        </div>
         <span
           className="hidden sm:inline font-mono text-[10px] uppercase tracking-wider"
-          style={{ color: hex }}
+          style={{ color: pushEnabled ? '#00FF41' : '#FF3D3D' }}
         >
-          {label}
+          {pushEnabled ? 'Push On' : 'Push Off'}
         </span>
       </button>
       <AnimatePresence>
@@ -227,7 +214,7 @@ function NotificationStatus() {
             className="absolute top-full right-0 mt-2 w-64 p-3 rounded-lg bg-black/90 border border-warning-red/40 backdrop-blur-xl shadow-[0_0_20px_rgba(255,61,61,0.2)] z-[100]"
           >
             <p className="font-mono text-[10px] text-text-white/80 leading-relaxed">
-              Notifications are blocked by your browser. Click the lock/info icon in your address bar and enable notifications for this site.
+              Push notifications are blocked by your browser. Click the lock/info icon in your address bar and enable notifications for this site.
             </p>
           </motion.div>
         )}
@@ -404,7 +391,7 @@ export default function DashboardPage() {
           <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 pointer-events-auto max-w-[55%] sm:max-w-none">
             <VisitorCount />
             <SystemClock />
-<NotificationStatus />
+<PushToggle />
             {user?.department && (
               <span className="font-rajdhani text-[10px] sm:text-xs text-arc-blue/60 uppercase tracking-[2px] sm:tracking-[3px] border border-arc-blue/20 px-1.5 sm:px-3 py-1 rounded-lg">
                 {user.department}

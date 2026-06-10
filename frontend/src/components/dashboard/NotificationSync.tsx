@@ -18,6 +18,7 @@ export default function NotificationSync() {
   const { user, isAuthenticated } = useAuthStore();
   const permitted = useRef(false);
   const addNotification = useNotificationStore((s) => s.addNotification);
+  const pushEnabled = useNotificationStore((s) => s.pushEnabled);
 
   useEffect(() => {
     if (!isAuthenticated || !user) return;
@@ -41,7 +42,7 @@ export default function NotificationSync() {
 
             addNotification({ type: 'broadcast', title, body, data: { url: '/dashboard' } });
 
-            if (permitted.current) {
+            if (permitted.current && pushEnabled) {
               showLocalNotification(title, body, { url: '/dashboard', tag: `broadcast-${msg.id}` });
             }
           }
@@ -62,7 +63,7 @@ export default function NotificationSync() {
 
             addNotification({ type, title, body, data: { url: '/dashboard' } });
 
-            if (permitted.current) {
+            if (permitted.current && pushEnabled) {
               showLocalNotification(title, body, { url: '/dashboard', tag: `post-${post.id}` });
             }
           }
@@ -82,7 +83,7 @@ export default function NotificationSync() {
 
               addNotification({ type: 'feedback_reply', title, body, data: { url: '/dashboard' } });
 
-              if (permitted.current) {
+              if (permitted.current && pushEnabled) {
                 showLocalNotification(title, body, { url: '/dashboard', tag: `reply-${fb.id}` });
               }
             }
@@ -94,7 +95,7 @@ export default function NotificationSync() {
     return () => {
       channels.forEach((c) => supabase.removeChannel(c));
     };
-  }, [isAuthenticated, user, addNotification]);
+  }, [isAuthenticated, user, addNotification, pushEnabled]);
 
   return null;
 }

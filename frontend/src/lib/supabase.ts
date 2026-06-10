@@ -191,6 +191,16 @@ class MockQueryBuilder {
         posts.unshift(newPost);
         setStorage('arc_os_admin_posts', posts);
         data = newPost;
+      } else if (this.operation === 'update') {
+        const idFilter = this.filters.find((f) => f.column === 'id');
+        if (idFilter) {
+          const index = posts.findIndex((p: any) => p.id === idFilter.value);
+          if (index !== -1) {
+            posts[index] = { ...posts[index], ...this.updateValues };
+            setStorage('arc_os_admin_posts', posts);
+            data = posts[index];
+          }
+        }
       }
     } else if (this.table === 'post_reactions') {
       const reactions = getStorage('arc_os_post_reactions', []);

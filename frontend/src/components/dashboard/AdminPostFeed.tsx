@@ -12,6 +12,7 @@ interface AdminPost {
   body: string;
   video_url: string | null;
   image_url: string | null;
+  pdf_url: string | null;
   created_at: string;
 }
 
@@ -37,7 +38,7 @@ export default function AdminPostFeed() {
           });
           if (res.ok) {
             const data = await res.json();
-            setPosts((data.posts || []).filter((p: AdminPost) => !p.image_url && !p.video_url));
+            setPosts((data.posts || []).filter((p: AdminPost) => !p.image_url && !p.video_url && !p.pdf_url));
             return;
           }
         }
@@ -48,12 +49,12 @@ export default function AdminPostFeed() {
 
     const { data } = await supabase
       .from('admin_posts')
-      .select('id, title, body, video_url, image_url, created_at')
+      .select('id, title, body, video_url, image_url, pdf_url, created_at')
       .eq('is_active', true)
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (data) setPosts((data as AdminPost[]).filter((p) => !p.image_url && !p.video_url));
+    if (data) setPosts((data as AdminPost[]).filter((p) => !p.image_url && !p.video_url && !p.pdf_url));
   };
 
   const handleDelete = async (postId: string) => {

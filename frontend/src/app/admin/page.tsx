@@ -47,6 +47,8 @@ export default function AdminDashboard() {
   const [postBody, setPostBody] = useState('');
   const [postVideoUrl, setPostVideoUrl] = useState('');
   const [postImageUrl, setPostImageUrl] = useState('');
+  const [postMediaFile, setPostMediaFile] = useState<File | null>(null);
+  const [postDownloadable, setPostDownloadable] = useState(true);
   const [posting, setPosting] = useState(false);
   const [postMessage, setPostMessage] = useState('');
 
@@ -217,6 +219,42 @@ export default function AdminDashboard() {
     }
   };
 
+  const uploadMedia = async (): Promise<{ url: string | null; type: 'image' | 'pdf' | null }> => {
+    if (!postMediaFile) return { url: null, type: null };
+    const isPdf = postMediaFile.type === 'application/pdf';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const supabase = createClient();
+
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const formData = new FormData();
+          formData.append('file', postMediaFile);
+          const res = await fetch(`${apiUrl}/posts/upload-media`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${session.access_token}` },
+            body: formData,
+          });
+          if (res.ok) {
+            const result = await res.json();
+            return { url: result.url, type: isPdf ? 'pdf' : 'image' };
+          }
+        }
+      } catch {
+        // fall through to mock/storage
+      }
+    }
+
+    // Mock mode: Convert to base64 data URL
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({ url: reader.result as string, type: isPdf ? 'pdf' : 'image' });
+      reader.onerror = () => resolve({ url: null, type: null });
+      reader.readAsDataURL(postMediaFile);
+    });
+  };
+
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!postBody.trim()) return;
@@ -227,6 +265,10 @@ export default function AdminDashboard() {
     const supabase = createClient();
 
     try {
+      const { url: mediaUrl, type: mediaType } = await uploadMedia();
+      const finalImageUrl = mediaType === 'image' ? mediaUrl : (postImageUrl.trim() || null);
+      const finalPdfUrl = mediaType === 'pdf' ? mediaUrl : null;
+
       if (apiUrl) {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
@@ -240,7 +282,9 @@ export default function AdminDashboard() {
               title: postTitle.trim() || null,
               body: postBody.trim(),
               video_url: postVideoUrl.trim() || null,
-              image_url: postImageUrl.trim() || null,
+              image_url: finalImageUrl,
+              pdf_url: finalPdfUrl,
+              downloadable: postDownloadable,
             }),
           });
           if (res.ok) {
@@ -248,6 +292,8 @@ export default function AdminDashboard() {
             setPostBody('');
             setPostVideoUrl('');
             setPostImageUrl('');
+            setPostMediaFile(null);
+            setPostDownloadable(true);
             setPostMessage('Post published to all users.');
             setPosting(false);
             return;
@@ -259,7 +305,9 @@ export default function AdminDashboard() {
         title: postTitle.trim() || null,
         body: postBody.trim(),
         video_url: postVideoUrl.trim() || null,
-        image_url: postImageUrl.trim() || null,
+        image_url: finalImageUrl,
+        pdf_url: finalPdfUrl,
+        downloadable: postDownloadable,
         created_by: user?.id,
       });
 
@@ -268,6 +316,8 @@ export default function AdminDashboard() {
         setPostBody('');
         setPostVideoUrl('');
         setPostImageUrl('');
+        setPostMediaFile(null);
+        setPostDownloadable(true);
         setPostMessage('Post published to all users.');
       } else {
         setPostMessage('Failed to publish post.');
@@ -463,8 +513,41 @@ export default function AdminDashboard() {
                 className="w-full bg-black/60 border border-arc-blue/30 rounded p-3 text-white font-mono text-sm focus:outline-none focus:border-arc-blue"
               />
             </div>
-            <div className="flex items-center justify-between gap-4">
-              <p className="font-mono text-xs text-white/40">Visible to all users on dashboard. Cached in Redis.</p>
+            <div className="flex flex-col gap-1">
+              <label className="font-mono text-[10px] text-white/40 uppercase tracking-wider">
+                Upload Media (PDF, JPG, PNG — optional)
+              </label>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                onChange={(e) => setPostMediaFile(e.target.files?.[0] || null)}
+                className="w-full bg-black/60 border border-arc-blue/30 rounded p-2.5 text-white font-mono text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-arc-blue/20 file:text-arc-blue file:text-xs file:font-orbitron hover:file:bg-arc-blue/30 focus:outline-none focus:border-arc-blue cursor-pointer"
+              />
+              {postMediaFile && (
+                <p className="font-mono text-[10px] text-terminal-green">
+                  Selected: {postMediaFile.name} ({(postMediaFile.size / 1024).toFixed(1)} KB)
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => setPostDownloadable(!postDownloadable)}
+                  className={`w-9 h-5 rounded-full transition-colors relative ${
+                    postDownloadable ? 'bg-terminal-green' : 'bg-white/20'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+                      postDownloadable ? 'translate-x-4' : 'translate-x-0.5'
+                    }`}
+                  />
+                </button>
+                <span className="font-mono text-xs text-white/60">
+                  {postDownloadable ? 'Download enabled' : 'View only (no download)'}
+                </span>
+              </label>
               <button
                 type="submit"
                 disabled={posting || !postBody.trim()}
@@ -504,29 +587,31 @@ export default function AdminDashboard() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.05 * i }}
                     key={f.id}
-                    className="p-4 border border-arc-blue/20 bg-arc-blue/5 rounded-lg relative group"
+                    className="p-4 border border-arc-blue/20 bg-arc-blue/5 rounded-lg group"
                   >
-                    <button 
-                      onClick={() => handleDeleteFeedback(f.id)}
-                      className="absolute top-4 right-4 text-white/30 hover:text-warning-red transition-colors"
-                      title="Delete Feedback"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                    </button>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-orbitron text-arc-blue text-sm">
-                        {f.profiles?.name || 'Unknown User'}
-                      </span>
-                      <span className="font-mono text-white/40 text-xs">
-                        ({f.profiles?.email})
-                      </span>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0">
+                        <span className="font-orbitron text-arc-blue text-sm truncate">
+                          {f.profiles?.name || 'Unknown User'}
+                        </span>
+                        <span className="font-mono text-white/40 text-xs truncate">
+                          ({f.profiles?.email})
+                        </span>
+                      </div>
+                      <button 
+                        onClick={() => handleDeleteFeedback(f.id)}
+                        className="shrink-0 text-white/30 hover:text-warning-red transition-colors p-1"
+                        title="Delete Feedback"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                      </button>
                     </div>
-                    <p className="font-mono text-white/80 text-sm whitespace-pre-wrap">{f.message}</p>
+                    <p className="font-mono text-white/80 text-sm whitespace-pre-wrap break-words">{f.message}</p>
                     
                     {f.reply && (
                       <div className="mt-3 p-3 border-l-2 border-terminal-green bg-terminal-green/5 rounded font-mono text-sm">
                         <span className="text-terminal-green text-xs font-bold uppercase tracking-wider block mb-1">Reply Transmitted:</span>
-                        <p className="text-white/80">{f.reply}</p>
+                        <p className="text-white/80 whitespace-pre-wrap break-words">{f.reply}</p>
                       </div>
                     )}
 
@@ -557,14 +642,14 @@ export default function AdminDashboard() {
                         </div>
                       </form>
                     ) : (
-                      <div className="mt-3 flex justify-between items-center">
+                      <div className="mt-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <div className="font-mono text-white/30 text-[10px] uppercase">
                           Transmitted: {new Date(f.created_at).toLocaleString()}
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                           <button
                             onClick={() => handleToggleBroadcast(f.id, f.is_broadcast || false)}
-                            className={`px-3 py-1 text-xs border rounded flex items-center gap-1.5 transition-all ${
+                            className={`px-3 py-1.5 text-xs border rounded flex items-center gap-1.5 transition-all ${
                               f.is_broadcast
                                 ? 'border-terminal-green text-terminal-green bg-terminal-green/10 shadow-[0_0_8px_rgba(0,255,65,0.2)]'
                                 : 'border-white/20 text-white/50 hover:text-white hover:border-white/40'
@@ -580,7 +665,7 @@ export default function AdminDashboard() {
                               setReplyingFeedbackId(f.id);
                               setReplyText(f.reply || '');
                             }}
-                            className="px-3 py-1 text-xs border border-arc-blue/30 text-arc-blue rounded hover:bg-arc-blue/10 flex items-center gap-1.5 transition-colors"
+                            className="px-3 py-1.5 text-xs border border-arc-blue/30 text-arc-blue rounded hover:bg-arc-blue/10 flex items-center gap-1.5 transition-colors"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
                             {f.reply ? 'Edit Reply' : 'Reply'}

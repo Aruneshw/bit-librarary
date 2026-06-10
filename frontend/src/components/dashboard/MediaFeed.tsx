@@ -13,12 +13,23 @@ interface MediaPost {
   body: string;
   video_url: string | null;
   image_url: string | null;
+  pdf_url: string | null;
+  downloadable: boolean;
   created_at: string;
 }
 
 function getYouTubeEmbedUrl(url: string): string | null {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]+)/);
   return match ? `https://www.youtube.com/embed/${match[1]}` : null;
+}
+
+function isDataUrl(url: string): boolean {
+  return url.startsWith('data:');
+}
+
+function getDownloadUrl(url: string): string {
+  if (isDataUrl(url)) return url;
+  return url + (url.includes('?') ? '&' : '?') + 'download=1';
 }
 
 export default function MediaFeed() {
@@ -31,9 +42,9 @@ export default function MediaFeed() {
     const supabase = createClient();
     const { data } = await supabase
       .from('admin_posts')
-      .select('id, title, body, video_url, image_url, created_at')
+      .select('id, title, body, video_url, image_url, pdf_url, downloadable, created_at')
       .eq('is_active', true)
-      .or('image_url.neq.,video_url.neq.')
+      .or('image_url.neq.,video_url.neq.,pdf_url.neq.')
       .order('created_at', { ascending: false })
       .limit(20);
 
@@ -116,6 +127,7 @@ export default function MediaFeed() {
       ) : (
         posts.map((post) => {
           const embedUrl = post.video_url ? getYouTubeEmbedUrl(post.video_url) : null;
+          const isPdf = !!post.pdf_url;
           return (
             <motion.article
               key={post.id}
@@ -127,9 +139,40 @@ export default function MediaFeed() {
                 <h3 className="font-orbitron text-sm text-arc-blue mb-2">{post.title}</h3>
               )}
               <p className="font-mono text-sm text-text-white/85 whitespace-pre-wrap">{post.body}</p>
-              {post.image_url && (
-                <img src={post.image_url} alt="" className="mt-3 rounded-lg border border-arc-blue/20 max-h-96 w-full object-cover" />
+
+              {/* Image display */}
+              {post.image_url && !isPdf && (
+                <div className="mt-3 relative group/image">
+                  <img
+                    src={post.image_url}
+                    alt={post.title || 'Media'}
+                    className="rounded-lg border border-arc-blue/20 max-h-96 w-full object-cover"
+                    draggable={post.downloadable}
+                    onContextMenu={post.downloadable ? undefined : (e) => e.preventDefault()}
+                  />
+                  {post.downloadable && (
+                    <a
+                      href={getDownloadUrl(post.image_url)}
+                      download
+                      className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 border border-arc-blue/30 flex items-center justify-center text-arc-blue opacity-0 group-hover/image:opacity-100 transition-opacity hover:bg-arc-blue/20"
+                      title="Download image"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                    </a>
+                  )}
+                  {!post.downloadable && (
+                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 border border-arc-blue/20 text-[9px] font-mono text-arc-blue/60 uppercase tracking-wider">
+                      View only
+                    </div>
+                  )}
+                </div>
               )}
+
+              {/* Video embed */}
               {embedUrl && (
                 <div className="mt-3 aspect-video rounded-lg overflow-hidden border border-arc-blue/20">
                   <iframe
@@ -146,23 +189,82 @@ export default function MediaFeed() {
                   Open video link
                 </a>
               )}
+
+              {/* PDF display */}
+              {isPdf && (
+                <div className="mt-3 rounded-lg overflow-hidden border border-arc-blue/20 bg-black/40">
+                  <div className="flex items-center justify-between px-3 py-2 bg-arc-blue/5 border-b border-arc-blue/20">
+                    <div className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-warning-red">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                      </svg>
+                      <span className="font-mono text-[10px] text-text-white/60 uppercase tracking-wider">PDF Document</span>
+                      {!post.downloadable && (
+                        <span className="font-mono text-[9px] text-arc-blue/60 uppercase tracking-wider">(View only)</span>
+                      )}
+                    </div>
+                    {post.downloadable && (
+                      <a
+                        href={getDownloadUrl(post.pdf_url!)}
+                        download
+                        className="flex items-center gap-1 px-2 py-1 text-xs font-mono text-arc-blue border border-arc-blue/30 rounded hover:bg-arc-blue/10 transition-colors"
+                        title="Download PDF"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="7 10 12 15 17 10"></polyline>
+                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download
+                      </a>
+                    )}
+                  </div>
+                  <div className="w-full" style={{ height: '70vh', maxHeight: '600px' }}>
+                    <embed
+                      src={post.pdf_url! + (post.downloadable ? '' : '#toolbar=0&navpanes=0')}
+                      type="application/pdf"
+                      className="w-full h-full"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-2">
                 <p className="font-mono text-[10px] text-text-white/30">
                   {new Date(post.created_at).toLocaleString()}
                 </p>
-                {isAdmin && (
-                  <button
-                    onClick={() => handleDelete(post.id)}
-                    className="text-warning-red/50 hover:text-warning-red transition-colors p-1"
-                    aria-label="Delete post"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    </svg>
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {post.downloadable && post.image_url && !isPdf && (
+                    <a
+                      href={getDownloadUrl(post.image_url)}
+                      download
+                      className="text-arc-blue/50 hover:text-arc-blue transition-colors p-1 sm:hidden"
+                      title="Download"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                    </a>
+                  )}
+                  {isAdmin && (
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="text-warning-red/50 hover:text-warning-red transition-colors p-1"
+                      aria-label="Delete post"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
               <PostReactions postId={post.id} />
             </motion.article>

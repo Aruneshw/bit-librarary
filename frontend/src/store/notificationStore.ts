@@ -13,6 +13,7 @@ export interface NotificationItem {
 }
 
 const STORAGE_KEY = 'bit_library_notifications';
+const PUSH_KEY = 'bit_library_push_enabled';
 const MAX_NOTIFICATIONS = 100;
 
 function loadPersisted(): NotificationItem[] {
@@ -39,28 +40,56 @@ function persist(items: NotificationItem[]) {
   }
 }
 
+function loadPushPref(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(PUSH_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function savePushPref(enabled: boolean) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(PUSH_KEY, enabled ? 'true' : 'false');
+  } catch {
+    // silently fail
+  }
+}
+
+function contentKey(item: { type: string; title: string; body: string }): string {
+  return `${item.type}:${item.title}:${item.body}`;
+}
+
 interface NotificationState {
   notifications: NotificationItem[];
+  pushEnabled: boolean;
   addNotification: (item: Omit<NotificationItem, 'id' | 'timestamp' | 'read'>) => void;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   clearAll: () => void;
   unreadCount: number;
+  setPushEnabled: (enabled: boolean) => void;
 }
 
 export const useNotificationStore = create<NotificationState>((set, get) => {
   const initial = loadPersisted();
+  const initialPush = loadPushPref();
   return {
     notifications: initial,
     unreadCount: initial.filter((n) => !n.read).length,
+    pushEnabled: initialPush,
+
+    setPushEnabled: (enabled) => {
+      savePushPref(enabled);
+      set({ pushEnabled: enabled });
+    },
 
     addNotification: (item) => {
       set((state) => {
-        const within60s = state.notifications.some((n) => {
-          if (n.type !== item.type || n.title !== item.title || n.body !== item.body) return false;
-          return Date.now() - new Date(n.timestamp).getTime() < 60000;
-        });
-        if (within60s) return state;
+        const exists = state.notifications.some((n) => contentKey(n) === contentKey(item));
+        if (exists) return state;
 
         const id = `${item.type}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
         const newItem: NotificationItem = {

@@ -1,0 +1,66 @@
+-- ═══════════════════════════════════════════
+-- ARC_OS Admin Posts: Add PDF URL column
+-- Run in Supabase SQL Editor
+-- ═══════════════════════════════════════════
+
+ALTER TABLE admin_posts ADD COLUMN IF NOT EXISTS pdf_url TEXT;
+ALTER TABLE admin_posts ADD COLUMN IF NOT EXISTS downloadable BOOLEAN NOT NULL DEFAULT true;
+
+-- Create storage bucket for PDFs (run in Supabase Storage section)
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('pdfs', 'pdfs', false);
+--
+-- Storage RLS policy to allow admin uploads and authenticated users to read:
+-- CREATE POLICY "Admin can upload PDFs"
+--   ON storage.objects FOR INSERT
+--   WITH CHECK (
+--     bucket_id = 'pdfs' AND
+--     auth.jwt() ->> 'email' IN (
+--       'aruneshownsty1@gmail.com',
+--       'harishraghav489@gmail.com',
+--       'admin@bitsathy.ac.in'
+--     )
+--   );
+--
+-- CREATE POLICY "Authenticated users can read PDFs"
+--   ON storage.objects FOR SELECT
+--   USING (bucket_id = 'pdfs');
+--
+-- CREATE POLICY "Admin can delete PDFs"
+--   ON storage.objects FOR DELETE
+--   USING (
+--     bucket_id = 'pdfs' AND
+--     auth.jwt() ->> 'email' IN (
+--       'aruneshownsty1@gmail.com',
+--       'harishraghav489@gmail.com',
+--       'admin@bitsathy.ac.in'
+--     )
+--   );
+--
+-- Create storage bucket for images (run in Supabase Storage section)
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('media', 'media', false);
+--
+-- CREATE POLICY "Admin can upload media"
+--   ON storage.objects FOR INSERT
+--   WITH CHECK (
+--     bucket_id = 'media' AND
+--     auth.jwt() ->> 'email' IN (
+--       'aruneshownsty1@gmail.com',
+--       'harishraghav489@gmail.com',
+--       'admin@bitsathy.ac.in'
+--     )
+--   );
+--
+-- CREATE POLICY "Authenticated users can read media"
+--   ON storage.objects FOR SELECT
+--   USING (bucket_id = 'media');
+--
+-- CREATE POLICY "Admin can delete media"
+--   ON storage.objects FOR DELETE
+--   USING (
+--     bucket_id = 'media' AND
+--     auth.jwt() ->> 'email' IN (
+--       'aruneshownsty1@gmail.com',
+--       'harishraghav489@gmail.com',
+--       'admin@bitsathy.ac.in'
+--     )
+--   );

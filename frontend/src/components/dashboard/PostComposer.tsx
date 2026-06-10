@@ -16,6 +16,8 @@ export default function PostComposer({ isOpen, onClose }: Props) {
   const [body, setBody] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
+  const [downloadable, setDownloadable] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -25,8 +27,45 @@ export default function PostComposer({ isOpen, onClose }: Props) {
     setBody('');
     setImageUrl('');
     setVideoUrl('');
+    setMediaFile(null);
+    setDownloadable(true);
     setSubmitted(false);
     setError('');
+  };
+
+  const uploadMedia = async (): Promise<{ url: string | null; type: 'image' | 'pdf' | null }> => {
+    if (!mediaFile) return { url: null, type: null };
+    const isPdf = mediaFile.type === 'application/pdf';
+    const supabase = createClient();
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const formData = new FormData();
+          formData.append('file', mediaFile);
+          const res = await fetch(`${apiUrl}/posts/upload-media`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${session.access_token}` },
+            body: formData,
+          });
+          if (res.ok) {
+            const result = await res.json();
+            return { url: result.url, type: isPdf ? 'pdf' : 'image' };
+          }
+        }
+      } catch {
+        // fall through to mock
+      }
+    }
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve({ url: reader.result as string, type: isPdf ? 'pdf' : 'image' });
+      reader.onerror = () => resolve({ url: null, type: null });
+      reader.readAsDataURL(mediaFile);
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,11 +76,17 @@ export default function PostComposer({ isOpen, onClose }: Props) {
     setError('');
 
     const supabase = createClient();
+    const { url: mediaUrl, type: mediaType } = await uploadMedia();
+    const finalImageUrl = mediaType === 'image' ? mediaUrl : (imageUrl.trim() || null);
+    const finalPdfUrl = mediaType === 'pdf' ? mediaUrl : null;
+
     const { error: err } = await supabase.from('admin_posts').insert({
       title: title.trim() || null,
       body: body.trim(),
-      image_url: imageUrl.trim() || null,
+      image_url: finalImageUrl,
       video_url: videoUrl.trim() || null,
+      pdf_url: finalPdfUrl,
+      downloadable,
       created_by: user.id,
     });
 
@@ -136,6 +181,42 @@ export default function PostComposer({ isOpen, onClose }: Props) {
                       className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-3 text-text-white font-mono text-base sm:text-sm focus:outline-none focus:border-arc-blue focus:ring-1 focus:ring-arc-blue transition-all placeholder:text-text-white/20"
                     />
                   </>
+                )}
+                {isAdmin && (
+                  <div className="flex flex-col gap-1">
+                    <label className="font-mono text-[10px] text-white/40 uppercase tracking-wider">
+                      Upload Media (PDF, JPG, PNG — optional)
+                    </label>
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                      onChange={(e) => setMediaFile(e.target.files?.[0] || null)}
+                      className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-2.5 text-text-white font-mono text-base sm:text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-arc-blue/20 file:text-arc-blue file:text-xs file:font-orbitron hover:file:bg-arc-blue/30 focus:outline-none focus:border-arc-blue cursor-pointer placeholder:text-text-white/20"
+                    />
+                    {mediaFile && (
+                      <p className="font-mono text-[10px] text-terminal-green">
+                        Selected: {mediaFile.name} ({(mediaFile.size / 1024).toFixed(1)} KB)
+                      </p>
+                    )}
+                    <label className="flex items-center gap-2 cursor-pointer mt-1">
+                      <button
+                        type="button"
+                        onClick={() => setDownloadable(!downloadable)}
+                        className={`w-9 h-5 rounded-full transition-colors relative ${
+                          downloadable ? 'bg-terminal-green' : 'bg-white/20'
+                        }`}
+                      >
+                        <span
+                          className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+                            downloadable ? 'translate-x-4' : 'translate-x-0.5'
+                          }`}
+                        />
+                      </button>
+                      <span className="font-mono text-xs text-white/60">
+                        {downloadable ? 'Download enabled' : 'View only (no download)'}
+                      </span>
+                    </label>
+                  </div>
                 )}
                 <button
                   type="submit"
