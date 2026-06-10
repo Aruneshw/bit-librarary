@@ -17,6 +17,7 @@ import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
 import AdminPostFeed from '@/components/dashboard/AdminPostFeed';
 import MediaFeed from '@/components/dashboard/MediaFeed';
 import PostComposer from '@/components/dashboard/PostComposer';
+import PollComposer from '@/components/admin/PollComposer';
 import FeedbackForm from '@/components/dashboard/FeedbackForm';
 import NotificationCenter from '@/components/dashboard/NotificationCenter';
 import NotificationSync from '@/components/dashboard/NotificationSync';
@@ -25,6 +26,11 @@ import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import { useNotification } from '@/hooks/useNotification';
 import { logAccess } from '@/lib/dailyAccess';
+import { useStudyTracker } from '@/lib/journey/tracker';
+import WelcomeBanner from '@/components/journey/WelcomeBanner';
+import TitleUnlockAnimation from '@/components/journey/TitleUnlockAnimation';
+import ProfileCard from '@/components/journey/ProfileCard';
+import type { JourneyStats, TitleUnlock } from '@/lib/journey/types';
 
 function SystemClock() {
   const [time, setTime] = useState<string>('');
@@ -235,6 +241,10 @@ export default function DashboardPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeFeedTab, setActiveFeedTab] = useState<'posts' | 'media'>('posts');
   const [showPostComposer, setShowPostComposer] = useState(false);
+  const [showPollComposer, setShowPollComposer] = useState(false);
+  const [journeyStats, setJourneyStats] = useState<JourneyStats | null>(null);
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [newTitleUnlock, setNewTitleUnlock] = useState<TitleUnlock | null>(null);
 
   // Check if intro has already been completed in this browser session
   useEffect(() => {
@@ -297,6 +307,46 @@ export default function DashboardPage() {
       sessionStorage.setItem('access_logged_today', 'true');
     }
   }, [user?.id]);
+
+  // Journey stats
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch('/api/journey/stats')
+      .then((r) => r.json())
+      .then((data) => {
+        setJourneyStats(data);
+        if (data.title_history && data.title_history.length > 0) {
+          const lastUnlocked = data.title_history[data.title_history.length - 1];
+          // Show unlock animation if title was unlocked recently (today)
+          const unlockDate = new Date(lastUnlocked.unlocked_at).toDateString();
+          if (unlockDate === new Date().toDateString()) {
+            setNewTitleUnlock({ title: lastUnlocked.title, day: lastUnlocked.day_number, isNew: true });
+          }
+        }
+      })
+      .catch(() => {});
+  }, [user?.id]);
+
+  // Study tracker
+  useStudyTracker(user?.id, {
+    onHeartbeat(result) {
+      setJourneyStats((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          current_streak: result.current_streak,
+          longest_streak: result.longest_streak,
+          total_active_days: result.total_active_days,
+          total_study_seconds: result.total_study_seconds,
+          current_title: result.current_title,
+          today_seconds: result.today_seconds,
+        };
+      });
+      if (result.title_unlocked) {
+        setNewTitleUnlock(result.title_unlocked);
+      }
+    },
+  });
 
   // Check tutorial status
   useEffect(() => {
@@ -366,14 +416,38 @@ export default function DashboardPage() {
         {/* Header */}
         <header className="absolute top-0 left-0 right-0 flex items-start sm:items-center justify-between px-4 sm:px-6 py-4 pointer-events-none z-50">
           <div className="flex items-center gap-3 pointer-events-auto">
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="Profile" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30" />
-            ) : (
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
-                <span className="font-orbitron text-arc-blue font-bold text-sm">
-                  {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
-                </span>
-              </div>
+            {journeyStats && (
+              <button onClick={() => router.push('/journey')} className="transition-transform hover:scale-105">
+                <div className="relative">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Profile" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 object-cover" />
+                  ) : (
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
+                      <span className="font-orbitron text-arc-blue font-bold text-sm">
+                        {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  {journeyStats.current_streak > 0 && (
+                    <div className="absolute -bottom-0.5 -right-0.5 px-1 py-0.5 rounded-full bg-terminal-green/20 border border-terminal-green/30">
+                      <span className="font-mono text-[6px] text-terminal-green font-bold">🔥{journeyStats.current_streak}</span>
+                    </div>
+                  )}
+                </div>
+              </button>
+            )}
+            {!journeyStats && (
+              <>
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Profile" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30" />
+                ) : (
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
+                    <span className="font-orbitron text-arc-blue font-bold text-sm">
+                      {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+              </>
             )}
             <div>
               <h1
@@ -382,9 +456,11 @@ export default function DashboardPage() {
               >
                 BIT LIBRARY
               </h1>
-              <p className="font-mono text-[8px] sm:text-[10px] text-text-white/60 tracking-wider mt-0.5 truncate max-w-[100px] sm:max-w-none">
-                {user?.name || user?.email}
-              </p>
+              <button onClick={() => router.push('/journey')} className="block">
+                <p className="font-mono text-[8px] sm:text-[10px] text-arc-blue/40 tracking-wider mt-0.5 truncate max-w-[100px] sm:max-w-none hover:text-arc-blue/70 transition-colors">
+                  {user?.name || user?.email}
+                </p>
+              </button>
             </div>
           </div>
 
@@ -424,6 +500,15 @@ export default function DashboardPage() {
         {/* Feed tabs */}
         {!subjectsLoading && introComplete && (
           <div className="w-full max-w-2xl mx-auto px-4 pt-20 sm:pt-24">
+            {showWelcome && journeyStats && (
+              <div className="mb-4">
+                <WelcomeBanner
+                  stats={journeyStats}
+                  newTitle={newTitleUnlock}
+                  onDismiss={() => setShowWelcome(false)}
+                />
+              </div>
+            )}
             <div className="flex items-center justify-between mb-3">
               <div className="flex gap-1 bg-arc-blue/5 border border-arc-blue/20 rounded-lg p-1">
                 <button
@@ -448,16 +533,25 @@ export default function DashboardPage() {
                 </button>
               </div>
               {isAdmin && (
-                <button
-                  onClick={() => setShowPostComposer(true)}
-                  className="w-8 h-8 rounded-full bg-arc-blue/10 border border-arc-blue/30 flex items-center justify-center text-arc-blue hover:bg-arc-blue/20 transition-all"
-                  aria-label="Create post"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                  </svg>
-                </button>
+                <>
+                  <button
+                    onClick={() => setShowPostComposer(true)}
+                    className="w-8 h-8 rounded-full bg-arc-blue/10 border border-arc-blue/30 flex items-center justify-center text-arc-blue hover:bg-arc-blue/20 transition-all"
+                    aria-label="Create post"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setShowPollComposer(true)}
+                    className="w-8 h-8 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 hover:bg-amber-400/20 transition-all"
+                    aria-label="Create poll"
+                  >
+                    <span className="text-sm">📊</span>
+                  </button>
+                </>
               )}
             </div>
 
@@ -513,7 +607,12 @@ export default function DashboardPage() {
       {isAuthenticated && introComplete && <NotificationCenter />}
       {isAuthenticated && introComplete && <NotificationSync />}
       {isAuthenticated && introComplete && <FeedbackForm />}
+      <TitleUnlockAnimation
+        unlock={newTitleUnlock}
+        onComplete={() => setNewTitleUnlock(null)}
+      />
       <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
+      <PollComposer isOpen={showPollComposer} onClose={() => setShowPollComposer(false)} />
     </main>
   );
 }

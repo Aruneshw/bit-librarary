@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import PostReactions from './PostReactions';
+import PollCard from './PollCard';
+import type { PollData } from './PollCard';
 
 interface AdminPost {
   id: string;
@@ -25,6 +27,7 @@ function getYouTubeEmbedUrl(url: string): string | null {
 export default function AdminPostFeed() {
   const { isAuthenticated, isAdmin, user } = useAuthStore();
   const [posts, setPosts] = useState<AdminPost[]>([]);
+  const [polls, setPolls] = useState<PollData[]>([]);
   const [liveViewers, setLiveViewers] = useState<Record<string, number>>({});
   const [trackedViews, setTrackedViews] = useState<Set<string>>(new Set());
   const visiblePostRef = useRef<string | null>(null);
@@ -59,6 +62,31 @@ export default function AdminPostFeed() {
       .limit(10);
 
     if (data) setPosts((data as AdminPost[]).filter((p) => !p.image_url && !p.video_url && !p.pdf_url));
+  };
+
+  const fetchPolls = async () => {
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from('polls')
+        .select('id, question, created_by, created_at, end_date, multiple_choice, anonymous, show_live_results, status')
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (data) {
+        const pollsWithOptions = await Promise.all(
+          data.map(async (poll: { id: string; question: string; created_by: string | null; created_at: string; end_date: string | null; multiple_choice: boolean; anonymous: boolean; show_live_results: boolean; status: string }) => {
+            const { data: opts } = await supabase
+              .from('poll_options')
+              .select('id, option_text, sort_order')
+              .eq('poll_id', poll.id)
+              .order('sort_order');
+            return { ...poll, options: opts ?? [] } as PollData;
+          })
+        );
+        setPolls(pollsWithOptions);
+      }
+    } catch { /* ignore */ }
   };
 
   const trackView = async (postId: string) => {
@@ -127,12 +155,19 @@ export default function AdminPostFeed() {
   useEffect(() => {
     if (!isAuthenticated) return;
     fetchPosts();
+    fetchPolls();
 
     const supabase = createClient();
 
     const feedChannel = supabase
       .channel('admin-posts-feed')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'admin_posts' }, () => fetchPosts())
+      .subscribe();
+
+    const pollChannel = supabase
+      .channel('admin-poll-feed')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'polls' }, () => fetchPolls())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'poll_votes' }, () => fetchPolls())
       .subscribe();
 
     const presenceChannel = supabase.channel('post-live', {
@@ -188,20 +223,31 @@ export default function AdminPostFeed() {
 
     return () => {
       supabase.removeChannel(feedChannel);
+      supabase.removeChannel(pollChannel);
       supabase.removeChannel(presenceChannel);
       observer.disconnect();
       clearTimeout(timer);
     };
   }, [isAuthenticated, user?.id]);
 
-  if (!isAuthenticated || posts.length === 0) return null;
+  // Merge posts and polls sorted by created_at
+  const mergedFeed = [
+    ...posts.map((p) => ({ type: 'post' as const, id: p.id, created_at: p.created_at, data: p })),
+    ...polls.map((p) => ({ type: 'poll' as const, id: p.id, created_at: p.created_at, data: p })),
+  ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  if (!isAuthenticated || mergedFeed.length === 0) return null;
 
   return (
     <div className="mb-6 space-y-3">
       <h2 className="font-orbitron text-xs text-arc-blue/70 tracking-[3px] uppercase">
         Director Posts
       </h2>
-      {posts.map((post) => {
+      {mergedFeed.map((item) => {
+        if (item.type === 'poll') {
+          return <PollCard key={`poll-${item.id}`} poll={item.data as PollData} />;
+        }
+        const post = item.data as AdminPost;
         const embedUrl = post.video_url ? getYouTubeEmbedUrl(post.video_url) : null;
         return (
           <motion.article

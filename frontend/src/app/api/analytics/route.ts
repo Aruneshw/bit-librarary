@@ -403,7 +403,86 @@ export async function GET() {
       };
     });
 
+    // ── Poll Analytics ─────────────────────────────────────
+    const [totalPollsRes, totalVotesRes, activePollsRes] = await Promise.all([
+      supabase.from('polls').select('id', { count: 'exact', head: true }),
+      supabase.from('poll_votes').select('id', { count: 'exact', head: true }),
+      supabase.from('polls').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+    ]);
+
+    const { data: pollVoteData } = await supabase
+      .from('poll_votes')
+      .select('user_id');
+
+    const { data: allPolls } = await supabase
+      .from('polls')
+      .select('id, question, status')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    // Most active poll
+    let mostActivePoll: { question: string; total_votes: number } | null = null;
+    if (allPolls && allPolls.length > 0) {
+      const pollIds = allPolls.map((p) => p.id);
+      const { data: voteCounts } = await supabase
+        .from('poll_votes')
+        .select('poll_id');
+      const voteMap: Record<string, number> = {};
+      for (const v of (voteCounts ?? [])) {
+        voteMap[v.poll_id] = (voteMap[v.poll_id] || 0) + 1;
+      }
+      let maxVotes = 0;
+      for (const p of allPolls) {
+        const vc = voteMap[p.id] || 0;
+        if (vc > maxVotes) {
+          maxVotes = vc;
+          mostActivePoll = { question: p.question, total_votes: vc };
+        }
+      }
+    }
+
+    // Department-wise participation
+    const uniqueVoterIds = [...new Set((pollVoteData ?? []).map((v: any) => v.user_id))];
+    let deptParticipation: { department: string; votes: number }[] = [];
+    if (uniqueVoterIds.length > 0) {
+      const { data: voterProfiles } = await supabase
+        .from('profiles')
+        .select('id, department')
+        .in('id', uniqueVoterIds);
+      const deptVoteMap: Record<string, number> = {};
+      for (const p of (voterProfiles ?? [])) {
+        const dept = p.department || 'UNKNOWN';
+        deptVoteMap[dept] = (deptVoteMap[dept] || 0) + 1;
+      }
+      deptParticipation = Object.entries(deptVoteMap)
+        .map(([department, votes]) => ({ department, votes }))
+        .sort((a, b) => b.votes - a.votes);
+    }
+
+    const totalPolls = totalPollsRes.count ?? 0;
+    const totalPollVotes = totalVotesRes.count ?? 0;
+    const activePollsCount = activePollsRes.count ?? 0;
+
+    // Participation rate (unique voters / total profiles)
+    const { count: totalProfiles } = await supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true });
+
+    const participationRate = totalProfiles && totalProfiles > 0
+      ? Math.round((uniqueVoterIds.length / totalProfiles) * 100)
+      : 0;
+
+    const pollAnalytics = {
+      totalPolls,
+      totalVotes: totalPollVotes,
+      activePollsCount,
+      mostActivePoll,
+      deptParticipation,
+      participationRate,
+    };
+
     return NextResponse.json({
+      pollAnalytics,
       dailyUsers,
       departmentActivity,
       topUsers,

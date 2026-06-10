@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/authStore';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import FileManager from '@/components/admin/FileManager';
 import AnalyticsCarousel from '@/components/admin/AnalyticsCarousel';
+import PollComposer from '@/components/admin/PollComposer';
 
 interface UserProfile {
   id: string;
@@ -71,6 +72,7 @@ export default function AdminDashboard() {
   const [storageProvider, setStorageProvider] = useState<'supabase' | 'vercel_blob'>('supabase');
   const [hasBlobToken, setHasBlobToken] = useState(false);
   const [userSearch, setUserSearch] = useState('');
+  const [showPollComposer, setShowPollComposer] = useState(false);
 
   const fetchSystemMetrics = useCallback(async () => {
     const supabase = createClient();
@@ -720,10 +722,19 @@ export default function AdminDashboard() {
           className="mt-8 bg-black/40 border border-arc-blue/20 rounded-xl backdrop-blur-md overflow-hidden shadow-[0_0_30px_rgba(0,217,255,0.05)]"
         >
           <div className="p-6 border-b border-arc-blue/20 bg-arc-blue/5">
-            <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-terminal-green shadow-[0_0_8px_rgba(0,255,65,1)]" />
-              Publish Post / Video
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-orbitron text-xl text-white tracking-wider flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-terminal-green shadow-[0_0_8px_rgba(0,255,65,1)]" />
+                Publish Post / Video
+              </h2>
+              <button
+                onClick={() => setShowPollComposer(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-400/10 border border-amber-400 text-amber-400 font-orbitron text-xs tracking-widest uppercase rounded-lg hover:bg-amber-400/20 transition-all"
+              >
+                <span className="text-sm">📊</span>
+                Create Poll
+              </button>
+            </div>
           </div>
           <form onSubmit={handleCreatePost} className="p-6 space-y-4">
             <input
@@ -998,6 +1009,11 @@ export default function AdminDashboard() {
           </div>
         </motion.div>
       </div>
+
+      <PollComposer
+        isOpen={showPollComposer}
+        onClose={() => setShowPollComposer(false)}
+      />
     </div>
   );
 }

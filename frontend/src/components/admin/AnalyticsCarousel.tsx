@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, Legend,
@@ -87,7 +87,17 @@ interface ContentPerf {
   engagementScore: number;
 }
 
+interface PollAnalytics {
+  totalPolls: number;
+  totalVotes: number;
+  activePollsCount: number;
+  mostActivePoll: { question: string; total_votes: number } | null;
+  deptParticipation: { department: string; votes: number }[];
+  participationRate: number;
+}
+
 interface AnalyticsData {
+  pollAnalytics: PollAnalytics;
   dailyUsers: DailyUsers;
   departmentActivity: DeptActivity[];
   topUsers: TopUser[];
@@ -121,6 +131,7 @@ const SLIDES = [
   'Device Analytics',
   'Storage Analytics',
   'Content Performance',
+  'Poll Analytics',
 ];
 
 const DEPT_COLORS: Record<string, string> = {
@@ -268,6 +279,7 @@ export default function AnalyticsCarousel() {
       case 7: return <DeviceSlide data={data.deviceAnalytics} />;
       case 8: return <StorageSlide data={data.storage} />;
       case 9: return <ContentPerfSlide data={data.contentPerformance} />;
+      case 10: return <PollAnalyticsSlide data={data.pollAnalytics} />;
       default: return null;
     }
   };
@@ -818,6 +830,90 @@ function ContentPerfSlide({ data }: { data: ContentPerf[] }) {
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// SLIDE 11: Poll Analytics
+// ═══════════════════════════════════════════════════════════
+function PollAnalyticsSlide({ data }: { data: PollAnalytics }) {
+  const [localData, setLocalData] = useState(data);
+
+  useEffect(() => {
+    setLocalData(data);
+  }, [data]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel('analytics-polls')
+      .on('postgres_changes' as any, { event: '*', schema: 'public', table: 'poll_votes' }, () => {
+        // Refetch analytics on vote change
+        fetch('/api/analytics').then((r) => r.json()).then((d) => {
+          if (d.pollAnalytics) setLocalData(d.pollAnalytics);
+        }).catch(() => {});
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  const statCards = [
+    { label: 'Total Polls', value: localData.totalPolls, color: 'text-amber-400' },
+    { label: 'Active', value: localData.activePollsCount, color: 'text-terminal-green' },
+    { label: 'Total Votes', value: localData.totalVotes, color: 'text-arc-blue' },
+    { label: 'Participation', value: `${localData.participationRate}%`, color: 'text-purple-400' },
+  ];
+
+  return (
+    <div>
+      <div className="grid grid-cols-4 gap-3 mb-5">
+        {statCards.map((s) => (
+          <div key={s.label} className="bg-black/60 border border-white/10 rounded-lg p-3">
+            <p className="font-mono text-[9px] text-white/40 uppercase tracking-wider">{s.label}</p>
+            <p className={`font-orbitron text-xl font-bold mt-1 ${s.color}`}>{s.value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Most active poll */}
+        <div>
+          {localData.mostActivePoll ? (
+            <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+              <p className="font-mono text-[9px] text-white/40 uppercase tracking-wider mb-1">Most Active Poll</p>
+              <p className="font-orbitron text-xs text-white/90 mb-1">{localData.mostActivePoll.question}</p>
+              <p className="font-mono text-[10px] text-amber-400">{localData.mostActivePoll.total_votes} votes</p>
+            </div>
+          ) : (
+            <p className="font-mono text-xs text-white/30 text-center py-6">No poll activity yet.</p>
+          )}
+        </div>
+
+        {/* Department participation */}
+        <div>
+          <p className="font-mono text-[9px] text-white/40 uppercase tracking-wider mb-2">Department Participation</p>
+          {localData.deptParticipation.length > 0 ? (
+            <div className="space-y-1.5 max-h-[180px] overflow-y-auto">
+              {localData.deptParticipation.map((d) => (
+                <div key={d.department} className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] text-white/70">{d.department}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-20 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full bg-amber-400" style={{
+                        width: `${Math.min((d.votes / Math.max(...localData.deptParticipation.map((x) => x.votes), 1)) * 100, 100)}%`,
+                      }} />
+                    </div>
+                    <span className="font-orbitron text-[10px] text-amber-400 w-8 text-right">{d.votes}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="font-mono text-[10px] text-white/30">No votes yet.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
