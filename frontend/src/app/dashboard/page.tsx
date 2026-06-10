@@ -18,6 +18,8 @@ import MediaFeed from '@/components/dashboard/MediaFeed';
 import PostComposer from '@/components/dashboard/PostComposer';
 import FeedbackForm from '@/components/dashboard/FeedbackForm';
 import NotificationCenter from '@/components/dashboard/NotificationCenter';
+import NotificationSync from '@/components/dashboard/NotificationSync';
+import PushNotificationDemo from '@/components/dashboard/PushNotificationDemo';
 import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 
@@ -428,6 +430,8 @@ export default function DashboardPage() {
 
       {isAuthenticated && introComplete && <MobileActionDock />}
       {isAuthenticated && introComplete && <NotificationCenter />}
+      {isAuthenticated && introComplete && <NotificationSync />}
+      {isAuthenticated && introComplete && <PushNotificationDemo />}
       {isAuthenticated && introComplete && <FeedbackForm />}
       <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
     </main>

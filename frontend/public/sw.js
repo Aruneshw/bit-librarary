@@ -1,25 +1,14 @@
-// ═══════════════════════════════════════════
-// BIT LIBRARY — Service Worker
-// ═══════════════════════════════════════════
-
-const CACHE_NAME = 'bit-library-v1';
-
-// Install event: skip waiting to activate the worker immediately
-self.addEventListener('install', (event) => {
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
-// Activate event: claim all open clients immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-// Fetch event: simple network-first fallback strategy (safe for dynamic database queries)
 self.addEventListener('fetch', (event) => {
-  // Pass through all requests directly to the network
   event.respondWith(
     fetch(event.request).catch(() => {
-      // Offline fallback can be handled here if needed
       return new Response('Network error occurred. Please check your connection.', {
         status: 503,
         statusText: 'Service Unavailable',
@@ -27,4 +16,29 @@ self.addEventListener('fetch', (event) => {
       });
     })
   );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/';
+  event.waitUntil(
+    self.clients.openWindow(url)
+  );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SHOW_NOTIFICATION') {
+    const { title, body, icon, badge, tag, vibrate, data } = event.data;
+    event.waitUntil(
+      self.registration.showNotification(title, {
+        body,
+        icon: icon || '/icon.png',
+        badge: badge || '/icon.png',
+        tag: tag || 'default',
+        renotify: true,
+        vibrate: vibrate || [200, 100, 200],
+        data: { url: data?.url || '/' },
+      })
+    );
+  }
 });
