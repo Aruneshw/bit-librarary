@@ -62,6 +62,9 @@ export default function AdminDashboard() {
   const [posting, setPosting] = useState(false);
   const [postMessage, setPostMessage] = useState('');
   const [storageStats, setStorageStats] = useState<StorageStats | null>(null);
+  const [blobStats, setBlobStats] = useState<{ totalSize: number; count: number; totalLimit: number; usedPercent: number; remaining: number } | null>(null);
+  const [storageMode, setStorageMode] = useState<'supabase' | 'vercel'>('supabase');
+  const [hasBlobToken, setHasBlobToken] = useState(false);
   const [userSearch, setUserSearch] = useState('');
 
   const fetchSystemMetrics = useCallback(async () => {
@@ -128,6 +131,22 @@ export default function AdminDashboard() {
     } catch { /* ignore */ }
   }, []);
 
+  const fetchStorageConfig = useCallback(async () => {
+    try {
+      const res = await fetch('/api/storage-config');
+      if (res.ok) {
+        const config = await res.json();
+        setHasBlobToken(config.hasBlobToken);
+        if (config.hasBlobToken) {
+          setStorageMode(localStorage.getItem('admin_storage_mode') === 'supabase' ? 'supabase' : 'vercel');
+        }
+        if (config.blobStats) {
+          setBlobStats(config.blobStats);
+        }
+      }
+    } catch { /* ignore */ }
+  }, []);
+
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
@@ -141,9 +160,10 @@ export default function AdminDashboard() {
         fetchFeedbacks();
         fetchSystemMetrics();
         fetchStorageStats();
+        fetchStorageConfig();
       }
     }
-  }, [isAdmin, isLoading, router, fetchSystemMetrics]);
+  }, [isAdmin, isLoading, router, fetchSystemMetrics, fetchStorageConfig]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -282,31 +302,50 @@ export default function AdminDashboard() {
   const uploadMedia = async (): Promise<{ url: string | null; type: 'image' | 'pdf' | null }> => {
     if (!postMediaFile) return { url: null, type: null };
     const isPdf = postMediaFile.type === 'application/pdf';
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const supabase = createClient();
+    const maxFallbackSize = 10 * 1024 * 1024;
 
-    if (apiUrl) {
+    const uploadTo = async (endpoint: string, signal?: AbortSignal): Promise<{ url: string; storage: string }> => {
+      const formData = new FormData();
+      formData.append('file', postMediaFile);
+      const res = await fetch(endpoint, { method: 'POST', body: formData, signal });
+      if (res.ok) return res.json();
+      const errBody = await res.json().catch(() => null);
+      throw new Error(errBody?.error || `Upload failed (${res.status})`);
+    };
+
+    // Vercel Blob
+    if (storageMode === 'vercel' && hasBlobToken) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const formData = new FormData();
-          formData.append('file', postMediaFile);
-          const res = await fetch(`${apiUrl}/posts/upload-media`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${session.access_token}` },
-            body: formData,
-          });
-          if (res.ok) {
-            const result = await res.json();
-            return { url: result.url, type: isPdf ? 'pdf' : 'image' };
-          }
-        }
-      } catch {
-        // fall through to mock/storage
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 120000);
+        const result = await uploadTo('/api/upload', controller.signal);
+        clearTimeout(timeout);
+        return { url: result.url, type: isPdf ? 'pdf' : 'image' };
+      } catch (e: any) {
+        if (e.name === 'AbortError') throw new Error('Upload timed out. File too large for Vercel Blob.');
+        throw e;
       }
     }
 
-    // Mock mode: Convert to base64 data URL
+    // Supabase direct (via Next.js API — no Express backend needed)
+    for (const endpoint of ['/api/upload-supabase']) {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 180000);
+        const result = await uploadTo(endpoint, controller.signal);
+        clearTimeout(timeout);
+        return { url: result.url, type: isPdf ? 'pdf' : 'image' };
+      } catch (e: any) {
+        if (e.name === 'AbortError') throw new Error('Upload timed out. Check your connection.');
+        throw e;
+      }
+    }
+
+    // Final fallback: base64 for small files only
+    if (postMediaFile.size > maxFallbackSize) {
+      throw new Error(`File too large (${(postMediaFile.size / 1024 / 1024).toFixed(1)}MB) for fallback. Max is ${maxFallbackSize / 1024 / 1024}MB.`);
+    }
+
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = () => resolve({ url: reader.result as string, type: isPdf ? 'pdf' : 'image' });
@@ -340,6 +379,8 @@ export default function AdminDashboard() {
       if (apiUrl) {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 30000);
           const res = await fetch(`${apiUrl}/posts`, {
             method: 'POST',
             headers: {
@@ -354,7 +395,9 @@ export default function AdminDashboard() {
               pdf_url: finalPdfUrl,
               downloadable: postDownloadable,
             }),
+            signal: controller.signal,
           });
+          clearTimeout(timeout);
           if (res.ok) {
             setPostTitle('');
             setPostBody('');
@@ -364,9 +407,14 @@ export default function AdminDashboard() {
             setPostDownloadable(true);
             setPostMessage('Post published to all users.');
             setPosting(false);
+            fetchStorageStats();
+            fetchStorageConfig();
             return;
           }
+          const errBody = await res.json().catch(() => null);
+          throw new Error(errBody?.error?.message || `Server error (${res.status})`);
         }
+        throw new Error('No auth session — try logging in again');
       }
 
       const { error } = await supabase.from('admin_posts').insert({
@@ -390,9 +438,12 @@ export default function AdminDashboard() {
       } else {
         setPostMessage('Failed to publish post. ' + (error.message || ''));
       }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : '';
-      setPostMessage('Failed to publish post.' + (msg ? ' ' + msg : ''));
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        setPostMessage('Request timed out. The backend server may not be running. Start it with: cd backend && npm run dev');
+      } else {
+        setPostMessage(err?.message || 'Failed to publish post.');
+      }
     }
     setPosting(false);
   };
@@ -459,28 +510,55 @@ export default function AdminDashboard() {
           <div className="bg-black/40 border border-amber-400/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.05)]">
             <p className="font-orbitron text-[10px] text-amber-400/60 tracking-widest uppercase mb-2 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              Storage
+              Storage: {storageMode === 'vercel' ? 'Vercel' : 'Supabase'}
             </p>
             <p className="font-orbitron text-3xl text-amber-400 font-bold" style={{ textShadow: '0 0 12px rgba(251,191,36,0.4)' }}>
-              {storageStats ? `${(storageStats.totalSize / (1024 * 1024)).toFixed(1)} MB` : '—'}
+              {storageMode === 'vercel' && blobStats
+                ? `${(blobStats.totalSize / (1024 * 1024)).toFixed(1)} MB`
+                : storageStats
+                  ? `${(storageStats.totalSize / (1024 * 1024)).toFixed(1)} MB`
+                  : '—'}
             </p>
             <div className="mt-2">
-              {storageStats && (
+              {storageMode === 'vercel' && blobStats && (
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-500 ${
-                        storageStats.usedPercent > 80 ? 'bg-warning-red' : storageStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'
-                      }`}
-                      style={{ width: `${Math.min(storageStats.usedPercent, 100)}%` }}
-                    />
+                    <div className={`h-full rounded-full transition-all duration-500 ${blobStats.usedPercent > 80 ? 'bg-warning-red' : blobStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(blobStats.usedPercent, 100)}%` }} />
+                  </div>
+                  <span className="font-mono text-[10px] text-white/40">{blobStats.usedPercent}%</span>
+                </div>
+              )}
+              {storageMode === 'supabase' && storageStats && (
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full transition-all duration-500 ${storageStats.usedPercent > 80 ? 'bg-warning-red' : storageStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(storageStats.usedPercent, 100)}%` }} />
                   </div>
                   <span className="font-mono text-[10px] text-white/40">{storageStats.usedPercent}%</span>
                 </div>
               )}
               <p className="font-mono text-[10px] text-white/40 mt-1">
-                {storageStats ? `${(storageStats.remaining / (1024 * 1024)).toFixed(1)} MB remaining` : 'Supabase storage usage'}
+                {storageMode === 'vercel' && blobStats
+                  ? `${(blobStats.remaining / (1024 * 1024)).toFixed(1)} MB remaining`
+                  : storageStats
+                    ? `${(storageStats.remaining / (1024 * 1024)).toFixed(1)} MB remaining`
+                    : 'Storage usage'}
               </p>
+              {hasBlobToken && (
+                <div className="mt-3 flex gap-1 bg-black/60 border border-amber-400/20 rounded-lg p-0.5">
+                  <button
+                    onClick={() => { setStorageMode('vercel'); localStorage.setItem('admin_storage_mode', 'vercel'); }}
+                    className={`flex-1 px-2 py-1 font-orbitron text-[9px] tracking-wider rounded-md transition-all ${storageMode === 'vercel' ? 'bg-amber-400/20 text-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.2)]' : 'text-white/50 hover:text-white/80'}`}
+                  >
+                    Vercel Blob
+                  </button>
+                  <button
+                    onClick={() => { setStorageMode('supabase'); localStorage.setItem('admin_storage_mode', 'supabase'); }}
+                    className={`flex-1 px-2 py-1 font-orbitron text-[9px] tracking-wider rounded-md transition-all ${storageMode === 'supabase' ? 'bg-amber-400/20 text-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.2)]' : 'text-white/50 hover:text-white/80'}`}
+                  >
+                    Supabase
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </motion.div>
@@ -581,26 +659,13 @@ export default function AdminDashboard() {
                             {u.login_count || 0}
                           </td>
                           <td className="p-4">
-                            <button
-                              onClick={async () => {
-                                const supabase = createClient();
-                                const { error } = await supabase
-                                  .from('profiles')
-                                  .update({ app_installed: !u.app_installed })
-                                  .eq('id', u.id);
-                                if (!error) {
-                                  setUsers(users.map(usr => usr.id === u.id ? { ...usr, app_installed: !usr.app_installed } : usr));
-                                }
-                              }}
-                              className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono rounded cursor-pointer transition-all ${
-                                u.app_installed
-                                  ? 'text-terminal-green border border-terminal-green/30 bg-terminal-green/10 hover:bg-terminal-green/20'
-                                  : 'text-white/40 border border-white/10 bg-white/5 hover:bg-arc-blue/10 hover:text-arc-blue'
-                              }`}
-                              title={u.app_installed ? 'Mark as not installed' : 'Mark as installed'}
-                            >
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-mono rounded ${
+                              u.app_installed
+                                ? 'text-terminal-green border border-terminal-green/30 bg-terminal-green/10'
+                                : 'text-white/40 border border-white/10 bg-white/5'
+                            }`}>
                               {u.app_installed ? 'Installed' : 'Not Installed'}
-                            </button>
+                            </span>
                           </td>
                           <td className="p-4 text-white/50 font-mono text-xs">
                             {new Date(u.created_at).toLocaleDateString()} {new Date(u.created_at).toLocaleTimeString()}
@@ -663,8 +728,13 @@ export default function AdminDashboard() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="font-mono text-[10px] text-white/40 uppercase tracking-wider">
+              <label className="font-mono text-[10px] text-white/40 uppercase tracking-wider flex items-center gap-2">
                 Upload Media (PDF, JPG, PNG — optional)
+                <span className={`px-1.5 py-0.5 text-[8px] rounded font-bold ${
+                  storageMode === 'vercel' ? 'bg-amber-400/20 text-amber-400 border border-amber-400/30' : 'bg-arc-blue/20 text-arc-blue border border-arc-blue/30'
+                }`}>
+                  {storageMode === 'vercel' ? 'Vercel Blob' : 'Supabase'}
+                </span>
               </label>
               <input
                 type="file"
@@ -681,9 +751,16 @@ export default function AdminDashboard() {
                 className="w-full bg-black/60 border border-arc-blue/30 rounded p-2.5 text-white font-mono text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-arc-blue/20 file:text-arc-blue file:text-xs file:font-orbitron hover:file:bg-arc-blue/30 focus:outline-none focus:border-arc-blue cursor-pointer"
               />
               {postMediaFile && (
-                <p className="font-mono text-[10px] text-terminal-green">
-                  Selected: {postMediaFile.name} ({(postMediaFile.size / 1024 / 1024).toFixed(2)} MB)
-                </p>
+                <div className="flex flex-col gap-0.5">
+                  <p className={`font-mono text-[10px] ${postMediaFile.size > 50 * 1024 * 1024 ? 'text-warning-red' : 'text-terminal-green'}`}>
+                    Selected: {postMediaFile.name} ({(postMediaFile.size / 1024 / 1024).toFixed(2)} MB)
+                  </p>
+                  {postMediaFile.size > 50 * 1024 * 1024 && (
+                    <p className="font-mono text-[9px] text-warning-red/70">
+                      Large file — upload may take a while. Ensure backend is running.
+                    </p>
+                  )}
+                </div>
               )}
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

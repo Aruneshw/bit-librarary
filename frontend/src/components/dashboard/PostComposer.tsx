@@ -33,39 +33,57 @@ export default function PostComposer({ isOpen, onClose }: Props) {
     setError('');
   };
 
+  const getStorageMode = (): 'supabase' | 'vercel' => {
+    if (typeof window === 'undefined') return 'supabase';
+    return (localStorage.getItem('admin_storage_mode') || 'vercel') as 'supabase' | 'vercel';
+  };
+
   const uploadMedia = async (): Promise<{ url: string | null; type: 'image' | 'pdf' | null }> => {
     if (!mediaFile) return { url: null, type: null };
     const isPdf = mediaFile.type === 'application/pdf';
-    const supabase = createClient();
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const storageMode = getStorageMode();
+    const maxFallbackSize = 10 * 1024 * 1024;
 
-    if (apiUrl) {
+    const uploadTo = async (endpoint: string, signal?: AbortSignal): Promise<{ url: string; storage: string }> => {
+      const formData = new FormData();
+      formData.append('file', mediaFile);
+      const res = await fetch(endpoint, { method: 'POST', body: formData, signal });
+      if (res.ok) return res.json();
+      const errBody = await res.json().catch(() => null);
+      throw new Error(errBody?.error || `Upload failed (${res.status})`);
+    };
+
+    if (storageMode === 'vercel') {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const formData = new FormData();
-          formData.append('file', mediaFile);
-          const res = await fetch(`${apiUrl}/posts/upload-media`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${session.access_token}` },
-            body: formData,
-          });
-          if (res.ok) {
-            const result = await res.json();
-            return { url: result.url, type: isPdf ? 'pdf' : 'image' };
-          }
-        }
-      } catch {
-        // fall through to mock
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 120000);
+        const result = await uploadTo('/api/upload', controller.signal);
+        clearTimeout(timeout);
+        return { url: result.url, type: isPdf ? 'pdf' : 'image' };
+      } catch (e: any) {
+        if (e.name === 'AbortError') throw new Error('Upload timed out. File too large for Vercel Blob.');
+        throw e;
       }
     }
 
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve({ url: reader.result as string, type: isPdf ? 'pdf' : 'image' });
-      reader.onerror = () => resolve({ url: null, type: null });
-      reader.readAsDataURL(mediaFile);
-    });
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 180000);
+      const result = await uploadTo('/api/upload-supabase', controller.signal);
+      clearTimeout(timeout);
+      return { url: result.url, type: isPdf ? 'pdf' : 'image' };
+    } catch (e: any) {
+      if (e.name === 'AbortError') throw new Error('Upload timed out. Check your connection.');
+      if (!mediaFile || mediaFile.size <= maxFallbackSize) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({ url: reader.result as string, type: isPdf ? 'pdf' : 'image' });
+          reader.onerror = () => resolve({ url: null, type: null });
+          reader.readAsDataURL(mediaFile!);
+        });
+      }
+      throw e;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,33 +93,37 @@ export default function PostComposer({ isOpen, onClose }: Props) {
     setIsSubmitting(true);
     setError('');
 
-    const supabase = createClient();
-    const { url: mediaUrl, type: mediaType } = await uploadMedia();
-    const finalImageUrl = mediaType === 'image' ? mediaUrl : (imageUrl.trim() || null);
-    const finalPdfUrl = mediaType === 'pdf' ? mediaUrl : null;
+    try {
+      const supabase = createClient();
+      const { url: mediaUrl, type: mediaType } = await uploadMedia();
+      const finalImageUrl = mediaType === 'image' ? mediaUrl : (imageUrl.trim() || null);
+      const finalPdfUrl = mediaType === 'pdf' ? mediaUrl : null;
 
-    const { error: err } = await supabase.from('admin_posts').insert({
-      title: title.trim() || null,
-      body: body.trim(),
-      image_url: finalImageUrl,
-      video_url: videoUrl.trim() || null,
-      pdf_url: finalPdfUrl,
-      downloadable,
-      created_by: user.id,
-    });
+      const { error: err } = await supabase.from('admin_posts').insert({
+        title: title.trim() || null,
+        body: body.trim(),
+        image_url: finalImageUrl,
+        video_url: videoUrl.trim() || null,
+        pdf_url: finalPdfUrl,
+        downloadable,
+        created_by: user.id,
+      });
 
-    setIsSubmitting(false);
+      if (err) {
+        setError(err.message || 'Failed to publish post');
+        setIsSubmitting(false);
+        return;
+      }
 
-    if (err) {
-      setError(err.message || 'Failed to publish post');
-      return;
+      setSubmitted(true);
+      setTimeout(() => {
+        onClose();
+        reset();
+      }, 2000);
+    } catch (e: any) {
+      setError(e?.message || 'Failed to publish post');
     }
-
-    setSubmitted(true);
-    setTimeout(() => {
-      onClose();
-      reset();
-    }, 2000);
+    setIsSubmitting(false);
   };
 
   return (
@@ -201,11 +223,18 @@ export default function PostComposer({ isOpen, onClose }: Props) {
         }}
         className="w-full bg-black/50 border border-arc-blue/30 rounded-lg p-2.5 text-text-white font-mono text-base sm:text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-arc-blue/20 file:text-arc-blue file:text-xs file:font-orbitron hover:file:bg-arc-blue/30 focus:outline-none focus:border-arc-blue cursor-pointer placeholder:text-text-white/20"
       />
-      {mediaFile && (
-        <p className="font-mono text-[10px] text-terminal-green">
-          Selected: {mediaFile.name} ({(mediaFile.size / 1024 / 1024).toFixed(2)} MB)
-        </p>
-      )}
+                    {mediaFile && (
+                      <div className="flex flex-col gap-0.5">
+                        <p className={`font-mono text-[10px] ${mediaFile.size > 50 * 1024 * 1024 ? 'text-warning-red' : 'text-terminal-green'}`}>
+                          Selected: {mediaFile.name} ({(mediaFile.size / 1024 / 1024).toFixed(2)} MB)
+                        </p>
+                        {mediaFile.size > 50 * 1024 * 1024 && (
+                          <p className="font-mono text-[9px] text-warning-red/70">
+                            Large file — upload may take a while.
+                          </p>
+                        )}
+                      </div>
+                    )}
                     <label className="flex items-center gap-2 cursor-pointer mt-1">
                       <button
                         type="button"
