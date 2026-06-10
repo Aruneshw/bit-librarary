@@ -68,6 +68,12 @@ export default function AdminDashboard() {
     details?: Record<string, { size: number; count: number; limit: number }>
   } | null>(null);
   const [storageMode, setStorageMode] = useState<'supabase' | 'vercel'>('supabase');
+  const [viewAnalytics, setViewAnalytics] = useState<{
+    totalViews: number;
+    viewsToday: number;
+    viewsThisWeek: number;
+    mostViewed: Array<{ id: string; title: string | null; body: string; view_count: number; created_at: string }>;
+  } | null>(null);
   const [hasBlobToken, setHasBlobToken] = useState(false);
   const [userSearch, setUserSearch] = useState('');
 
@@ -116,6 +122,55 @@ export default function AdminDashboard() {
     } catch { /* ignore */ }
   }, []);
 
+  const fetchViewAnalytics = useCallback(async () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const supabase = createClient();
+    if (apiUrl) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const res = await fetch(`${apiUrl}/posts/analytics`, {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setViewAnalytics(data);
+            return;
+          }
+        }
+      } catch { /* fallback to direct query */ }
+    }
+    const { count: totalViews } = await supabase
+      .from('post_views')
+      .select('*', { count: 'exact', head: true });
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const { count: viewsToday } = await supabase
+      .from('post_views')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', today.toISOString());
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    const { count: viewsThisWeek } = await supabase
+      .from('post_views')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', weekStart.toISOString());
+    const { data: mostViewed } = await supabase
+      .from('admin_posts')
+      .select('id, title, body, view_count, created_at')
+      .eq('is_active', true)
+      .gt('view_count', 0)
+      .order('view_count', { ascending: false })
+      .limit(5);
+    setViewAnalytics({
+      totalViews: totalViews ?? 0,
+      viewsToday: viewsToday ?? 0,
+      viewsThisWeek: viewsThisWeek ?? 0,
+      mostViewed: (mostViewed || []) as any[],
+    });
+  }, []);
+
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
@@ -129,9 +184,10 @@ export default function AdminDashboard() {
         fetchFeedbacks();
         fetchSystemMetrics();
         fetchStorageConfig();
+        fetchViewAnalytics();
       }
     }
-  }, [isAdmin, isLoading, router, fetchSystemMetrics, fetchStorageConfig]);
+  }, [isAdmin, isLoading, router, fetchSystemMetrics, fetchStorageConfig, fetchViewAnalytics]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -174,13 +230,15 @@ export default function AdminDashboard() {
       });
 
     const storageInterval = setInterval(() => fetchStorageConfig(), 30000);
+    const analyticsInterval = setInterval(() => fetchViewAnalytics(), 15000);
 
     return () => {
       supabase.removeChannel(metricsChannel);
       supabase.removeChannel(presenceChannel);
       clearInterval(storageInterval);
+      clearInterval(analyticsInterval);
     };
-  }, [isAdmin, user, fetchSystemMetrics, fetchStorageConfig]);
+  }, [isAdmin, user, fetchSystemMetrics, fetchStorageConfig, fetchViewAnalytics]);
 
   const fetchUsers = async () => {
     const supabase = createClient();
@@ -531,6 +589,67 @@ export default function AdminDashboard() {
               <p className="font-mono text-[10px] text-white/30 mt-2">Loading storage data...</p>
             )}
           </div>
+        </motion.div>
+
+        {/* View Analytics Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.07 }}
+          className="bg-black/40 border border-purple-500/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.05)] mt-8"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <h2 className="font-orbitron text-xs text-purple-400/80 tracking-widest uppercase">View Analytics</h2>
+          </div>
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            <div>
+              <p className="font-mono text-[10px] text-white/40 uppercase tracking-wider">Total Views</p>
+              <p className="font-orbitron text-2xl text-purple-400 font-bold" style={{ textShadow: '0 0 12px rgba(168,85,247,0.3)' }}>
+                {viewAnalytics?.totalViews ?? '—'}
+              </p>
+            </div>
+            <div>
+              <p className="font-mono text-[10px] text-white/40 uppercase tracking-wider">Today</p>
+              <p className="font-orbitron text-2xl text-arc-blue font-bold">
+                {viewAnalytics?.viewsToday ?? '—'}
+              </p>
+            </div>
+            <div>
+              <p className="font-mono text-[10px] text-white/40 uppercase tracking-wider">This Week</p>
+              <p className="font-orbitron text-2xl text-terminal-green font-bold">
+                {viewAnalytics?.viewsThisWeek ?? '—'}
+              </p>
+            </div>
+          </div>
+          {viewAnalytics?.mostViewed && viewAnalytics.mostViewed.length > 0 && (
+            <div>
+              <p className="font-orbitron text-[10px] text-purple-400/60 tracking-widest uppercase mb-2">Most Viewed Posts</p>
+              <div className="space-y-1.5">
+                {viewAnalytics.mostViewed.slice(0, 5).map((p, i) => (
+                  <div key={p.id} className="flex items-center justify-between py-1.5 px-2 rounded bg-white/5 border border-white/5">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className="font-mono text-[10px] text-white/30 w-4 shrink-0">#{i + 1}</span>
+                      <span className="font-mono text-xs text-white/80 truncate">{p.title || p.body.slice(0, 60)}</span>
+                    </div>
+                    <span className="flex items-center gap-1 font-mono text-xs text-purple-400 shrink-0 ml-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      {p.view_count}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          {(!viewAnalytics || viewAnalytics.totalViews === 0) && (
+            <p className="font-mono text-xs text-white/30 text-center py-4">No views recorded yet.</p>
+          )}
         </motion.div>
 
         {/* Daily Access Analytics Chart */}

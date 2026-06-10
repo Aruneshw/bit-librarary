@@ -14,9 +14,11 @@ interface Reaction {
 
 interface Props {
   postId: string;
+  viewCount?: number;
+  liveViewerCount?: number;
 }
 
-export default function PostReactions({ postId }: Props) {
+export default function PostReactions({ postId, viewCount, liveViewerCount }: Props) {
   const { user, isAuthenticated } = useAuthStore();
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [showPicker, setShowPicker] = useState(false);
@@ -79,6 +81,23 @@ export default function PostReactions({ postId }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-arc-blue/10">
+      {/* View count */}
+      {(viewCount ?? 0) > 0 && (
+        <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-mono text-arc-blue/70 border border-arc-blue/15 bg-arc-blue/5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          {viewCount}
+        </span>
+      )}
+      {(liveViewerCount ?? 0) > 0 && (
+        <span className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-mono text-terminal-green border border-terminal-green/30 bg-terminal-green/5 animate-pulse">
+          <span className="w-1.5 h-1.5 rounded-full bg-terminal-green" />
+          {liveViewerCount} watching
+        </span>
+      )}
+
       {/* Like */}
       <button
         onClick={() => toggleReaction('like')}

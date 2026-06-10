@@ -72,10 +72,18 @@ export default function AdminPostFeed() {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          await fetch(`${apiUrl}/posts/${postId}/view`, {
+          const res = await fetch(`${apiUrl}/posts/${postId}/view`, {
             method: 'POST',
             headers: { Authorization: `Bearer ${session.access_token}` },
           });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.view_count !== undefined) {
+              setPosts((prev) =>
+                prev.map((p) => (p.id === postId ? { ...p, view_count: data.view_count } : p))
+              );
+            }
+          }
           return;
         }
       } catch {}
@@ -226,27 +234,12 @@ export default function AdminPostFeed() {
                 Open video link
               </a>
             )}
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center gap-2">
-                <p className="font-mono text-[10px] text-text-white/30">
-                  {new Date(post.created_at).toLocaleString()}
-                </p>
-                {(post.view_count ?? 0) > 0 && (
-                  <span className="flex items-center gap-1 font-mono text-[10px] text-arc-blue/50">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    {post.view_count}
-                  </span>
-                )}
-                {(liveViewers[post.id] || 0) > 0 && (
-                  <span className="flex items-center gap-1 font-mono text-[10px] text-terminal-green animate-pulse">
-                    <span className="w-1.5 h-1.5 rounded-full bg-terminal-green" />
-                    {liveViewers[post.id]} watching
-                  </span>
-                )}
-              </div>
+              <div className="flex items-center justify-between mt-2">
+                <div className="flex items-center gap-2">
+                  <p className="font-mono text-[10px] text-text-white/30">
+                    {new Date(post.created_at).toLocaleString()}
+                  </p>
+                </div>
               {isAdmin && (
                 <button
                   onClick={() => handleDelete(post.id)}
@@ -261,7 +254,7 @@ export default function AdminPostFeed() {
                 </button>
               )}
             </div>
-            <PostReactions postId={post.id} />
+            <PostReactions postId={post.id} viewCount={post.view_count ?? 0} liveViewerCount={liveViewers[post.id] || 0} />
           </motion.article>
         );
       })}

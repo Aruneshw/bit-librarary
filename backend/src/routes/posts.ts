@@ -180,9 +180,59 @@ postsRouter.post('/:id/view', authMiddleware, async (req: AuthRequest, res: Resp
       return;
     }
 
-    res.json({ success: true });
+    const { data: post } = await supabaseAdmin
+      .from('admin_posts')
+      .select('view_count')
+      .eq('id', req.params.id)
+      .single();
+
+    res.json({ success: true, view_count: post?.view_count ?? 0 });
   } catch {
     res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Server error', status: 500 } });
+  }
+});
+
+// GET /posts/analytics
+postsRouter.get('/analytics', authMiddleware, async (req: AuthRequest, res: Response) => {
+  if (!isAdminEmail(req.userEmail)) {
+    res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Admin access required', status: 403 } });
+    return;
+  }
+
+  try {
+    const { count: totalViews } = await supabaseAdmin
+      .from('post_views')
+      .select('*', { count: 'exact', head: true });
+
+    const { count: viewsToday } = await supabaseAdmin
+      .from('post_views')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', new Date(new Date().toDateString()).toISOString());
+
+    const weekStart = new Date();
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    const { count: viewsThisWeek } = await supabaseAdmin
+      .from('post_views')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', weekStart.toISOString());
+
+    const { data: mostViewed } = await supabaseAdmin
+      .from('admin_posts')
+      .select('id, title, body, view_count, created_at')
+      .eq('is_active', true)
+      .gt('view_count', 0)
+      .order('view_count', { ascending: false })
+      .limit(5);
+
+    res.json({
+      totalViews: totalViews ?? 0,
+      viewsToday: viewsToday ?? 0,
+      viewsThisWeek: viewsThisWeek ?? 0,
+      mostViewed: mostViewed || [],
+    });
+  } catch {
+    res.status(500).json({ error: { code: 'INTERNAL_ERROR', message: 'Failed to fetch analytics', status: 500 } });
   }
 });
 
