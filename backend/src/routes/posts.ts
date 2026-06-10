@@ -44,7 +44,7 @@ const POSTS_CACHE_KEY = 'admin_posts:recent';
 async function fetchActivePosts() {
   const { data, error } = await supabaseAdmin
     .from('admin_posts')
-    .select('id, title, body, video_url, image_url, pdf_url, downloadable, created_at, created_by, view_count')
+    .select('id, title, body, video_url, image_url, pdf_url, downloadable, created_at, created_by, view_count, storage_provider, file_url, blob_path, file_size, mime_type')
     .eq('is_active', true)
     .order('created_at', { ascending: false })
     .limit(20);
@@ -69,7 +69,7 @@ postsRouter.get('/', authMiddleware, async (_req: AuthRequest, res: Response) =>
 
 // POST /posts
 postsRouter.post('/', authMiddleware, async (req: AuthRequest, res: Response) => {
-  const { title, body, video_url, image_url, pdf_url, downloadable } = req.body;
+  const { title, body, video_url, image_url, pdf_url, downloadable, storage_provider, file_url, blob_path, file_size, mime_type } = req.body;
   if (!body?.trim()) {
     res.status(400).json({ error: { code: 'BAD_REQUEST', message: 'Post body is required', status: 400 } });
     return;
@@ -86,6 +86,11 @@ postsRouter.post('/', authMiddleware, async (req: AuthRequest, res: Response) =>
         pdf_url: pdf_url || null,
         downloadable: downloadable !== false,
         created_by: req.userId,
+        storage_provider: storage_provider || null,
+        file_url: file_url || null,
+        blob_path: blob_path || null,
+        file_size: file_size || null,
+        mime_type: mime_type || null,
       })
       .select()
       .single();
@@ -110,6 +115,31 @@ postsRouter.delete('/:id', authMiddleware, async (req: AuthRequest, res: Respons
   }
 
   try {
+    // Fetch post to get storage info before deletion
+    const { data: post } = await supabaseAdmin
+      .from('admin_posts')
+      .select('storage_provider, blob_path, file_url, image_url, pdf_url')
+      .eq('id', req.params.id)
+      .single();
+
+    // Clean up file from storage provider
+    if (post?.storage_provider === 'supabase' && post?.blob_path) {
+      const bucket = post.blob_path.startsWith('pdfs/') ? 'pdfs' : 'media';
+      await supabaseAdmin.storage.from(bucket).remove([post.blob_path]);
+    } else if (post?.storage_provider === 'vercel_blob' && post?.blob_path) {
+      // Vercel Blob cleanup via API call
+      try {
+        const { del } = await import('@vercel/blob');
+        await del(post.blob_path);
+      } catch {}
+    }
+
+    // Soft-delete associated file_metadata
+    await supabaseAdmin
+      .from('file_metadata')
+      .update({ is_active: false })
+      .eq('post_id', req.params.id);
+
     const { error } = await supabaseAdmin
       .from('admin_posts')
       .update({ is_active: false })

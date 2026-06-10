@@ -69,9 +69,10 @@ export default function PostComposer({ isOpen, onClose }: Props) {
     const maxFallbackSize = 10 * 1024 * 1024;
     const vercelMaxSize = 50 * 1024 * 1024; // Vercel Blob max file size
 
-    const uploadTo = async (endpoint: string, signal?: AbortSignal): Promise<{ url: string; storage: string }> => {
+    const uploadTo = async (endpoint: string, provider: string, signal?: AbortSignal): Promise<{ url: string; storage: string; provider: string }> => {
       const formData = new FormData();
       formData.append('file', mediaFile);
+      formData.append('provider', provider);
       const res = await fetch(endpoint, { method: 'POST', body: formData, signal });
       if (res.ok) return res.json();
       const errBody = await res.json().catch(() => null);
@@ -83,7 +84,7 @@ export default function PostComposer({ isOpen, onClose }: Props) {
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 120000);
-        const result = await uploadTo('/api/upload', controller.signal);
+        const result = await uploadTo('/api/upload', 'vercel_blob', controller.signal);
         clearTimeout(timeout);
         return { url: result.url, type: isPdf ? 'pdf' : 'image' };
       } catch (e: any) {
@@ -96,7 +97,7 @@ export default function PostComposer({ isOpen, onClose }: Props) {
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 300000);
-      const result = await uploadTo('/api/upload-supabase', controller.signal);
+      const result = await uploadTo('/api/upload', 'supabase', controller.signal);
       clearTimeout(timeout);
       return { url: result.url, type: isPdf ? 'pdf' : 'image' };
     } catch (e: any) {
@@ -125,6 +126,7 @@ export default function PostComposer({ isOpen, onClose }: Props) {
       const { url: mediaUrl, type: mediaType } = await uploadMedia();
       const finalImageUrl = mediaType === 'image' ? mediaUrl : (imageUrl.trim() || null);
       const finalPdfUrl = mediaType === 'pdf' ? mediaUrl : null;
+      const usedProvider = mediaFile ? storageMode : null;
 
       const { error: err } = await supabase.from('admin_posts').insert({
         title: title.trim() || null,
@@ -134,12 +136,29 @@ export default function PostComposer({ isOpen, onClose }: Props) {
         pdf_url: finalPdfUrl,
         downloadable,
         created_by: user.id,
+        storage_provider: usedProvider,
+        file_url: mediaUrl,
+        blob_path: null,
+        file_size: mediaFile?.size || null,
+        mime_type: mediaFile?.type || null,
       });
 
       if (err) {
         setError(err.message || 'Failed to publish post');
         setIsSubmitting(false);
         return;
+      }
+
+      if (mediaFile) {
+        await supabase.from('file_metadata').insert({
+          file_name: mediaFile.name,
+          file_url: mediaUrl,
+          storage_provider: storageMode === 'vercel' ? 'vercel_blob' : 'supabase',
+          bucket: storageMode === 'supabase' ? (mediaFile.type === 'application/pdf' ? 'pdfs' : 'media') : null,
+          blob_path: mediaUrl,
+          file_size: mediaFile.size,
+          mime_type: mediaFile.type,
+        });
       }
 
       setSubmitted(true);

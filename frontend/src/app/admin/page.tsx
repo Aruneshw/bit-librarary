@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import DailyAccessChart from '@/components/admin/DailyAccessChart';
+import FileManager from '@/components/admin/FileManager';
 
 interface UserProfile {
   id: string;
@@ -325,27 +326,26 @@ export default function AdminDashboard() {
     }
   };
 
-  const uploadMedia = async (): Promise<{ url: string | null; type: 'image' | 'pdf' | null }> => {
+  const uploadMediaForPost = async (): Promise<{ url: string | null; type: 'image' | 'pdf' | null }> => {
     if (!postMediaFile) return { url: null, type: null };
     const isPdf = postMediaFile.type === 'application/pdf';
-    const maxFallbackSize = 10 * 1024 * 1024;
     const vercelMaxSize = 50 * 1024 * 1024;
 
-    const uploadTo = async (endpoint: string, signal?: AbortSignal): Promise<{ url: string; storage: string }> => {
+    const uploadTo = async (endpoint: string, provider: string, signal?: AbortSignal): Promise<{ url: string; storage: string }> => {
       const formData = new FormData();
       formData.append('file', postMediaFile);
+      formData.append('provider', provider);
       const res = await fetch(endpoint, { method: 'POST', body: formData, signal });
       if (res.ok) return res.json();
       const errBody = await res.json().catch(() => null);
       throw new Error(errBody?.error || `Upload failed (${res.status})`);
     };
 
-    // Vercel Blob (only if file is within size limit)
     if (storageMode === 'vercel' && hasBlobToken && postMediaFile.size <= vercelMaxSize) {
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 120000);
-        const result = await uploadTo('/api/upload', controller.signal);
+        const result = await uploadTo('/api/upload', 'vercel_blob', controller.signal);
         clearTimeout(timeout);
         return { url: result.url, type: isPdf ? 'pdf' : 'image' };
       } catch (e: any) {
@@ -354,11 +354,10 @@ export default function AdminDashboard() {
       }
     }
 
-    // Supabase (or fallback when Vercel mode but file too large)
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 300000);
-      const result = await uploadTo('/api/upload-supabase', controller.signal);
+      const result = await uploadTo('/api/upload', 'supabase', controller.signal);
       clearTimeout(timeout);
       return { url: result.url, type: isPdf ? 'pdf' : 'image' };
     } catch (e: any) {
@@ -378,7 +377,7 @@ export default function AdminDashboard() {
 
     try {
       setPostMessage('Uploading media...');
-      const { url: mediaUrl, type: mediaType } = await uploadMedia();
+      const { url: mediaUrl, type: mediaType } = await uploadMediaForPost();
       if (postMediaFile && !mediaUrl) {
         setPostMessage('Failed to upload media. File may be too large for storage.');
         setPosting(false);
@@ -386,6 +385,7 @@ export default function AdminDashboard() {
       }
       const finalImageUrl = mediaType === 'image' ? mediaUrl : (postImageUrl.trim() || null);
       const finalPdfUrl = mediaType === 'pdf' ? mediaUrl : null;
+      const usedProvider = postMediaFile ? storageMode : null;
 
       setPostMessage('Publishing post...');
 
@@ -407,11 +407,26 @@ export default function AdminDashboard() {
               image_url: finalImageUrl,
               pdf_url: finalPdfUrl,
               downloadable: postDownloadable,
+              storage_provider: usedProvider,
+              file_url: mediaUrl,
+              file_size: postMediaFile?.size || null,
+              mime_type: postMediaFile?.type || null,
             }),
             signal: controller.signal,
           });
           clearTimeout(timeout);
           if (res.ok) {
+            if (postMediaFile && mediaUrl) {
+              await supabase.from('file_metadata').insert({
+                file_name: postMediaFile.name,
+                file_url: mediaUrl,
+                storage_provider: storageMode === 'vercel' ? 'vercel_blob' : 'supabase',
+                bucket: storageMode === 'supabase' ? (postMediaFile.type === 'application/pdf' ? 'pdfs' : 'media') : null,
+                blob_path: mediaUrl,
+                file_size: postMediaFile.size,
+                mime_type: postMediaFile.type,
+              });
+            }
             setPostTitle('');
             setPostBody('');
             setPostVideoUrl('');
@@ -437,9 +452,24 @@ export default function AdminDashboard() {
         pdf_url: finalPdfUrl,
         downloadable: postDownloadable,
         created_by: user?.id,
+        storage_provider: usedProvider,
+        file_url: mediaUrl,
+        file_size: postMediaFile?.size || null,
+        mime_type: postMediaFile?.type || null,
       });
 
       if (!error) {
+        if (postMediaFile && mediaUrl) {
+          await supabase.from('file_metadata').insert({
+            file_name: postMediaFile.name,
+            file_url: mediaUrl,
+            storage_provider: storageMode === 'vercel' ? 'vercel_blob' : 'supabase',
+            bucket: storageMode === 'supabase' ? (postMediaFile.type === 'application/pdf' ? 'pdfs' : 'media') : null,
+            blob_path: mediaUrl,
+            file_size: postMediaFile.size,
+            mime_type: postMediaFile.type,
+          });
+        }
         setPostTitle('');
         setPostBody('');
         setPostVideoUrl('');
@@ -520,73 +550,99 @@ export default function AdminDashboard() {
             <p className="font-mono text-[10px] text-white/40 mt-1">Currently active on the platform</p>
           </div>
           <div className="bg-black/40 border border-amber-400/20 rounded-xl p-5 backdrop-blur-md shadow-[0_0_20px_rgba(251,191,36,0.05)]">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+              </svg>
               <p className="font-orbitron text-[10px] text-amber-400/60 tracking-widest uppercase flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                Storage
+                Storage Network
               </p>
-              {hasBlobToken && (
-                <span className="font-orbitron text-[8px] text-white/30 tracking-wider">
-                  Upload: {storageMode === 'vercel' ? 'Vercel Blob' : 'Supabase'}
-                </span>
-              )}
             </div>
 
-            {/* Vercel Blob — always shown when configured */}
+            {/* Vercel Blob */}
             {blobStats && (
-              <div className="mb-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-amber-400/80">Vercel Blob (1 GB)</span>
-                  <span className="font-mono text-[9px] text-white/40">
-                    {blobStats.totalSize >= 1024 * 1024 * 1024
-                      ? `${(blobStats.totalSize / (1024 * 1024 * 1024)).toFixed(2)} GB`
-                      : `${(blobStats.totalSize / (1024 * 1024)).toFixed(1)} MB`}
-                    {' / '}
-                    {blobStats.remaining >= 1024 * 1024 * 1024
-                      ? `${(blobStats.remaining / (1024 * 1024 * 1024)).toFixed(2)} GB free`
-                      : `${(blobStats.remaining / (1024 * 1024)).toFixed(1)} MB free`}
-                  </span>
+              <div className="mb-3 pb-3 border-b border-amber-400/10">
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-terminal-green shadow-[0_0_6px_rgba(0,255,65,0.6)]" title="Online" />
+                    <span className="font-orbitron text-[10px] text-amber-400/80 tracking-wider">Vercel Blob — 1 GB</span>
+                  </div>
+                  <span className="font-mono text-[9px] text-white/40">{blobStats.count} files</span>
                 </div>
-                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mt-0.5">
-                  <div className={`h-full rounded-full transition-all duration-500 ${blobStats.usedPercent > 80 ? 'bg-warning-red' : blobStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(blobStats.usedPercent, 100)}%` }} />
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="font-mono text-[9px] text-white/50">
+                    Used: {blobStats.totalSize >= 1024 * 1024 * 1024 ? `${(blobStats.totalSize / (1024 * 1024 * 1024)).toFixed(2)} GB` : `${(blobStats.totalSize / (1024 * 1024)).toFixed(1)} MB`}
+                    {' / '}
+                    {blobStats.remaining >= 1024 * 1024 * 1024 ? `${(blobStats.remaining / (1024 * 1024 * 1024)).toFixed(2)} GB` : `${(blobStats.remaining / (1024 * 1024)).toFixed(1)} MB`} remaining
+                  </span>
+                  {blobStats.usedPercent >= 95 && (
+                    <span className="font-mono text-[8px] text-warning-red bg-warning-red/10 px-1.5 py-0.5 rounded border border-warning-red/30 animate-pulse">CRITICAL</span>
+                  )}
+                  {blobStats.usedPercent >= 80 && blobStats.usedPercent < 95 && (
+                    <span className="font-mono text-[8px] text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded border border-amber-400/30">WARNING</span>
+                  )}
+                </div>
+                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                  <div className={`h-full rounded-full transition-all duration-700 ${
+                    blobStats.usedPercent >= 95 ? 'bg-warning-red shadow-[0_0_8px_rgba(255,50,50,0.5)]' :
+                    blobStats.usedPercent >= 80 ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.3)]' :
+                    blobStats.usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'
+                  }`} style={{ width: `${Math.min(blobStats.usedPercent, 100)}%` }} />
                 </div>
               </div>
             )}
 
-            {/* Supabase per-bucket — always shown */}
+            {/* Supabase */}
             {supabaseStats?.details && (
-              <div className="space-y-2 pt-2 border-t border-amber-400/10">
-                {Object.entries(supabaseStats.details).map(([name, data]) => {
-                  const limit = data.limit || 200 * 1024 * 1024;
-                  const usedPercent = data.size > 0 ? Math.round((data.size / limit) * 100) : 0;
-                  const remaining = Math.max(0, limit - data.size);
-                  const label = name === 'pdfs' ? 'PDFs (200 MB)' : 'Media (200 MB)';
-                  return (
-                    <div key={name}>
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono text-[10px] text-arc-blue/80">{label}</span>
-                        <span className="font-mono text-[9px] text-white/40">
-                          {data.size >= 1024 * 1024
-                            ? `${(data.size / (1024 * 1024)).toFixed(1)} MB`
-                            : `${(data.size / 1024).toFixed(0)} KB`}
-                          {' / '}
-                          {remaining >= 1024 * 1024
-                            ? `${(remaining / (1024 * 1024)).toFixed(1)} MB free`
-                            : `${(remaining / 1024).toFixed(0)} KB free`}
-                        </span>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-terminal-green shadow-[0_0_6px_rgba(0,255,65,0.6)]" title="Online" />
+                  <span className="font-orbitron text-[10px] text-arc-blue/80 tracking-wider">Supabase</span>
+                </div>
+                <div className="space-y-2">
+                  {Object.entries(supabaseStats.details).map(([name, data]) => {
+                    const limit = data.limit || 200 * 1024 * 1024;
+                    const usedPercent = data.size > 0 ? Math.round((data.size / limit) * 100) : 0;
+                    const remaining = Math.max(0, limit - data.size);
+                    const label = name === 'pdfs' ? 'PDFs' : 'Media';
+                    return (
+                      <div key={name}>
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-[9px] text-arc-blue/70">{label} — 200 MB</span>
+                          <span className="font-mono text-[8px] text-white/35">{data.count} files</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-[8px] text-white/40">
+                            Used: {data.size >= 1024 * 1024 ? `${(data.size / (1024 * 1024)).toFixed(1)} MB` : `${(data.size / 1024).toFixed(0)} KB`}
+                            {' / '}
+                            {remaining >= 1024 * 1024 ? `${(remaining / (1024 * 1024)).toFixed(1)} MB left` : `${(remaining / 1024).toFixed(0)} KB left`}
+                          </span>
+                          {usedPercent >= 95 && (
+                            <span className="font-mono text-[7px] text-warning-red bg-warning-red/10 px-1 py-0.5 rounded border border-warning-red/30 animate-pulse">CRITICAL</span>
+                          )}
+                          {usedPercent >= 80 && usedPercent < 95 && (
+                            <span className="font-mono text-[7px] text-amber-400 bg-amber-400/10 px-1 py-0.5 rounded border border-amber-400/30">WARNING</span>
+                          )}
+                        </div>
+                        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mt-0.5">
+                          <div className={`h-full rounded-full transition-all duration-700 ${
+                            usedPercent >= 95 ? 'bg-warning-red shadow-[0_0_6px_rgba(255,50,50,0.4)]' :
+                            usedPercent >= 80 ? 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.2)]' :
+                            usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'
+                          }`} style={{ width: `${Math.min(usedPercent, 100)}%` }} />
+                        </div>
                       </div>
-                      <div className="h-1.5 bg-white/10 rounded-full overflow-hidden mt-0.5">
-                        <div className={`h-full rounded-full transition-all duration-500 ${usedPercent > 80 ? 'bg-warning-red' : usedPercent > 50 ? 'bg-amber-400' : 'bg-terminal-green'}`} style={{ width: `${Math.min(usedPercent, 100)}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
 
             {/* Fallback when no data */}
             {!blobStats && !supabaseStats && (
-              <p className="font-mono text-[10px] text-white/30 mt-2">Loading storage data...</p>
+              <p className="font-mono text-[10px] text-white/30">Loading storage data...</p>
             )}
           </div>
         </motion.div>
@@ -884,6 +940,16 @@ export default function AdminDashboard() {
             </div>
             {postMessage && <p className="font-mono text-xs text-arc-blue">{postMessage}</p>}
           </form>
+        </motion.div>
+
+        {/* File Manager */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="mt-8"
+        >
+          <FileManager />
         </motion.div>
 
         {/* Feedback Section */}
