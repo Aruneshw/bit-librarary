@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useNotification } from '@/hooks/useNotification';
 
 const DISMISS_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 const DISMISS_KEY = 'notification_demo_dismissed_at';
@@ -14,16 +13,37 @@ function isOnCooldown(): boolean {
 }
 
 export default function PushNotificationDemo() {
-  const { permission, askPermission, swReady } = useNotification();
+  const [permission, setPermission] = useState<NotificationPermission | null>(null);
   const askedRef = useRef(false);
   const [dismissed, setDismissed] = useState(isOnCooldown);
+  const [showTip, setShowTip] = useState(false);
+  const tipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!askedRef.current && swReady && !dismissed && permission === 'default') {
-      askedRef.current = true;
-      askPermission();
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setPermission(Notification.permission);
     }
-  }, [swReady, askPermission, dismissed, permission]);
+  }, []);
+
+  useEffect(() => {
+    if (!askedRef.current && permission === 'default' && !dismissed) {
+      askedRef.current = true;
+      Notification.requestPermission().then((p) => setPermission(p));
+    }
+  }, [permission, dismissed]);
+
+  const handleAsk = async () => {
+    if (permission === 'denied') {
+      setShowTip(true);
+      if (tipTimer.current) clearTimeout(tipTimer.current);
+      tipTimer.current = setTimeout(() => setShowTip(false), 4000);
+      return;
+    }
+    if (permission === 'default') {
+      const p = await Notification.requestPermission();
+      setPermission(p);
+    }
+  };
 
   const handleDismiss = () => {
     localStorage.setItem(DISMISS_KEY, String(Date.now()));
@@ -36,11 +56,11 @@ export default function PushNotificationDemo() {
     <div className="fixed bottom-20 left-4 z-50">
       <div className="relative">
         <button
-          onClick={askPermission}
+          onClick={handleAsk}
           className="font-orbitron text-xs text-arc-blue uppercase tracking-wider bg-arc-blue/10 border border-arc-blue/30 px-3 py-2 rounded-lg hover:bg-arc-blue/20 transition-all"
           style={{ textShadow: '0 0 8px rgba(0,217,255,0.4)' }}
         >
-          ENABLE NOTIFICATIONS
+          {permission === 'denied' ? 'NOTIFICATIONS BLOCKED' : 'ENABLE NOTIFICATIONS'}
         </button>
         <button
           onClick={handleDismiss}
@@ -52,6 +72,13 @@ export default function PushNotificationDemo() {
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </button>
+        {showTip && (
+          <div className="absolute bottom-full left-0 mb-2 w-64 p-3 rounded-lg bg-black/90 border border-warning-red/40 backdrop-blur-xl shadow-[0_0_20px_rgba(255,61,61,0.2)] z-[100]">
+            <p className="font-mono text-[10px] text-text-white/80 leading-relaxed">
+              Notifications are blocked by your browser. Click the lock/info icon in your address bar and enable notifications for this site.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useSubjectStore } from '@/store/subjectStore';
@@ -162,7 +163,9 @@ function isNotifDismissed(): boolean {
 function NotificationStatus() {
   const { permission, askPermission, swReady } = useNotification();
   const [dismissed, setDismissed] = useState(false);
+  const [showTip, setShowTip] = useState(false);
   const askedRef = useRef(false);
+  const tipTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const d = isNotifDismissed();
@@ -174,43 +177,61 @@ function NotificationStatus() {
   }, [swReady, askPermission, permission]);
 
   const enabled = permission === 'granted';
+  const denied = permission === 'denied';
   const hex = enabled ? '#00FF41' : '#FF3D3D';
   const rgb = enabled ? '0, 255, 65' : '255, 61, 61';
-  const label = enabled ? 'Notifications On' : 'Notifications Off';
+  const label = enabled ? 'Notifications On' : denied ? 'Notifications Blocked' : 'Notifications Off';
 
   const handleClick = async () => {
-    if (!enabled) {
-      const granted = await askPermission();
-      if (!granted) {
-        localStorage.setItem(NOTIF_DISMISS_KEY, String(Date.now()));
-        setDismissed(true);
-      }
+    if (enabled) return;
+    if (denied) {
+      setShowTip(true);
+      if (tipTimer.current) clearTimeout(tipTimer.current);
+      tipTimer.current = setTimeout(() => setShowTip(false), 4000);
+      return;
     }
+    await askPermission();
   };
 
   return (
-    <button
-      onClick={handleClick}
-      className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 rounded-lg transition-all pointer-events-auto"
-      style={{
-        border: `1px solid rgba(${rgb}, 0.3)`,
-        backgroundColor: `rgba(${rgb}, 0.1)`,
-      }}
-    >
-      <div
-        className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse"
+    <div className="relative pointer-events-auto">
+      <button
+        onClick={handleClick}
+        className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 rounded-lg transition-all"
         style={{
-          backgroundColor: hex,
-          boxShadow: `0 0 6px ${hex}`,
+          border: `1px solid rgba(${rgb}, 0.3)`,
+          backgroundColor: `rgba(${rgb}, 0.1)`,
         }}
-      />
-      <span
-        className="hidden sm:inline font-mono text-[10px] uppercase tracking-wider"
-        style={{ color: hex }}
       >
-        {label}
-      </span>
-    </button>
+        <div
+          className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse"
+          style={{
+            backgroundColor: hex,
+            boxShadow: `0 0 6px ${hex}`,
+          }}
+        />
+        <span
+          className="hidden sm:inline font-mono text-[10px] uppercase tracking-wider"
+          style={{ color: hex }}
+        >
+          {label}
+        </span>
+      </button>
+      <AnimatePresence>
+        {showTip && (
+          <motion.div
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            className="absolute top-full right-0 mt-2 w-64 p-3 rounded-lg bg-black/90 border border-warning-red/40 backdrop-blur-xl shadow-[0_0_20px_rgba(255,61,61,0.2)] z-[100]"
+          >
+            <p className="font-mono text-[10px] text-text-white/80 leading-relaxed">
+              Notifications are blocked by your browser. Click the lock/info icon in your address bar and enable notifications for this site.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 

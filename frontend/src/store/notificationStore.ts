@@ -55,14 +55,20 @@ export const useNotificationStore = create<NotificationState>((set, get) => {
     unreadCount: initial.filter((n) => !n.read).length,
 
     addNotification: (item) => {
-      const id = `${item.type}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-      const newItem: NotificationItem = {
-        ...item,
-        id,
-        timestamp: new Date().toISOString(),
-        read: false,
-      };
       set((state) => {
+        const within60s = state.notifications.some((n) => {
+          if (n.type !== item.type || n.title !== item.title || n.body !== item.body) return false;
+          return Date.now() - new Date(n.timestamp).getTime() < 60000;
+        });
+        if (within60s) return state;
+
+        const id = `${item.type}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        const newItem: NotificationItem = {
+          ...item,
+          id,
+          timestamp: new Date().toISOString(),
+          read: false,
+        };
         const updated = [newItem, ...state.notifications].slice(0, MAX_NOTIFICATIONS);
         persist(updated);
         return {
