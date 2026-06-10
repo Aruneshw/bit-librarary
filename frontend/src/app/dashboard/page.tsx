@@ -246,6 +246,16 @@ export default function DashboardPage() {
   const [newTitleUnlock, setNewTitleUnlock] = useState<TitleUnlock | null>(null);
   const [showFeatureNotice, setShowFeatureNotice] = useState(true);
 
+  // Check if feature notice has already been shown this session
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const noticeSeen = sessionStorage.getItem('feature_notice_shown') === 'true';
+      if (noticeSeen) {
+        setShowFeatureNotice(false);
+      }
+    }
+  }, []);
+
   // Check if intro has already been completed in this browser session
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -367,6 +377,9 @@ export default function DashboardPage() {
   }, [introComplete, user]);
 
   const handleFeatureDismiss = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('feature_notice_shown', 'true');
+    }
     setShowFeatureNotice(false);
   }, []);
 
