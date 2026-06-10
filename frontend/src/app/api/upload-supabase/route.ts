@@ -28,13 +28,18 @@ export async function POST(request: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    // Ensure bucket exists and is public
     const { data: buckets } = await supabaseAdmin.storage.listBuckets();
-    if (!buckets?.find((b: any) => b.name === bucket)) {
+    const existing = buckets?.find((b: any) => b.name === bucket);
+    if (!existing) {
       await supabaseAdmin.storage.createBucket(bucket, {
-        public: false,
+        public: true,
         fileSizeLimit: 200 * 1024 * 1024,
         allowedMimeTypes: isPdf ? ['application/pdf'] : ['image/jpeg', 'image/png'],
       });
+    } else if (!existing.public) {
+      // Update bucket to public for public URL access
+      await supabaseAdmin.storage.updateBucket(bucket, { public: true });
     }
 
     const { error } = await supabaseAdmin.storage

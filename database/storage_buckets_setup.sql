@@ -5,13 +5,13 @@
 
 -- Create storage bucket for PDFs
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES ('pdfs', 'pdfs', false, 104857600, ARRAY['application/pdf'])
-ON CONFLICT (id) DO UPDATE SET file_size_limit = 104857600;
+VALUES ('pdfs', 'pdfs', true, 209715200, ARRAY['application/pdf'])
+ON CONFLICT (id) DO UPDATE SET public = true, file_size_limit = 209715200;
 
 -- Create storage bucket for media (images)
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES ('media', 'media', false, 104857600, ARRAY['image/jpeg', 'image/png'])
-ON CONFLICT (id) DO UPDATE SET file_size_limit = 104857600;
+VALUES ('media', 'media', true, 209715200, ARRAY['image/jpeg', 'image/png'])
+ON CONFLICT (id) DO UPDATE SET public = true, file_size_limit = 209715200;
 
 -- Storage RLS policy for pdfs bucket
 DROP POLICY IF EXISTS "Admin can upload PDFs" ON storage.objects;
