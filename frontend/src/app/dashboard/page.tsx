@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useSubjectStore } from '@/store/subjectStore';
@@ -19,9 +19,9 @@ import PostComposer from '@/components/dashboard/PostComposer';
 import FeedbackForm from '@/components/dashboard/FeedbackForm';
 import NotificationCenter from '@/components/dashboard/NotificationCenter';
 import NotificationSync from '@/components/dashboard/NotificationSync';
-import PushNotificationDemo from '@/components/dashboard/PushNotificationDemo';
 import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
+import { useNotification } from '@/hooks/useNotification';
 
 function SystemClock() {
   const [time, setTime] = useState<string>('');
@@ -148,6 +148,48 @@ function VisitorCount() {
   );
 }
 
+
+function NotificationStatus() {
+  const { permission, askPermission, swReady } = useNotification();
+  const askedRef = useRef(false);
+
+  useEffect(() => {
+    if (!askedRef.current && swReady) {
+      askedRef.current = true;
+      askPermission();
+    }
+  }, [swReady, askPermission]);
+
+  const enabled = permission === 'granted';
+  const hex = enabled ? '#00FF41' : '#FF3D3D';
+  const rgb = enabled ? '0, 255, 65' : '255, 61, 61';
+  const label = enabled ? 'Notifications On' : 'Notifications Off';
+
+  return (
+    <button
+      onClick={() => { if (!enabled) askPermission(); }}
+      className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 rounded-lg transition-all pointer-events-auto"
+      style={{
+        border: `1px solid rgba(${rgb}, 0.3)`,
+        backgroundColor: `rgba(${rgb}, 0.1)`,
+      }}
+    >
+      <div
+        className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse"
+        style={{
+          backgroundColor: hex,
+          boxShadow: `0 0 6px ${hex}`,
+        }}
+      />
+      <span
+        className="hidden sm:inline font-mono text-[10px] uppercase tracking-wider"
+        style={{ color: hex }}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
 
 export default function DashboardPage() {
   const { user, avatarUrl, isAuthenticated, isAdmin, isLoading: authLoading, fetchUser, signOut } = useAuthStore();
@@ -307,10 +349,7 @@ export default function DashboardPage() {
           <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 pointer-events-auto max-w-[55%] sm:max-w-none">
             <VisitorCount />
             <SystemClock />
-            <div className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-3 py-1 border border-terminal-green/30 bg-terminal-green/10 rounded-lg">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-terminal-green animate-pulse" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,65,0.8))' }} />
-              <span className="hidden sm:inline font-mono text-[10px] text-terminal-green uppercase tracking-wider">Secure Channel</span>
-            </div>
+<NotificationStatus />
             {user?.department && (
               <span className="font-rajdhani text-[10px] sm:text-xs text-arc-blue/60 uppercase tracking-[2px] sm:tracking-[3px] border border-arc-blue/20 px-1.5 sm:px-3 py-1 rounded-lg">
                 {user.department}
@@ -431,7 +470,6 @@ export default function DashboardPage() {
       {isAuthenticated && introComplete && <MobileActionDock />}
       {isAuthenticated && introComplete && <NotificationCenter />}
       {isAuthenticated && introComplete && <NotificationSync />}
-      {isAuthenticated && introComplete && <PushNotificationDemo />}
       {isAuthenticated && introComplete && <FeedbackForm />}
       <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
     </main>
