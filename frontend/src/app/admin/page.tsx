@@ -265,9 +265,17 @@ export default function AdminDashboard() {
     const supabase = createClient();
 
     try {
+      setPostMessage('Uploading media...');
       const { url: mediaUrl, type: mediaType } = await uploadMedia();
+      if (postMediaFile && !mediaUrl) {
+        setPostMessage('Failed to upload media. File may be too large for storage.');
+        setPosting(false);
+        return;
+      }
       const finalImageUrl = mediaType === 'image' ? mediaUrl : (postImageUrl.trim() || null);
       const finalPdfUrl = mediaType === 'pdf' ? mediaUrl : null;
+
+      setPostMessage('Publishing post...');
 
       if (apiUrl) {
         const { data: { session } } = await supabase.auth.getSession();
@@ -320,10 +328,11 @@ export default function AdminDashboard() {
         setPostDownloadable(true);
         setPostMessage('Post published to all users.');
       } else {
-        setPostMessage('Failed to publish post.');
+        setPostMessage('Failed to publish post. ' + (error.message || ''));
       }
-    } catch {
-      setPostMessage('Failed to publish post.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '';
+      setPostMessage('Failed to publish post.' + (msg ? ' ' + msg : ''));
     }
     setPosting(false);
   };

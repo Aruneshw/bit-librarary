@@ -103,7 +103,15 @@ class MockQueryBuilder {
     };
 
     const setStorage = (key: string, val: any) => {
-      localStorage.setItem(key, JSON.stringify(val));
+      try {
+        localStorage.setItem(key, JSON.stringify(val));
+      } catch (e) {
+        if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+          console.error('Mock DB: localStorage quota exceeded. Try clearing storage or reducing file size.');
+        } else {
+          throw e;
+        }
+      }
     };
 
     let data: any = null;

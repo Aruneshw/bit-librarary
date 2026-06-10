@@ -9,7 +9,7 @@ export const postsRouter = Router();
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+  limits: { fileSize: 100 * 1024 * 1024 }, // 100MB max
   fileFilter: (_req, file, cb) => {
     const allowed = ['application/pdf', 'image/jpeg', 'image/png'];
     if (allowed.includes(file.mimetype)) {
