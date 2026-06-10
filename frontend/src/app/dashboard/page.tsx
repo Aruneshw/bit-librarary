@@ -244,6 +244,7 @@ export default function DashboardPage() {
   const [journeyStats, setJourneyStats] = useState<JourneyStats | null>(null);
   const [showWelcome, setShowWelcome] = useState(true);
   const [newTitleUnlock, setNewTitleUnlock] = useState<TitleUnlock | null>(null);
+  const [showFeatureNotice, setShowFeatureNotice] = useState(true);
 
   // Check if intro has already been completed in this browser session
   useEffect(() => {
@@ -365,6 +366,10 @@ export default function DashboardPage() {
     if (introComplete) checkTutorial();
   }, [introComplete, user]);
 
+  const handleFeatureDismiss = useCallback(() => {
+    setShowFeatureNotice(false);
+  }, []);
+
   const handleIntroComplete = useCallback(() => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('intro_seen', 'true');
@@ -393,224 +398,229 @@ export default function DashboardPage() {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden">
-      <FeatureNotice />
-      <PwaInstallBanner />
+      {showFeatureNotice ? (
+        <FeatureNotice onDismiss={handleFeatureDismiss} />
+      ) : (
+        <>
+          <PwaInstallBanner />
 
-      {/* HUD Front Page / Boot sequence */}
-      {showIntro && (
-        <HudFrontPage
-          onEnter={handleIntroComplete}
-        />
-      )}
+          {/* HUD Front Page / Boot sequence */}
+          {showIntro && (
+            <HudFrontPage
+              onEnter={handleIntroComplete}
+            />
+          )}
 
-      {/* Tutorial Modal */}
-      <TutorialModal
-        isOpen={showTutorial}
-        onClose={() => setShowTutorial(false)}
-      />
+          {/* Tutorial Modal */}
+          <TutorialModal
+            isOpen={showTutorial}
+            onClose={() => setShowTutorial(false)}
+          />
 
-      {/* Dashboard Content */}
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center">
-        {/* Header */}
-        <header className="absolute top-0 left-0 right-0 flex items-start sm:items-center justify-between px-4 sm:px-6 py-4 pointer-events-none z-50">
-          <div className="flex items-center gap-3 pointer-events-auto">
-            {journeyStats && (
-              <button onClick={() => router.push('/journey')} className="transition-transform hover:scale-105">
-                <div className="relative">
-                  {avatarUrl ? (
-                    <img src={avatarUrl} alt="Profile" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 object-cover" />
-                  ) : (
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
-                      <span className="font-orbitron text-arc-blue font-bold text-sm">
-                        {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
-                      </span>
+          {/* Dashboard Content */}
+          <div className="relative z-10 min-h-screen flex flex-col items-center justify-center">
+            {/* Header */}
+            <header className="absolute top-0 left-0 right-0 flex items-start sm:items-center justify-between px-4 sm:px-6 py-4 pointer-events-none z-50">
+              <div className="flex items-center gap-3 pointer-events-auto">
+                {journeyStats && (
+                  <button onClick={() => router.push('/journey')} className="transition-transform hover:scale-105">
+                    <div className="relative">
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt="Profile" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
+                          <span className="font-orbitron text-arc-blue font-bold text-sm">
+                            {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                      )}
+                      {journeyStats.current_streak > 0 && (
+                        <div className="absolute -bottom-0.5 -right-0.5 px-1 py-0.5 rounded-full bg-terminal-green/20 border border-terminal-green/30">
+                          <span className="font-mono text-[6px] text-terminal-green font-bold">🔥{journeyStats.current_streak}</span>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {journeyStats.current_streak > 0 && (
-                    <div className="absolute -bottom-0.5 -right-0.5 px-1 py-0.5 rounded-full bg-terminal-green/20 border border-terminal-green/30">
-                      <span className="font-mono text-[6px] text-terminal-green font-bold">🔥{journeyStats.current_streak}</span>
-                    </div>
-                  )}
+                  </button>
+                )}
+                {!journeyStats && (
+                  <>
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="Profile" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30" />
+                    ) : (
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
+                        <span className="font-orbitron text-arc-blue font-bold text-sm">
+                          {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </>
+                )}
+                <div>
+                  <h1
+                    className="font-orbitron text-arc-blue text-base sm:text-lg font-bold tracking-wider"
+                    style={{ textShadow: '0 0 12px rgba(0,217,255,0.4)' }}
+                  >
+                    BIT LIBRARY
+                  </h1>
+                  <button onClick={() => router.push('/journey')} className="block">
+                    <p className="font-mono text-[8px] sm:text-[10px] text-arc-blue/40 tracking-wider mt-0.5 truncate max-w-[100px] sm:max-w-none hover:text-arc-blue/70 transition-colors">
+                      {user?.name || user?.email}
+                    </p>
+                  </button>
                 </div>
-              </button>
-            )}
-            {!journeyStats && (
-              <>
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="Profile" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30" />
-                ) : (
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-arc-blue/30 bg-arc-blue/10 flex items-center justify-center">
-                    <span className="font-orbitron text-arc-blue font-bold text-sm">
-                      {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
-                    </span>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 pointer-events-auto max-w-[55%] sm:max-w-none">
+                <VisitorCount />
+                <SystemClock />
+<PushToggle />
+                {user?.department && (
+                  <span className="font-rajdhani text-[10px] sm:text-xs text-arc-blue/60 uppercase tracking-[2px] sm:tracking-[3px] border border-arc-blue/20 px-1.5 sm:px-3 py-1 rounded-lg">
+                    {user.department}
+                  </span>
+                )}
+                <button
+                  onClick={() => router.push('/events')}
+                  className="font-rajdhani text-[10px] sm:text-xs text-arc-blue uppercase tracking-wider hover:text-white transition-colors border border-arc-blue/30 px-2 py-0.5 rounded bg-arc-blue/10"
+                >
+                  Events
+                </button>
+                {isAdmin && (
+                  <button
+                    onClick={() => router.push('/admin')}
+                    className="font-rajdhani text-[10px] sm:text-xs text-arc-blue uppercase tracking-wider hover:text-white transition-colors border border-arc-blue/30 px-2 py-0.5 rounded bg-arc-blue/10"
+                  >
+                    Admin
+                  </button>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="font-rajdhani text-[10px] sm:text-xs text-text-white/40 uppercase tracking-wider hover:text-warning-red transition-colors"
+                  id="logout-btn"
+                >
+                  Logout
+                </button>
+              </div>
+            </header>
+
+            {/* Feed tabs */}
+            {!subjectsLoading && introComplete && (
+              <div className="w-full max-w-2xl mx-auto px-4 pt-20 sm:pt-24">
+                {showWelcome && journeyStats && (
+                  <div className="mb-4">
+                    <WelcomeBanner
+                      stats={journeyStats}
+                      newTitle={newTitleUnlock}
+                      onDismiss={() => setShowWelcome(false)}
+                    />
                   </div>
                 )}
-              </>
-            )}
-            <div>
-              <h1
-                className="font-orbitron text-arc-blue text-base sm:text-lg font-bold tracking-wider"
-                style={{ textShadow: '0 0 12px rgba(0,217,255,0.4)' }}
-              >
-                BIT LIBRARY
-              </h1>
-              <button onClick={() => router.push('/journey')} className="block">
-                <p className="font-mono text-[8px] sm:text-[10px] text-arc-blue/40 tracking-wider mt-0.5 truncate max-w-[100px] sm:max-w-none hover:text-arc-blue/70 transition-colors">
-                  {user?.name || user?.email}
-                </p>
-              </button>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 pointer-events-auto max-w-[55%] sm:max-w-none">
-            <VisitorCount />
-            <SystemClock />
-<PushToggle />
-            {user?.department && (
-              <span className="font-rajdhani text-[10px] sm:text-xs text-arc-blue/60 uppercase tracking-[2px] sm:tracking-[3px] border border-arc-blue/20 px-1.5 sm:px-3 py-1 rounded-lg">
-                {user.department}
-              </span>
-            )}
-            <button
-              onClick={() => router.push('/events')}
-              className="font-rajdhani text-[10px] sm:text-xs text-arc-blue uppercase tracking-wider hover:text-white transition-colors border border-arc-blue/30 px-2 py-0.5 rounded bg-arc-blue/10"
-            >
-              Events
-            </button>
-            {isAdmin && (
-              <button
-                onClick={() => router.push('/admin')}
-                className="font-rajdhani text-[10px] sm:text-xs text-arc-blue uppercase tracking-wider hover:text-white transition-colors border border-arc-blue/30 px-2 py-0.5 rounded bg-arc-blue/10"
-              >
-                Admin
-              </button>
-            )}
-            <button
-              onClick={handleLogout}
-              className="font-rajdhani text-[10px] sm:text-xs text-text-white/40 uppercase tracking-wider hover:text-warning-red transition-colors"
-              id="logout-btn"
-            >
-              Logout
-            </button>
-          </div>
-        </header>
-
-        {/* Feed tabs */}
-        {!subjectsLoading && introComplete && (
-          <div className="w-full max-w-2xl mx-auto px-4 pt-20 sm:pt-24">
-            {showWelcome && journeyStats && (
-              <div className="mb-4">
-                <WelcomeBanner
-                  stats={journeyStats}
-                  newTitle={newTitleUnlock}
-                  onDismiss={() => setShowWelcome(false)}
-                />
-              </div>
-            )}
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex gap-1 bg-arc-blue/5 border border-arc-blue/20 rounded-lg p-1">
-                <button
-                  onClick={() => setActiveFeedTab('posts')}
-                  className={`px-3 py-1.5 font-orbitron text-xs tracking-wider rounded-md transition-all ${
-                    activeFeedTab === 'posts'
-                      ? 'bg-arc-blue/20 text-arc-blue shadow-[0_0_8px_rgba(0,217,255,0.2)]'
-                      : 'text-text-white/50 hover:text-text-white/80'
-                  }`}
-                >
-                  Posts
-                </button>
-                <button
-                  onClick={() => setActiveFeedTab('media')}
-                  className={`px-3 py-1.5 font-orbitron text-xs tracking-wider rounded-md transition-all ${
-                    activeFeedTab === 'media'
-                      ? 'bg-arc-blue/20 text-arc-blue shadow-[0_0_8px_rgba(0,217,255,0.2)]'
-                      : 'text-text-white/50 hover:text-text-white/80'
-                  }`}
-                >
-                  Media
-                </button>
-              </div>
-              {isAdmin && (
-                <>
-                  <button
-                    onClick={() => setShowPostComposer(true)}
-                    className="w-8 h-8 rounded-full bg-arc-blue/10 border border-arc-blue/30 flex items-center justify-center text-arc-blue hover:bg-arc-blue/20 transition-all"
-                    aria-label="Create post"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => setShowPollComposer(true)}
-                    className="w-8 h-8 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 hover:bg-amber-400/20 transition-all"
-                    aria-label="Create poll"
-                  >
-                    <span className="text-sm">📊</span>
-                  </button>
-                </>
-              )}
-            </div>
-
-            {activeFeedTab === 'posts' ? <AdminPostFeed /> : <MediaFeed />}
-          </div>
-        )}
-
-        {/* Subject Display */}
-        {!subjectsLoading && introComplete && (
-          <div className="w-full flex-1 flex flex-col items-center justify-center pb-12 pt-24 lg:pt-0">
-            {/* Compact reactor + title for mobile */}
-            {isMobile && (
-              <div className="flex flex-col items-center mb-8">
-                {/* Compact ARC Reactor (Triangular Design) */}
-                <div className="relative mb-4">
-                  <ArcReactor size={80} />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex gap-1 bg-arc-blue/5 border border-arc-blue/20 rounded-lg p-1">
+                    <button
+                      onClick={() => setActiveFeedTab('posts')}
+                      className={`px-3 py-1.5 font-orbitron text-xs tracking-wider rounded-md transition-all ${
+                        activeFeedTab === 'posts'
+                          ? 'bg-arc-blue/20 text-arc-blue shadow-[0_0_8px_rgba(0,217,255,0.2)]'
+                          : 'text-text-white/50 hover:text-text-white/80'
+                      }`}
+                    >
+                      Posts
+                    </button>
+                    <button
+                      onClick={() => setActiveFeedTab('media')}
+                      className={`px-3 py-1.5 font-orbitron text-xs tracking-wider rounded-md transition-all ${
+                        activeFeedTab === 'media'
+                          ? 'bg-arc-blue/20 text-arc-blue shadow-[0_0_8px_rgba(0,217,255,0.2)]'
+                          : 'text-text-white/50 hover:text-text-white/80'
+                      }`}
+                    >
+                      Media
+                    </button>
+                  </div>
+                  {isAdmin && (
+                    <>
+                      <button
+                        onClick={() => setShowPostComposer(true)}
+                        className="w-8 h-8 rounded-full bg-arc-blue/10 border border-arc-blue/30 flex items-center justify-center text-arc-blue hover:bg-arc-blue/20 transition-all"
+                        aria-label="Create post"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => setShowPollComposer(true)}
+                        className="w-8 h-8 rounded-full bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 hover:bg-amber-400/20 transition-all"
+                        aria-label="Create poll"
+                      >
+                        <span className="text-sm">📊</span>
+                      </button>
+                    </>
+                  )}
                 </div>
 
-                <h2 className="font-orbitron text-sm text-arc-blue/60 uppercase tracking-[4px]">
-                  Knowledge Nodes
-                </h2>
+                {activeFeedTab === 'posts' ? <AdminPostFeed /> : <MediaFeed />}
               </div>
             )}
 
-            {isMobile ? (
-              <SubjectCardStack subjects={subjects} />
-            ) : (
-              <SubjectOrbit subjects={subjects} />
+            {/* Subject Display */}
+            {!subjectsLoading && introComplete && (
+              <div className="w-full flex-1 flex flex-col items-center justify-center pb-12 pt-24 lg:pt-0">
+                {/* Compact reactor + title for mobile */}
+                {isMobile && (
+                  <div className="flex flex-col items-center mb-8">
+                    {/* Compact ARC Reactor (Triangular Design) */}
+                    <div className="relative mb-4">
+                      <ArcReactor size={80} />
+                    </div>
+
+                    <h2 className="font-orbitron text-sm text-arc-blue/60 uppercase tracking-[4px]">
+                      Knowledge Nodes
+                    </h2>
+                  </div>
+                )}
+
+                {isMobile ? (
+                  <SubjectCardStack subjects={subjects} />
+                ) : (
+                  <SubjectOrbit subjects={subjects} />
+                )}
+              </div>
             )}
+
+            {/* Loading State */}
+            {subjectsLoading && introComplete && (
+              <div className="flex items-center justify-center mt-20">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-8 h-8 rounded-full border-2 border-arc-blue/40 border-t-arc-blue animate-spin" />
+                  <p className="font-mono text-xs text-arc-blue/40">Loading subjects...</p>
+                </div>
+              </div>
+            )}
+
+            {/* Footer */}
+            <footer className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none z-50">
+              <p className="font-mono text-[9px] sm:text-[10px] text-arc-blue/40 uppercase tracking-[4px]">
+                Developed by <span className="text-arc-blue/80 font-bold">Stark</span> & <span className="text-arc-blue/80 font-bold">Ruder</span>
+              </p>
+            </footer>
+
           </div>
-        )}
 
-        {/* Loading State */}
-        {subjectsLoading && introComplete && (
-          <div className="flex items-center justify-center mt-20">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 rounded-full border-2 border-arc-blue/40 border-t-arc-blue animate-spin" />
-              <p className="font-mono text-xs text-arc-blue/40">Loading subjects...</p>
-            </div>
-          </div>
-        )}
-
-        {/* Footer */}
-        <footer className="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none z-50">
-          <p className="font-mono text-[9px] sm:text-[10px] text-arc-blue/40 uppercase tracking-[4px]">
-            Developed by <span className="text-arc-blue/80 font-bold">Stark</span> & <span className="text-arc-blue/80 font-bold">Ruder</span>
-          </p>
-        </footer>
-
-      </div>
-
-      {isAuthenticated && introComplete && <MobileActionDock />}
-      {isAuthenticated && introComplete && <NotificationCenter />}
-      {isAuthenticated && introComplete && <NotificationSync />}
-      {isAuthenticated && introComplete && <FeedbackForm />}
-      <TitleUnlockAnimation
-        unlock={newTitleUnlock}
-        onComplete={() => setNewTitleUnlock(null)}
-      />
-      <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
-      <PollComposer isOpen={showPollComposer} onClose={() => setShowPollComposer(false)} />
+          {isAuthenticated && introComplete && <MobileActionDock />}
+          {isAuthenticated && introComplete && <NotificationCenter />}
+          {isAuthenticated && introComplete && <NotificationSync />}
+          {isAuthenticated && introComplete && <FeedbackForm />}
+          <TitleUnlockAnimation
+            unlock={newTitleUnlock}
+            onComplete={() => setNewTitleUnlock(null)}
+          />
+          <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
+          <PollComposer isOpen={showPollComposer} onClose={() => setShowPollComposer(false)} />
+        </>
+      )}
     </main>
   );
 }
