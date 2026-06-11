@@ -21,6 +21,7 @@ import { PostHogProvider } from "@/components/providers/PostHogProvider";
 import PresenceProvider from "@/components/providers/PresenceProvider";
 import StudyTrackerProvider from "@/components/providers/StudyTrackerProvider";
 import PwaRegister from "@/components/providers/PwaRegister";
+import GoogleTranslatePatch from "@/components/providers/GoogleTranslatePatch";
 
 export default function RootLayout({
   children,
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" translate="no" className="h-full antialiased notranslate">
       <body className="min-h-full flex flex-col notranslate">
+        <GoogleTranslatePatch />
         <PwaRegister />
         <PostHogProvider>
           <PresenceProvider />
