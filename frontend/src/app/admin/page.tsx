@@ -10,6 +10,7 @@ import FileManager from '@/components/admin/FileManager';
 import AnalyticsCarousel from '@/components/admin/AnalyticsCarousel';
 import PollComposer from '@/components/admin/PollComposer';
 import FeatureNoticeEditor from '@/components/admin/FeatureNoticeEditor';
+import FolderExplorer from '@/components/admin/FolderExplorer';
 
 interface UserProfile {
   id: string;
@@ -929,6 +930,16 @@ export default function AdminDashboard() {
           className="mt-8"
         >
           <FeatureNoticeEditor />
+        </motion.div>
+
+        {/* Project Explorer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.195 }}
+          className="mt-8"
+        >
+          <FolderExplorer />
         </motion.div>
 
         {/* Feedback Section */}
