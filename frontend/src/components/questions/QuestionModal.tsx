@@ -7,6 +7,7 @@ import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
 import { type QuestionWithStatus } from '@/types';
+import { useTranslationStore } from '@/store/translationStore';
 
 /* ─── Selection & Focus Cleanup ─── */
 function clearSelection() {
@@ -28,7 +29,6 @@ interface QuestionModalProps {
   onPrev?: () => void;
   hasNext?: boolean;
   hasPrev?: boolean;
-  isTamilSubject?: boolean;
 }
 
 /* ─── Memoized Markdown Renderer ─── */
@@ -162,6 +162,39 @@ export default function QuestionModal({
   const clickCountRef = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  const language = useTranslationStore(s => s.language);
+  const translateTexts = useTranslationStore(s => s.translateTexts);
+
+  const [translatedContent, setTranslatedContent] = useState<Record<string, string> | null>(null);
+  const translateGenRef = useRef(0);
+
+  /* ── Translate content when question or language changes ── */
+  useEffect(() => {
+    if (!question || language === 'en') return;
+
+    const answerText = question.answer;
+    if (!answerText || answerText === 'Loading answer from cache...') return;
+
+    const gen = ++translateGenRef.current;
+    const texts = [
+      question.question,
+      answerText,
+      question.notes || '',
+      question.references || '',
+    ];
+
+    translateTexts(texts).then(translations => {
+      if (translateGenRef.current === gen) {
+        setTranslatedContent({
+          question: translations[0],
+          answer: translations[1],
+          notes: translations[2],
+          references: translations[3],
+        });
+      }
+    });
+  }, [question?.id, question?.answer, language, translateTexts]);
+
   /* ── Scroll to top & clear selection on question change ── */
   useEffect(() => {
     if (!question) return;
@@ -169,7 +202,6 @@ export default function QuestionModal({
       contentRef.current.scrollTop = 0;
     }
     clearSelection();
-    // Double-RAF to catch post-paint browser auto-selection
     const id = requestAnimationFrame(() => {
       clearSelection();
       requestAnimationFrame(() => clearSelection());
@@ -208,7 +240,6 @@ export default function QuestionModal({
     const dx = e.clientX - swipeRef.current.startX;
     const dy = e.clientY - swipeRef.current.startY;
 
-    // Activate swipe guard once horizontal movement exceeds dead-zone
     if (!swipeRef.current.swiping && (Math.abs(dx) > 15 || Math.abs(dy) > 15)) {
       if (Math.abs(dx) > Math.abs(dy)) {
         swipeRef.current.swiping = true;
@@ -284,11 +315,16 @@ export default function QuestionModal({
   const gradientClass = isGreen ? 'from-terminal-green/30' : 'from-arc-blue/30';
   const borderClass = isGreen ? 'border-terminal-green/30' : 'border-glass-border';
 
-  /* ── Animation config (reduced on mobile) ── */
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const animConfig = isMobile
     ? { duration: 0.15, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }
     : { duration: 0.25, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] };
+
+  const useTranslated = language !== 'en' && translatedContent;
+  const displayQuestion = useTranslated && translatedContent.question ? translatedContent.question : question.question;
+  const displayAnswer = useTranslated && translatedContent.answer ? translatedContent.answer : (question.answer || 'Answer not available');
+  const displayNotes = useTranslated && translatedContent.notes ? translatedContent.notes : (question.notes || '');
+  const displayReferences = useTranslated && translatedContent.references ? translatedContent.references : (question.references || '');
 
   return (
     <AnimatePresence>
@@ -346,7 +382,7 @@ export default function QuestionModal({
                     </h3>
                     <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-3 sm:mb-4`} />
                     <div className="font-exo2 text-sm font-bold text-terminal-green leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-terminal-green prose-p:font-bold max-w-none">
-                      <QuestionContent content={question.question} />
+                      <QuestionContent content={displayQuestion} />
                     </div>
                   </div>
 
@@ -356,7 +392,7 @@ export default function QuestionModal({
                     </h3>
                     <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-3 sm:mb-4`} />
                     <div className="font-exo2 text-sm text-text-white leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-text-white max-w-none">
-                      <QuestionContent content={question.answer || 'Answer not available'} />
+                      <QuestionContent content={displayAnswer} />
                     </div>
                   </div>
 
@@ -372,26 +408,26 @@ export default function QuestionModal({
                     </div>
                   )}
 
-                  {question.references && (
+                  {displayReferences && (
                     <div className="mb-4 sm:mb-6">
                       <h3 className={`font-rajdhani text-[10px] sm:text-xs ${textClass} uppercase tracking-[3px] mb-2 sm:mb-3`}>
                         References
                       </h3>
                       <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-3 sm:mb-4`} />
                       <p className="font-mono text-xs text-text-white/60 leading-relaxed notranslate" translate="no">
-                        {question.references}
+                        {displayReferences}
                       </p>
                     </div>
                   )}
 
-                  {question.notes && (
+                  {displayNotes && (
                     <div>
                       <h3 className={`font-rajdhani text-[10px] sm:text-xs ${textClass} uppercase tracking-[3px] mb-2 sm:mb-3`}>
                         Notes
                       </h3>
                       <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-3 sm:mb-4`} />
                       <p className="font-exo2 text-xs text-text-white/50 leading-relaxed italic notranslate" translate="no">
-                        {question.notes}
+                        {displayNotes}
                       </p>
                     </div>
                   )}

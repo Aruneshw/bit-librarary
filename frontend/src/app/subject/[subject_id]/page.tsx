@@ -55,7 +55,6 @@ export default function SubjectPage() {
     [selectedQuestion?.id]
   );
 
-  const isTamilSubject = subjectId === 'a1000000-0000-0000-0000-000000000006';
   const theme = subjectId === 'a1000000-0000-0000-0000-000000000005' ? 'green' : 'blue';
 
   // Fetch user
@@ -311,7 +310,6 @@ export default function SubjectPage() {
         onPrev={handlePrevQuestion}
         hasNext={hasNext}
         hasPrev={hasPrev}
-        isTamilSubject={isTamilSubject}
       />
 
       {/* Conditionally Render Translator for Tamils Subject */}
