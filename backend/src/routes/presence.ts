@@ -4,14 +4,42 @@ import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
-router.post('/heartbeat', authMiddleware, async (req: AuthRequest, res) => {
+router.post('/heartbeat', async (req: AuthRequest, res) => {
   try {
-    const { error } = await supabaseAdmin.rpc('upsert_user_session', {
-      p_user_id: req.userId,
-    });
+    let userId: string | undefined;
 
-    if (error) {
-      console.error('Heartbeat upsert error:', error);
+    // Try header-based auth (normal heartbeat)
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.slice(7);
+      const { data: { user } } = await supabaseAdmin.auth.getUser(token);
+      userId = user?.id;
+    }
+
+    // Fallback: token in query string (sendBeacon, which cannot set headers)
+    const queryToken = req.query.token as string | undefined;
+    if (!userId && queryToken) {
+      const { data: { user } } = await supabaseAdmin.auth.getUser(queryToken);
+      userId = user?.id;
+    }
+
+    if (!userId) {
+      res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Invalid token', status: 401 } });
+      return;
+    }
+
+    const isOffline = req.body?.offline === true || req.query.offline === 'true';
+
+    if (isOffline) {
+      const { error } = await supabaseAdmin.rpc('mark_user_offline', {
+        p_user_id: userId,
+      });
+      if (error) console.error('Mark offline error:', error);
+    } else {
+      const { error } = await supabaseAdmin.rpc('upsert_user_session', {
+        p_user_id: userId,
+      });
+      if (error) console.error('Heartbeat upsert error:', error);
     }
 
     res.json({ status: 'ok' });

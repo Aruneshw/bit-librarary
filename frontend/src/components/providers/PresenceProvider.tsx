@@ -5,11 +5,13 @@ import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { usePresenceStore } from '@/store/presenceStore';
 
+const HEARTBEAT_MS = 20000;
+
 export default function PresenceProvider() {
   const { user, isAuthenticated } = useAuthStore();
   const { setOnlineCount, setOnlineUserIds, setIsConnected, reset } = usePresenceStore();
-  const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const channelRef = useRef<ReturnType<ReturnType<typeof createClient>['channel']> | null>(null);
+  const supabaseRef = useRef<ReturnType<typeof createClient> | null>(null);
   const userIdRef = useRef<string | undefined>(undefined);
   const userNameRef = useRef<string>('Unknown');
 
@@ -20,25 +22,23 @@ export default function PresenceProvider() {
     userNameRef.current = user.name || user.email || 'Unknown';
 
     const supabase = createClient();
+    supabaseRef.current = supabase;
     const currentUserId = user.id;
     const currentUserName = user.name || user.email || 'Unknown';
 
+    /* ── Supabase Realtime presence channel ── */
     const channel = supabase.channel('online-users', {
       config: {
-        presence: {
-          key: currentUserId,
-        },
+        presence: { key: currentUserId },
       },
     });
-
     channelRef.current = channel;
 
     channel
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState();
-        const userIds = Object.keys(state);
-        setOnlineCount(userIds.length);
-        setOnlineUserIds(userIds);
+        setOnlineCount(Object.keys(state).length);
+        setOnlineUserIds(Object.keys(state));
       })
       .subscribe(async (status: string) => {
         if (status === 'SUBSCRIBED') {
@@ -51,7 +51,18 @@ export default function PresenceProvider() {
         }
       });
 
-    const sendHeartbeat = async () => {
+    /* ── Combined heartbeat: track + DB ── */
+    const doHeartbeat = async () => {
+      try {
+        if (channelRef.current) {
+          await channelRef.current.track({
+            online_at: new Date().toISOString(),
+            user_id: userIdRef.current,
+            name: userNameRef.current,
+          });
+        }
+      } catch {}
+
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.access_token) {
@@ -66,40 +77,60 @@ export default function PresenceProvider() {
             });
           }
         }
-      } catch {
-      }
+      } catch {}
     };
 
-    sendHeartbeat();
-    heartbeatRef.current = setInterval(sendHeartbeat, 60000);
+    doHeartbeat();
+    const heartbeatId = setInterval(doHeartbeat, HEARTBEAT_MS);
 
-    const handleVisibilityChange = () => {
+    /* ── Visibility: untrack on hide, re-track on show ── */
+    const onVisibility = () => {
       if (document.visibilityState === 'hidden') {
-        sendHeartbeat();
-      } else if (document.visibilityState === 'visible' && channelRef.current) {
-        channelRef.current.track({
-          online_at: new Date().toISOString(),
-          user_id: userIdRef.current,
-          name: userNameRef.current,
-        });
+        try { channelRef.current?.untrack(); } catch {}
+      } else if (document.visibilityState === 'visible') {
+        try {
+          channelRef.current?.track({
+            online_at: new Date().toISOString(),
+            user_id: userIdRef.current,
+            name: userNameRef.current,
+          });
+        } catch {}
       }
     };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener('visibilitychange', onVisibility);
 
-    const handleBeforeUnload = () => {
-      sendHeartbeat();
+    /* ── Tab close: untrack + sendBeacon ── */
+    const onBeforeUnload = () => {
+      try { channelRef.current?.untrack(); } catch {}
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (apiUrl) {
+        (async () => {
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.access_token) {
+              const blob = new Blob(
+                [JSON.stringify({ offline: true })],
+                { type: 'application/json' },
+              );
+              navigator.sendBeacon(
+                `${apiUrl}/presence/heartbeat?token=${encodeURIComponent(session.access_token)}`,
+                blob,
+              );
+            }
+          } catch {}
+        })();
+      }
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('beforeunload', onBeforeUnload);
 
     return () => {
-      if (heartbeatRef.current) {
-        clearInterval(heartbeatRef.current);
-        heartbeatRef.current = null;
-      }
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      clearInterval(heartbeatId);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('beforeunload', onBeforeUnload);
       supabase.removeChannel(channel);
       channelRef.current = null;
+      supabaseRef.current = null;
       reset();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps

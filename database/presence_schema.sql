@@ -26,7 +26,7 @@ BEGIN
 END;
 $$;
 
--- RPC: Get online user count (active within last 5 minutes)
+-- RPC: Get online user count (active within last 2 minutes)
 CREATE OR REPLACE FUNCTION get_online_count()
 RETURNS integer
 LANGUAGE plpgsql
@@ -37,7 +37,7 @@ DECLARE
 BEGIN
   SELECT COUNT(*) INTO v_count
   FROM user_sessions
-  WHERE last_seen > NOW() - INTERVAL '5 minutes';
+  WHERE last_seen > NOW() - INTERVAL '2 minutes';
   RETURN v_count;
 END;
 $$;
@@ -52,7 +52,21 @@ BEGIN
   RETURN QUERY
   SELECT user_sessions.user_id
   FROM user_sessions
-  WHERE last_seen > NOW() - INTERVAL '5 minutes';
+  WHERE last_seen > NOW() - INTERVAL '2 minutes';
+END;
+$$;
+
+-- RPC: Mark user offline immediately (called on tab close via sendBeacon)
+CREATE OR REPLACE FUNCTION mark_user_offline(p_user_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  INSERT INTO user_sessions (user_id, last_seen)
+  VALUES (p_user_id, NOW() - INTERVAL '10 minutes')
+  ON CONFLICT (user_id)
+  DO UPDATE SET last_seen = NOW() - INTERVAL '10 minutes';
 END;
 $$;
 
