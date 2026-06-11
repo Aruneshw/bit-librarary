@@ -7,18 +7,11 @@ import fs from 'fs/promises';
 import path from 'path';
 
 const IGNORE = new Set([
-  'node_modules', '.git', '.next', 'out', 'dist', 'build',
-  '.cache', '.vercel', '.turbo', 'coverage',
-  'package-lock.json', 'yarn.lock', 'pnpm-lock.yaml', 'bun.lock',
-  '.env', '.env.local', '.env.production',
-  '*.log', '.DS_Store',
+  'node_modules', '.git', '.next', 'dist', 'build',
 ]);
 
 function shouldIgnore(name: string): boolean {
-  if (IGNORE.has(name)) return true;
-  if (name.startsWith('.')) return true;
-  if (name.endsWith('.log')) return true;
-  return false;
+  return IGNORE.has(name);
 }
 
 interface FileNode {
@@ -28,7 +21,7 @@ interface FileNode {
   size?: number;
 }
 
-async function readTree(dir: string, depth: number = 0, maxDepth: number = 5): Promise<FileNode[]> {
+async function readTree(dir: string, depth: number = 0, maxDepth: number = 10): Promise<FileNode[]> {
   if (depth > maxDepth) return [];
 
   const entries: FileNode[] = [];
@@ -41,9 +34,10 @@ async function readTree(dir: string, depth: number = 0, maxDepth: number = 5): P
   }
 
   names.sort((a, b) => {
-    if (a < b) return -1;
-    if (a > b) return 1;
-    return 0;
+    const aIsDir = a.startsWith('.') ? 1 : 0;
+    const bIsDir = b.startsWith('.') ? 1 : 0;
+    if (aIsDir !== bIsDir) return aIsDir - bIsDir;
+    return a.localeCompare(b);
   });
 
   for (const name of names) {
@@ -89,9 +83,10 @@ export async function GET(request: Request) {
     }
 
     const rootDir = path.resolve(process.cwd(), '..');
-    const tree = await readTree(rootDir, 0, Number(new URL(request.url).searchParams.get('depth')) || 4);
+    const depth = Math.min(Number(new URL(request.url).searchParams.get('depth')) || 10, 12);
+    const tree = await readTree(rootDir, 0, depth);
 
-    return NextResponse.json({ root: path.basename(rootDir), tree });
+    return NextResponse.json({ root: path.basename(rootDir), path: rootDir, tree });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || 'Failed to read directory' }, { status: 500 });
   }
