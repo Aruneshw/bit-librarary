@@ -165,7 +165,13 @@ export default function QuestionModal({
   const language = useTranslationStore(s => s.language);
   const translateTexts = useTranslationStore(s => s.translateTexts);
 
-  const [translatedContent, setTranslatedContent] = useState<Record<string, string> | null>(null);
+  const [translatedState, setTranslatedState] = useState<{
+    questionId: string;
+    question: string;
+    answer: string;
+    notes: string;
+    references: string;
+  } | null>(null);
   const translateGenRef = useRef(0);
 
   /* ── Translate content when question or language changes ── */
@@ -185,7 +191,8 @@ export default function QuestionModal({
 
     translateTexts(texts).then(translations => {
       if (translateGenRef.current === gen) {
-        setTranslatedContent({
+        setTranslatedState({
+          questionId: question.id,
           question: translations[0],
           answer: translations[1],
           notes: translations[2],
@@ -193,6 +200,10 @@ export default function QuestionModal({
         });
       }
     });
+
+    return () => {
+      translateGenRef.current = gen + 1;
+    };
   }, [question?.id, question?.answer, language, translateTexts]);
 
   /* ── Scroll to top & clear selection on question change ── */
@@ -320,11 +331,11 @@ export default function QuestionModal({
     ? { duration: 0.15, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }
     : { duration: 0.25, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] };
 
-  const useTranslated = language !== 'en' && translatedContent;
-  const displayQuestion = useTranslated && translatedContent.question ? translatedContent.question : question.question;
-  const displayAnswer = useTranslated && translatedContent.answer ? translatedContent.answer : (question.answer || 'Answer not available');
-  const displayNotes = useTranslated && translatedContent.notes ? translatedContent.notes : (question.notes || '');
-  const displayReferences = useTranslated && translatedContent.references ? translatedContent.references : (question.references || '');
+  const useTranslated = language !== 'en' && translatedState?.questionId === question.id;
+  const displayQuestion = useTranslated ? translatedState.question : question.question;
+  const displayAnswer = useTranslated ? translatedState.answer : (question.answer || 'Answer not available');
+  const displayNotes = useTranslated ? translatedState.notes : (question.notes || '');
+  const displayReferences = useTranslated ? translatedState.references : (question.references || '');
 
   return (
     <AnimatePresence>

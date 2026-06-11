@@ -27,11 +27,9 @@ import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import { useNotification } from '@/hooks/useNotification';
 import { logAccess } from '@/lib/dailyAccess';
-import { useStudyTracker } from '@/lib/journey/tracker';
+import { useJourneyStore } from '@/store/journeyStore';
 import WelcomeBanner from '@/components/journey/WelcomeBanner';
 import TitleUnlockAnimation from '@/components/journey/TitleUnlockAnimation';
-import ProfileCard from '@/components/journey/ProfileCard';
-import type { JourneyStats, TitleUnlock } from '@/lib/journey/types';
 
 function SystemClock() {
   const [time, setTime] = useState<string>('');
@@ -216,9 +214,11 @@ export default function DashboardPage() {
   const [activeFeedTab, setActiveFeedTab] = useState<'posts' | 'media'>('posts');
   const [showPostComposer, setShowPostComposer] = useState(false);
   const [showPollComposer, setShowPollComposer] = useState(false);
-  const [journeyStats, setJourneyStats] = useState<JourneyStats | null>(null);
+  const journeyStats = useJourneyStore((s) => s.stats);
+  const setStats = useJourneyStore((s) => s.setStats);
+  const newTitleUnlock = useJourneyStore((s) => s.newTitleUnlock);
+  const clearTitleUnlock = useJourneyStore((s) => s.clearTitleUnlock);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [newTitleUnlock, setNewTitleUnlock] = useState<TitleUnlock | null>(null);
   const [showFeatureNotice, setShowFeatureNotice] = useState(true);
 
   // Check if feature notice has already been shown this session
@@ -299,39 +299,25 @@ export default function DashboardPage() {
     fetch('/api/journey/stats')
       .then((r) => r.json())
       .then((data) => {
-        setJourneyStats(data);
+        setStats(data);
         if (data.title_history && data.title_history.length > 0) {
           const lastUnlocked = data.title_history[data.title_history.length - 1];
-          // Show unlock animation if title was unlocked recently (today)
           const unlockDate = new Date(lastUnlocked.unlocked_at).toDateString();
           if (unlockDate === new Date().toDateString()) {
-            setNewTitleUnlock({ title: lastUnlocked.title, day: lastUnlocked.day_number, isNew: true });
+            useJourneyStore.getState().updateFromHeartbeat({
+              current_streak: data.current_streak,
+              longest_streak: data.longest_streak,
+              total_active_days: data.total_active_days,
+              total_study_seconds: data.total_study_seconds,
+              current_title: data.current_title,
+              today_seconds: data.today_seconds,
+              title_unlocked: { title: lastUnlocked.title, day: lastUnlocked.day_number, isNew: true },
+            });
           }
         }
       })
       .catch(() => {});
-  }, [user?.id]);
-
-  // Study tracker
-  useStudyTracker(user?.id, {
-    onHeartbeat(result) {
-      setJourneyStats((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          current_streak: result.current_streak,
-          longest_streak: result.longest_streak,
-          total_active_days: result.total_active_days,
-          total_study_seconds: result.total_study_seconds,
-          current_title: result.current_title,
-          today_seconds: result.today_seconds,
-        };
-      });
-      if (result.title_unlocked) {
-        setNewTitleUnlock(result.title_unlocked);
-      }
-    },
-  });
+  }, [user?.id, setStats]);
 
   // Check tutorial status
   useEffect(() => {
@@ -604,7 +590,7 @@ export default function DashboardPage() {
           {isAuthenticated && introComplete && <FeedbackForm />}
           <TitleUnlockAnimation
             unlock={newTitleUnlock}
-            onComplete={() => setNewTitleUnlock(null)}
+            onComplete={() => clearTitleUnlock()}
           />
           <PostComposer isOpen={showPostComposer} onClose={() => setShowPostComposer(false)} />
           <PollComposer isOpen={showPollComposer} onClose={() => setShowPollComposer(false)} />

@@ -52,7 +52,7 @@ export default function SubjectPage() {
   );
   const hasPrev = useMemo(
     () => currentIdxRef.current > 0,
-    [selectedQuestion?.id]
+    [selectedQuestion?.id, questions.length]
   );
 
   const theme = subjectId === 'a1000000-0000-0000-0000-000000000005' ? 'green' : 'blue';
@@ -115,6 +115,13 @@ export default function SubjectPage() {
     }
   }, [subjectId, isAuthenticated, fetchQuestions]);
 
+  // Abort in-flight question detail fetch on unmount
+  useEffect(() => {
+    return () => {
+      fetchAbortRef.current?.abort();
+    };
+  }, []);
+
   // Track completion for celebration
   useEffect(() => {
     if (prevCompletion < 100 && completionPercent >= 100 && totalQuestions > 0) {
@@ -134,9 +141,10 @@ export default function SubjectPage() {
     const q = selectedQRef.current;
     if (q && !q.viewed) {
       await markViewed(q.id, subjectId);
-      updateSubjectProgress(subjectId, viewedCount + 1, totalQuestions);
+      const { viewedCount: currentViewed, totalQuestions: currentTotal } = useProgressStore.getState();
+      updateSubjectProgress(subjectId, currentViewed, currentTotal);
     }
-  }, [subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
+  }, [subjectId, markViewed, updateSubjectProgress]);
 
   const fetchAbortRef = useRef<AbortController | null>(null);
 
@@ -157,6 +165,7 @@ export default function SubjectPage() {
       const controller = new AbortController();
       fetchAbortRef.current = controller;
 
+      let cancelled = false;
       (async () => {
         try {
           const supabase = createClient();
@@ -170,16 +179,16 @@ export default function SubjectPage() {
             });
             if (res.ok) {
               const detail = await res.json();
-              setSelectedQuestion(detail);
+              if (!cancelled) setSelectedQuestion(detail);
               return;
             }
           }
         } catch (err: any) {
-          if (err?.name === 'AbortError') return;
+          if (err?.name === 'AbortError') { cancelled = true; return; }
           console.warn('Failed to fetch question detail from cached API:', err);
         }
 
-        // Direct database query fallback
+        if (cancelled) return;
         try {
           const supabase = createClient();
           const { data } = await supabase
@@ -187,11 +196,11 @@ export default function SubjectPage() {
             .select('*')
             .eq('id', question.id)
             .single();
-          if (data) {
+          if (data && !cancelled) {
             setSelectedQuestion({ ...question, ...data });
           }
         } catch (err) {
-          console.error('Failed to fetch question detail from Supabase:', err);
+          if (!cancelled) console.error('Failed to fetch question detail from Supabase:', err);
         }
       })();
     }
@@ -324,12 +333,7 @@ export default function SubjectPage() {
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={() => {
-            if (subjectId === 'a1000000-0000-0000-0000-000000000006') {
-              // Force reload to clear Google Translate DOM mutations
-              window.location.href = '/dashboard';
-            } else {
-              router.push('/dashboard');
-            }
+            router.push('/dashboard');
           }}
           className="flex items-center gap-2 text-text-white/40 hover:text-arc-blue transition-colors mb-6"
           id="back-to-dashboard"

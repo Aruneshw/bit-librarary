@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 import MatrixBackground from "@/components/animations/MatrixBackground";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
 import PresenceProvider from "@/components/providers/PresenceProvider";
-import GoogleTranslatePatch from "@/components/providers/GoogleTranslatePatch";
+import StudyTrackerProvider from "@/components/providers/StudyTrackerProvider";
 import PwaRegister from "@/components/providers/PwaRegister";
 
 export default function RootLayout({
@@ -30,10 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en" translate="no" className="h-full antialiased notranslate">
       <body className="min-h-full flex flex-col notranslate">
-        <GoogleTranslatePatch />
         <PwaRegister />
         <PostHogProvider>
           <PresenceProvider />
+          <StudyTrackerProvider />
           <MatrixBackground />
           <div className="app-container flex-1 flex flex-col">
             {children}
