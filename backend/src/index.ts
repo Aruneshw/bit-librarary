@@ -10,6 +10,7 @@ import { progressRouter } from './routes/progress';
 import { settingsRouter } from './routes/settings';
 import { postsRouter } from './routes/posts';
 import { reactionsRouter } from './routes/reactions';
+import presenceRouter from './routes/presence';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -37,6 +38,7 @@ app.use('/api/v1/progress', progressRouter);
 app.use('/api/v1/settings', settingsRouter);
 app.use('/api/v1/posts', postsRouter);
 app.use('/api/v1', reactionsRouter);
+app.use('/api/v1/presence', presenceRouter);
 
 // 404
 app.use((_req, res) => {

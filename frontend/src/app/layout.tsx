@@ -11,10 +11,14 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "BIT LIBRARY",
   },
+  other: {
+    'google': 'notranslate',
+  },
 };
 
 import MatrixBackground from "@/components/animations/MatrixBackground";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import PresenceProvider from "@/components/providers/PresenceProvider";
 import GoogleTranslatePatch from "@/components/providers/GoogleTranslatePatch";
 import PwaRegister from "@/components/providers/PwaRegister";
 
@@ -24,11 +28,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" translate="no" className="h-full antialiased notranslate">
       <body className="min-h-full flex flex-col notranslate">
         <GoogleTranslatePatch />
         <PwaRegister />
         <PostHogProvider>
+          <PresenceProvider />
           <MatrixBackground />
           <div className="app-container flex-1 flex flex-col">
             {children}

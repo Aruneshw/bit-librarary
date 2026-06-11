@@ -54,6 +54,14 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  translate: no;
+}
+
+/* Prevent Google Translate from modifying the document */
+html.notranslate,
+body.notranslate {
+  -webkit-translate: none;
+  translate: none;
 }
 
 body {
@@ -119,6 +127,13 @@ body::after {
   border-radius: var(--radius-card);
 }
 
+@media (max-width: 640px) {
+  .glass-panel {
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+  }
+}
+
 .glass-panel-green {
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -128,6 +143,14 @@ body::after {
   border-radius: var(--radius-card);
 }
 
+@media (max-width: 640px) {
+  .glass-panel-green {
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+    box-shadow: none;
+  }
+}
+
 .glass-panel-blue {
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -135,6 +158,14 @@ body::after {
   border: 1px solid var(--arc-blue);
   box-shadow: var(--glow-blue);
   border-radius: var(--radius-card);
+}
+
+@media (max-width: 640px) {
+  .glass-panel-blue {
+    backdrop-filter: blur(6px) saturate(120%);
+    -webkit-backdrop-filter: blur(6px) saturate(120%);
+    box-shadow: none;
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -306,6 +337,113 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════
+   Touch Interaction Helpers
+   ═══════════════════════════════════════════ */
+.touch-pan-y {
+  touch-action: pan-y;
+}
+
+.touch-none {
+  touch-action: none;
+}
+
+/* ═══════════════════════════════════════════
+   Skeleton Loading Animation
+   ═══════════════════════════════════════════ */
+@keyframes skeleton-pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+.skeleton {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-line-sm {
+  width: 60%;
+}
+
+.skeleton-line-md {
+  width: 80%;
+}
+
+.skeleton-line-lg {
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════
+   Modal Responsive Adjustments
+   ═══════════════════════════════════════════ */
+.modal-content {
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    max-height: 90vh !important;
+    padding: 16px !important;
+  }
+  .modal-content h3 {
+    font-size: 10px !important;
+  }
+  .modal-content .text-sm {
+    font-size: 13px !important;
+  }
+  .modal-content img {
+    border-radius: 8px !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .modal-content {
+    max-height: 85vh !important;
+    padding: 24px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   Selection and Touch Interaction Guards
+   ═══════════════════════════════════════════ */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Force user-select prevention during active swipe (must win all specificity) */
+.swipe-no-select,
+.swipe-no-select * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Suppress mobile tap highlight on modal reading surfaces */
+.modal-content,
+.modal-content * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent iOS callout (copy/paste popup) on long-press inside modal */
+.modal-content {
+  -webkit-touch-callout: none;
+}
+
+/* Block selection during question transitions */
+.question-transitioning,
+.question-transitioning * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+
+/* ═══════════════════════════════════════════
    Google Translate UI Override (Hiding Tooltips)
    ═══════════════════════════════════════════ */
 #goog-gt-tt, 
@@ -322,5 +460,16 @@ body::after {
   background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
+}
+
+/* Prevent any Google Translate banner */
+.goog-te-banner-frame {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+}
+
+body {
+  top: 0px !important;
 }
 

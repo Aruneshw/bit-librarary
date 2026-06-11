@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { useSubjectStore } from '@/store/subjectStore';
+import { usePresenceStore } from '@/store/presenceStore';
 import SubjectOrbit from '@/components/dashboard/SubjectOrbit';
 import SubjectCardStack from '@/components/dashboard/SubjectCardStack';
 import ArcReactor from '@/components/dashboard/ArcReactor';
@@ -55,9 +56,8 @@ function SystemClock() {
 }
 
 function VisitorCount() {
-  const { user } = useAuthStore();
   const [metrics, setMetrics] = useState<{ totalUsers: number; totalVisits: number } | null>(null);
-  const [onlineCount, setOnlineCount] = useState<number>(1);
+  const onlineCount = usePresenceStore((s) => s.onlineCount);
 
   const fetchCount = useCallback(async () => {
     const supabase = createClient();
@@ -86,7 +86,7 @@ function VisitorCount() {
 
     const supabase = createClient();
     
-    // 1. Subscribe to profile database changes for visit counts
+    // Subscribe to profile database changes for visit counts
     const dbChannel = supabase
       .channel('system-metrics-realtime')
       .on(
@@ -98,36 +98,10 @@ function VisitorCount() {
       )
       .subscribe();
 
-    // 2. Subscribe to Supabase Presence for active online users
-    const presenceChannel = supabase.channel('online-users', {
-      config: {
-        presence: {
-          key: user?.id || 'anonymous',
-        },
-      },
-    });
-
-    presenceChannel
-      .on('presence', { event: 'sync' }, () => {
-        const state = presenceChannel.presenceState();
-        // The number of unique keys in presenceState is the online count
-        const count = Object.keys(state).length;
-        setOnlineCount(count > 0 ? count : 1);
-      })
-      .subscribe(async (status: string) => {
-        if (status === 'SUBSCRIBED' && user) {
-          await presenceChannel.track({
-            online_at: new Date().toISOString(),
-            name: user.name || user.email,
-          });
-        }
-      });
-
     return () => {
       supabase.removeChannel(dbChannel);
-      supabase.removeChannel(presenceChannel);
     };
-  }, [fetchCount, user]);
+  }, [fetchCount]);
 
   if (!metrics) {
     return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
@@ -38,6 +38,26 @@ export default function SubjectPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [studyStats, setStudyStats] = useState<{ studying_count: number; recently_active: number } | null>(null);
 
+  // Refs for navigation (avoids stale closures on rapid clicks)
+  const navLockRef = useRef(false);
+  const currentIdxRef = useRef(-1);
+  currentIdxRef.current = selectedQuestion
+    ? questions.findIndex(q => q.id === selectedQuestion.id)
+    : -1;
+
+  // Memoized navigation flags
+  const hasNext = useMemo(
+    () => currentIdxRef.current >= 0 && currentIdxRef.current < questions.length - 1,
+    [selectedQuestion?.id, questions.length]
+  );
+  const hasPrev = useMemo(
+    () => currentIdxRef.current > 0,
+    [selectedQuestion?.id]
+  );
+
+  const isTamilSubject = subjectId === 'a1000000-0000-0000-0000-000000000006';
+  const theme = subjectId === 'a1000000-0000-0000-0000-000000000005' ? 'green' : 'blue';
+
   // Fetch user
   useEffect(() => {
     if (!isAuthenticated) fetchUser();
@@ -53,6 +73,7 @@ export default function SubjectPage() {
 
   // Fetch subject name
   useEffect(() => {
+    let cancelled = false;
     const fetchSubjectName = async () => {
       const supabase = createClient();
       const { data } = await supabase
@@ -60,21 +81,23 @@ export default function SubjectPage() {
         .select('subject_name')
         .eq('id', subjectId)
         .single();
-      if (data) setSubjectName(data.subject_name);
+      if (data && !cancelled) setSubjectName(data.subject_name);
     };
     fetchSubjectName();
+    return () => { cancelled = true; };
   }, [subjectId]);
 
   // Fetch admin study stats
   useEffect(() => {
     if (!isAdmin || !subjectId) return;
+    let cancelled = false;
 
     const fetchStats = async () => {
       const supabase = createClient();
       const { data, error } = await supabase.rpc('get_subject_study_stats', {
         target_subject_id: subjectId,
       });
-      if (!error && data) {
+      if (!error && data && !cancelled) {
         setStudyStats({
           studying_count: Number(data.studying_count) || 0,
           recently_active: Number(data.recently_active) || 0,
@@ -83,6 +106,7 @@ export default function SubjectPage() {
     };
 
     fetchStats();
+    return () => { cancelled = true; };
   }, [isAdmin, subjectId]);
 
   // Fetch questions
@@ -97,88 +121,118 @@ export default function SubjectPage() {
     if (prevCompletion < 100 && completionPercent >= 100 && totalQuestions > 0) {
       setShowCelebration(true);
     }
-    setPrevCompletion(completionPercent);
   }, [completionPercent, prevCompletion, totalQuestions]);
 
-  const handleSelectQuestion = async (question: QuestionWithStatus) => {
+  // Track prevCompletion separately to avoid re-triggering
+  useEffect(() => {
+    setPrevCompletion(completionPercent);
+  }, [completionPercent]);
+
+  const selectedQRef = useRef<QuestionWithStatus | null>(null);
+  selectedQRef.current = selectedQuestion;
+
+  const markViewedIfNeeded = useCallback(async () => {
+    const q = selectedQRef.current;
+    if (q && !q.viewed) {
+      await markViewed(q.id, subjectId);
+      updateSubjectProgress(subjectId, viewedCount + 1, totalQuestions);
+    }
+  }, [subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
+
+  const fetchAbortRef = useRef<AbortController | null>(null);
+
+  const handleSelectQuestion = useCallback((question: QuestionWithStatus) => {
+    window.getSelection()?.removeAllRanges();
+
+    // Cancel any in-flight fetch
+    if (fetchAbortRef.current) {
+      fetchAbortRef.current.abort();
+    }
+
     // Open modal immediately with basic info
     setSelectedQuestion({ ...question, answer: question.answer || 'Loading answer from cache...' });
 
     // Fetch full details from backend API
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (apiUrl && !question.answer) {
-      try {
-        const supabase = createClient();
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          const res = await fetch(`${apiUrl}/questions/${question.id}/detail`, {
-            headers: {
-              'Authorization': `Bearer ${session.access_token}`,
-            },
-          });
-          if (res.ok) {
-            const detail = await res.json();
-            setSelectedQuestion(detail);
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn('Failed to fetch question detail from cached API, trying direct query:', err);
-      }
-    }
+      const controller = new AbortController();
+      fetchAbortRef.current = controller;
 
-    // Direct database query fallback
-    if (!question.answer) {
-      try {
-        const supabase = createClient();
-        const { data } = await supabase
-          .from('questions')
-          .select('*')
-          .eq('id', question.id)
-          .single();
-        if (data) {
-          setSelectedQuestion({ ...question, ...data });
+      (async () => {
+        try {
+          const supabase = createClient();
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            const res = await fetch(`${apiUrl}/questions/${question.id}/detail`, {
+              signal: controller.signal,
+              headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+              },
+            });
+            if (res.ok) {
+              const detail = await res.json();
+              setSelectedQuestion(detail);
+              return;
+            }
+          }
+        } catch (err: any) {
+          if (err?.name === 'AbortError') return;
+          console.warn('Failed to fetch question detail from cached API:', err);
         }
-      } catch (err) {
-        console.error('Failed to fetch question detail from Supabase:', err);
-      }
+
+        // Direct database query fallback
+        try {
+          const supabase = createClient();
+          const { data } = await supabase
+            .from('questions')
+            .select('*')
+            .eq('id', question.id)
+            .single();
+          if (data) {
+            setSelectedQuestion({ ...question, ...data });
+          }
+        } catch (err) {
+          console.error('Failed to fetch question detail from Supabase:', err);
+        }
+      })();
     }
-  };
+  }, []);
+
+  const navigateToQuestion = useCallback(async (targetQuestion: QuestionWithStatus) => {
+    if (navLockRef.current) return;
+    navLockRef.current = true;
+    try {
+      await markViewedIfNeeded();
+      handleSelectQuestion(targetQuestion);
+    } finally {
+      navLockRef.current = false;
+    }
+  }, [markViewedIfNeeded, handleSelectQuestion]);
 
   const handleCloseModal = useCallback(async () => {
-    if (selectedQuestion && !selectedQuestion.viewed) {
-      await markViewed(selectedQuestion.id, subjectId);
-      // Update the subject store too
-      updateSubjectProgress(subjectId, viewedCount + 1, totalQuestions);
+    if (navLockRef.current) return;
+    window.getSelection()?.removeAllRanges();
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
     }
+    await markViewedIfNeeded();
     setSelectedQuestion(null);
-  }, [selectedQuestion, subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
+    selectedQRef.current = null;
+  }, [markViewedIfNeeded]);
 
-  const handleNextQuestion = useCallback(async () => {
-    if (!selectedQuestion) return;
-    const currentIndex = questions.findIndex(q => q.id === selectedQuestion.id);
-    if (currentIndex !== -1 && currentIndex < questions.length - 1) {
-      const nextQ = questions[currentIndex + 1];
-      if (!selectedQuestion.viewed) {
-        await markViewed(selectedQuestion.id, subjectId);
-        updateSubjectProgress(subjectId, viewedCount + 1, totalQuestions);
-      }
-      handleSelectQuestion(nextQ);
-    }
-  }, [selectedQuestion, questions, subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
+  const handleNextQuestion = useCallback(() => {
+    window.getSelection()?.removeAllRanges();
+    const idx = currentIdxRef.current;
+    if (idx < 0 || idx >= questions.length - 1) return;
+    navigateToQuestion(questions[idx + 1]);
+  }, [questions, navigateToQuestion]);
 
-  const handlePrevQuestion = useCallback(async () => {
-    if (!selectedQuestion) return;
-    const currentIndex = questions.findIndex(q => q.id === selectedQuestion.id);
-    if (currentIndex > 0) {
-      const prevQ = questions[currentIndex - 1];
-      if (!selectedQuestion.viewed) {
-        await markViewed(selectedQuestion.id, subjectId);
-        updateSubjectProgress(subjectId, viewedCount + 1, totalQuestions);
-      }
-      handleSelectQuestion(prevQ);
-    }
-  }, [selectedQuestion, questions, subjectId, markViewed, updateSubjectProgress, viewedCount, totalQuestions]);
+  const handlePrevQuestion = useCallback(() => {
+    window.getSelection()?.removeAllRanges();
+    const idx = currentIdxRef.current;
+    if (idx <= 0) return;
+    navigateToQuestion(questions[idx - 1]);
+  }, [questions, navigateToQuestion]);
 
   const handleDeleteQuestion = async (questionId: string) => {
     if (!confirm("Are you sure you want to permanently delete this question?")) return;
@@ -252,11 +306,12 @@ export default function SubjectPage() {
       <QuestionModal
         question={selectedQuestion}
         onClose={handleCloseModal}
-        theme={subjectId === 'a1000000-0000-0000-0000-000000000005' ? 'green' : 'blue'}
+        theme={theme}
         onNext={handleNextQuestion}
         onPrev={handlePrevQuestion}
-        hasNext={selectedQuestion ? questions.findIndex(q => q.id === selectedQuestion.id) < questions.length - 1 : false}
-        hasPrev={selectedQuestion ? questions.findIndex(q => q.id === selectedQuestion.id) > 0 : false}
+        hasNext={hasNext}
+        hasPrev={hasPrev}
+        isTamilSubject={isTamilSubject}
       />
 
       {/* Conditionally Render Translator for Tamils Subject */}

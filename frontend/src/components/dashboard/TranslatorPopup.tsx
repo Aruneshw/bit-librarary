@@ -1,27 +1,56 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+
+const LANG_COOKIE = 'googtrans';
+const LANG_STORAGE_KEY = 'bitlib_language';
+const TAMIL_COOKIE = '/en/ta';
+
+function getCookieValue(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`));
+  return match ? match[2] : null;
+}
+
+function setCookie(name: string, value: string, days: number) {
+  const expires = value ? new Date(Date.now() + days * 864e5).toUTCString() : 'Thu, 01 Jan 1970 00:00:00 UTC';
+  document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
+  if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    document.cookie = `${name}=${value}; expires=${expires}; path=/; domain=${window.location.hostname}; SameSite=Lax`;
+  }
+}
+
+function getStoredLanguage(): 'en' | 'ta' {
+  const fromStorage = localStorage.getItem(LANG_STORAGE_KEY);
+  if (fromStorage === 'ta' || fromStorage === 'en') return fromStorage;
+
+  const cookie = getCookieValue(LANG_COOKIE);
+  if (cookie?.includes('/ta')) return 'ta';
+
+  return 'en';
+}
 
 export default function TranslatorPopup() {
-  const [lang, setLang] = useState<'en' | 'ta'>('en');
+  const [lang, setLang] = useState<'en' | 'ta'>(getStoredLanguage);
 
-  // Helper to read the cookie
-  const getTranslateCookie = () => {
-    if (typeof document === 'undefined') return 'en';
-    const match = document.cookie.match(/(^|;)\s*googtrans\s*=\s*([^;]+)/);
-    if (match) {
-      const val = match[2];
-      if (val.includes('/ta')) return 'ta';
+  const applyLanguage = useCallback((targetLang: 'en' | 'ta') => {
+    if (targetLang === 'ta') {
+      setCookie(LANG_COOKIE, TAMIL_COOKIE, 365);
+      localStorage.setItem(LANG_STORAGE_KEY, 'ta');
+    } else {
+      setCookie(LANG_COOKIE, '', -1);
+      localStorage.setItem(LANG_STORAGE_KEY, 'en');
     }
-    return 'en';
-  };
+    setLang(targetLang);
+  }, []);
 
   useEffect(() => {
-    // Determine initial language from cookie
-    setLang(getTranslateCookie());
+    if (typeof window === 'undefined') return;
 
-    // Only add the script if it doesn't exist
-    if (!document.getElementById('google-translate-script')) {
+    const stored = getStoredLanguage();
+    setLang(stored);
+
+    if (stored === 'ta' && !document.getElementById('google-translate-script')) {
       const script = document.createElement('script');
       script.id = 'google-translate-script';
       script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
@@ -30,9 +59,10 @@ export default function TranslatorPopup() {
 
       window.googleTranslateElementInit = () => {
         new window.google.translate.TranslateElement(
-          { 
-            pageLanguage: 'en', 
-            includedLanguages: 'en,ta'
+          {
+            pageLanguage: 'en',
+            includedLanguages: 'en,ta',
+            autoDisplay: false,
           },
           'google_translate_element'
         );
@@ -40,31 +70,28 @@ export default function TranslatorPopup() {
     }
   }, []);
 
-  const handleToggle = (targetLang: 'en' | 'ta') => {
+  const handleToggle = useCallback((targetLang: 'en' | 'ta') => {
     if (targetLang === lang) return;
-    
-    if (targetLang === 'ta') {
-      document.cookie = "googtrans=/en/ta; path=/;";
-      if (window.location.hostname !== 'localhost') {
-        document.cookie = "googtrans=/en/ta; path=/; domain=" + window.location.hostname + ";";
-      }
-    } else {
-      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      if (window.location.hostname !== 'localhost') {
-        document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+    applyLanguage(targetLang);
+
+    if (targetLang === 'ta' && !document.getElementById('google-translate-script')) {
+      window.location.reload();
+      return;
+    }
+
+    if (targetLang === 'ta' && window.google && window.google.translate) {
+      const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+      if (select) {
+        select.value = 'ta';
+        select.dispatchEvent(new Event('change'));
       }
     }
-    
-    setLang(targetLang);
-    window.location.reload();
-  };
+  }, [lang, applyLanguage]);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 bg-[#050A15]/90 border border-[#00D9FF]/30 rounded-full p-1 shadow-[0_0_15px_rgba(0,217,255,0.25)] backdrop-blur-md flex items-center space-x-1 transition-all hover:scale-105">
-      {/* Hidden google translate widget where google expects it */}
+    <div className="fixed bottom-4 right-4 z-50 bg-[#050A15]/90 border border-[#00D9FF]/30 rounded-full p-1 shadow-[0_0_15px_rgba(0,217,255,0.25)] backdrop-blur-md flex items-center space-x-1 transition-all hover:scale-105 no-select">
       <div id="google_translate_element" className="absolute invisible pointer-events-none w-0 h-0 overflow-hidden" />
-      
-      {/* Custom toggle buttons */}
+
       <button
         onClick={() => handleToggle('en')}
         className={`px-3 py-1 rounded-full text-[10px] font-bold font-orbitron tracking-wider transition-all duration-300 ${
@@ -87,7 +114,6 @@ export default function TranslatorPopup() {
       </button>
 
       <style jsx global>{`
-        /* Hide all google translate artifacts completely */
         .skiptranslate iframe, iframe.skiptranslate, .goog-te-banner-frame {
           display: none !important;
           visibility: hidden !important;

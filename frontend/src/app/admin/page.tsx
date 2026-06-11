@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
+import { usePresenceStore } from '@/store/presenceStore';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import FileManager from '@/components/admin/FileManager';
 import AnalyticsCarousel from '@/components/admin/AnalyticsCarousel';
@@ -53,7 +54,7 @@ export default function AdminDashboard() {
   const [feedbacks, setFeedbacks] = useState<UserFeedback[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
-  const [onlineUserIds, setOnlineUserIds] = useState<string[]>([]);
+  const onlineUserIds = usePresenceStore((s) => s.onlineUserIds);
   const [systemMetrics, setSystemMetrics] = useState<{ totalUsers: number; totalVisits: number } | null>(null);
   const [replyingFeedbackId, setReplyingFeedbackId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
@@ -156,37 +157,13 @@ export default function AdminDashboard() {
       )
       .subscribe();
 
-    const presenceChannel = supabase.channel('online-users', {
-      config: {
-        presence: {
-          key: user?.id || 'admin',
-        },
-      },
-    });
-
-    presenceChannel
-      .on('presence', { event: 'sync' }, () => {
-        const state = presenceChannel.presenceState();
-        const onlineIds = Object.keys(state);
-        setOnlineUserIds(onlineIds);
-      })
-      .subscribe(async (status: string) => {
-        if (status === 'SUBSCRIBED' && user) {
-          await presenceChannel.track({
-            online_at: new Date().toISOString(),
-            name: user.name || user.email,
-          });
-        }
-      });
-
     const storageInterval = setInterval(() => fetchStorageConfig(), 30000);
 
     return () => {
       supabase.removeChannel(metricsChannel);
-      supabase.removeChannel(presenceChannel);
       clearInterval(storageInterval);
     };
-  }, [isAdmin, user, fetchSystemMetrics, fetchStorageConfig]);
+  }, [isAdmin, fetchSystemMetrics, fetchStorageConfig]);
 
   const fetchUsers = async () => {
     const supabase = createClient();
