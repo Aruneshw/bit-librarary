@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState, useMemo, memo } from 'react';
+import { useEffect, useRef, useCallback, useState, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
@@ -31,35 +31,6 @@ interface QuestionModalProps {
   isTamilSubject?: boolean;
 }
 
-/* ─── Skeleton Loader ─── */
-function QuestionSkeleton({ theme }: { theme: 'blue' | 'green' }) {
-  const accentClass = theme === 'green' ? 'text-terminal-green/30' : 'text-arc-blue/30';
-  const gradientClass = theme === 'green' ? 'from-terminal-green/20' : 'from-arc-blue/20';
-  return (
-    <div className="space-y-6 animate-pulse">
-      <div>
-        <div className={`h-3 w-16 ${accentClass} skeleton rounded mb-3`} />
-        <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
-        <div className="space-y-2">
-          <div className="skeleton-line skeleton-line-lg" />
-          <div className="skeleton-line skeleton-line-lg" />
-          <div className="skeleton-line skeleton-line-md" />
-        </div>
-      </div>
-      <div>
-        <div className={`h-3 w-14 ${accentClass} skeleton rounded mb-3`} />
-        <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-4`} />
-        <div className="space-y-2">
-          <div className="skeleton-line skeleton-line-lg" />
-          <div className="skeleton-line skeleton-line-md" />
-          <div className="skeleton-line skeleton-line-sm" />
-          <div className="skeleton-line skeleton-line-lg" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Memoized Markdown Renderer ─── */
 const MarkdownContent = ReactMarkdown as any;
 
@@ -79,17 +50,21 @@ const QuestionContent = memo(function QuestionContent({
           pre({ children, ...props }: any) {
             const child = Array.isArray(children) ? children[0] : children;
             if (child?.props?.['data-mermaid']) {
-              return <div className="w-full my-6">{children}</div>;
+              return <div className="w-full my-6 notranslate" translate="no">{children}</div>;
             }
-            return <pre {...props}>{children}</pre>;
+            return <pre {...props} className={`notranslate ${props.className || ''}`} translate="no">{children}</pre>;
           },
           code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
             const language = match ? match[1] : '';
             if (!inline && language === 'mermaid') {
-              return <Mermaid chart={String(children).replace(/\n$/, '')} data-mermaid />;
+              return (
+                <div className="notranslate" translate="no">
+                  <Mermaid chart={String(children).replace(/\n$/, '')} data-mermaid />
+                </div>
+              );
             }
-            return <code className={className} {...props}>{children}</code>;
+            return <code className={`${className || ''} notranslate`} translate="no" {...props}>{children}</code>;
           },
         }}
       >
@@ -182,34 +157,10 @@ export default function QuestionModal({
   onPrev,
   hasNext = false,
   hasPrev = false,
-  isTamilSubject = false,
 }: QuestionModalProps) {
   const doubleClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clickCountRef = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
-  const [contentReady, setContentReady] = useState(false);
-
-  /* ── Detect Tamil translation active ── */
-  const isTamilMode = useMemo(() => {
-    if (!isTamilSubject || typeof document === 'undefined') return false;
-    const match = document.cookie.match(/(^|;)\s*googtrans\s*=\s*([^;]+)/);
-    return match?.[2]?.includes('/ta') ?? false;
-  }, [isTamilSubject, question?.id]);
-
-  /* ── Content ready state ── */
-  useEffect(() => {
-    if (!question) return;
-    if (isTamilMode) {
-      setContentReady(false);
-      const raf = requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setContentReady(true);
-        });
-      });
-      return () => cancelAnimationFrame(raf);
-    }
-    setContentReady(true);
-  }, [question?.id, isTamilMode, question]);
 
   /* ── Scroll to top & clear selection on question change ── */
   useEffect(() => {
@@ -332,7 +283,6 @@ export default function QuestionModal({
   const textClass = isGreen ? 'text-terminal-green/60' : 'text-arc-blue/60';
   const gradientClass = isGreen ? 'from-terminal-green/30' : 'from-arc-blue/30';
   const borderClass = isGreen ? 'border-terminal-green/30' : 'border-glass-border';
-  const showSkeleton = isTamilMode && !contentReady;
 
   /* ── Animation config (reduced on mobile) ── */
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -389,16 +339,13 @@ export default function QuestionModal({
                 </svg>
               </button>
 
-              {showSkeleton ? (
-                <QuestionSkeleton theme={theme} />
-              ) : (
-                <div className="notranslate" translate="no">
+              <div>
                   <div className="mb-4 sm:mb-6">
                     <h3 className={`font-rajdhani text-[10px] sm:text-xs ${textClass} uppercase tracking-[3px] mb-2 sm:mb-3`}>
                       Question
                     </h3>
                     <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-3 sm:mb-4`} />
-                    <div className="font-exo2 text-sm font-bold text-terminal-green leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-terminal-green prose-p:font-bold max-w-none notranslate" translate="no">
+                    <div className="font-exo2 text-sm font-bold text-terminal-green leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-terminal-green prose-p:font-bold max-w-none">
                       <QuestionContent content={question.question} />
                     </div>
                   </div>
@@ -408,7 +355,7 @@ export default function QuestionModal({
                       Answer
                     </h3>
                     <div className={`w-full h-px bg-gradient-to-r ${gradientClass} to-transparent mb-3 sm:mb-4`} />
-                    <div className="font-exo2 text-sm text-text-white leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-text-white max-w-none notranslate" translate="no">
+                    <div className="font-exo2 text-sm text-text-white leading-relaxed prose prose-invert prose-p:my-1 prose-p:text-text-white max-w-none">
                       <QuestionContent content={question.answer || 'Answer not available'} />
                     </div>
                   </div>
@@ -449,7 +396,6 @@ export default function QuestionModal({
                     </div>
                   )}
                 </div>
-              )}
             </motion.div>
           </AnimatePresence>
 
