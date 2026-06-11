@@ -1,39 +1,131 @@
 INSERT INTO questions (id, subject_id, question, answer, image_url, "references", notes, order_index) VALUES
   ('faca0000-0000-0000-0000-000000000001', 'a1000000-0000-0000-0000-000000000006', 'Who is Paruthi Pendir?', '- **Paruthi Pendir** refers to the highly skilled women of the ancient Sangam age.
 - They were primarily engaged in spinning cotton and processing raw textiles.
-- These women formed the backbone of the booming ancient Tamil textile industry, producing world-renowned fine fabrics.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 1),
+- These women formed the backbone of the booming ancient Tamil textile industry, producing world-renowned fine fabrics.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Paruthi Pendir were women engaged in cotton processing and spinning during the Sangam age. They played an important role in the textile industry.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 1),
   ('faca0000-0000-0000-0000-000000000002', 'a1000000-0000-0000-0000-000000000006', 'What is "Paa" or "Paavottuthal"?', '- **Paavottuthal** is the essential preparatory process of arranging and starching warp threads before weaving.
-- This technique strengthens the yarn, making it smooth, resilient, and ready to be mounted on the handloom.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 2),
+- This technique strengthens the yarn, making it smooth, resilient, and ready to be mounted on the handloom.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Paavottuthal is the process of arranging warp threads before weaving. It is an important preparatory stage in textile production.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 2),
   ('faca0000-0000-0000-0000-000000000003', 'a1000000-0000-0000-0000-000000000006', 'What are the types of weaving?', 'The main types of weaving used in ancient times were:
 - **Plain Weaving**: The simplest and most common over-and-under intersecting pattern.
 - **Twill Weaving**: A diagonal parallel pattern used to create stronger, heavier fabrics.
-- **Satin Weaving**: A complex weave that produces a very smooth and lustrous surface.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 3),
+- **Satin Weaving**: A complex weave that produces a very smooth and lustrous surface.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The main types of weaving are:
+```mermaid
+mindmap
+  root((Weaving))
+    Plain weaving
+    Twill weaving
+    Satin weaving
+```', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 3),
   ('faca0000-0000-0000-0000-000000000004', 'a1000000-0000-0000-0000-000000000006', 'Write the names of any two parts of a loom.', 'Two critical parts of a traditional handloom are:
 - **The Shuttle**: A wooden device used to carry the horizontal weft thread back and forth across the vertical warp threads.
-- **The Reed**: A comb-like structure used to push the weft thread tightly into place to ensure dense cloth.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 4),
+- **The Reed**: A comb-like structure used to push the weft thread tightly into place to ensure dense cloth.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Any two parts of a loom are:
+
+Shuttle
+Reed', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 4),
   ('faca0000-0000-0000-0000-000000000005', 'a1000000-0000-0000-0000-000000000006', 'How were the woven garments sold during the Sangam period?', '- Domestically, woven garments were heavily traded in bustling local day and night markets (such as *Nalangadi* and *Allangadi*).
-- Internationally, Tamil textiles were highly sought after and exported through major coastal port cities (like Poompuhar) to great empires including Rome and Egypt.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 5),
-  ('faca0000-0000-0000-0000-000000000006', 'a1000000-0000-0000-0000-000000000006', 'Where were dye vats discovered?', '- Ancient brick **dye vats** (large structural tubs used for soaking and dyeing fabrics) were discovered by archaeologists at **Arikamedu**, an ancient port city located near modern-day Puducherry.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 6),
-  ('faca0000-0000-0000-0000-000000000007', 'a1000000-0000-0000-0000-000000000006', 'Which type of pottery was popular in Madurai?', '- **Glossy black pottery**, known for its incredibly smooth finish, elegant shine, and structural durability, was the most popular and refined style of pottery in the ancient Madurai region.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 7),
+- Internationally, Tamil textiles were highly sought after and exported through major coastal port cities (like Poompuhar) to great empires including Rome and Egypt.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Garments were sold in local markets and exported through ports to foreign countries.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 5),
+  ('faca0000-0000-0000-0000-000000000006', 'a1000000-0000-0000-0000-000000000006', 'Where were dye vats discovered?', '- Ancient brick **dye vats** (large structural tubs used for soaking and dyeing fabrics) were discovered by archaeologists at **Arikamedu**, an ancient port city located near modern-day Puducherry.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Dye vats were discovered at Arikamedu near Puducherry.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 6),
+  ('faca0000-0000-0000-0000-000000000007', 'a1000000-0000-0000-0000-000000000006', 'Which type of pottery was popular in Madurai?', '- **Glossy black pottery**, known for its incredibly smooth finish, elegant shine, and structural durability, was the most popular and refined style of pottery in the ancient Madurai region.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Glossy black pottery was popular in Madurai.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 7),
   ('faca0000-0000-0000-0000-000000000008', 'a1000000-0000-0000-0000-000000000006', 'What is the specialty of Velloor Karigiri pottery?', '- **Karigiri pottery** (originating from Vellore) is famous worldwide for its unique, vibrant green and blue glazes.
-- It is highly regarded for its exceptional durability and intricate artistic craftsmanship.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 8),
+- It is highly regarded for its exceptional durability and intricate artistic craftsmanship.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Velloor Karigiri pottery is famous for its fine finish, durability and artistic beauty.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 8),
   ('faca0000-0000-0000-0000-000000000009', 'a1000000-0000-0000-0000-000000000006', 'What are the two divisions of pottery?', 'Pottery is traditionally divided into two main categories based on its surface finish:
 - **Glossy Pottery**: Features a very smooth, polished, and reflective surface.
-- **Unglossed Pottery**: Left with a rough, natural, and unpolished earthy surface.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 9),
-  ('faca0000-0000-0000-0000-000000000010', 'a1000000-0000-0000-0000-000000000006', 'What is meant by craft work on pottery?', '- **Pottery craft work** refers to the artistic decorations, intricate carvings, and painted motifs applied to the surface of clay vessels to enhance their visual appeal and cultural significance.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 10),
+- **Unglossed Pottery**: Left with a rough, natural, and unpolished earthy surface.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The two divisions are:
+
+Glossy pottery
+Unglossed pottery', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 9),
+  ('faca0000-0000-0000-0000-000000000010', 'a1000000-0000-0000-0000-000000000006', 'What is meant by craft work on pottery?', '- **Pottery craft work** refers to the artistic decorations, intricate carvings, and painted motifs applied to the surface of clay vessels to enhance their visual appeal and cultural significance.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Decorative artistic designs made on pottery are called pottery craft work.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 10),
   ('faca0000-0000-0000-0000-000000000011', 'a1000000-0000-0000-0000-000000000006', 'What are the uses of pottery in educational art?', 'In educational settings, pottery is widely used for:
 - Teaching students hands-on creativity, patience, and 3D modeling skills.
-- Developing fine motor skills and helping to preserve ancient traditional craft techniques for future generations.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 11),
+- Developing fine motor skills and helping to preserve ancient traditional craft techniques for future generations.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Pottery is used for:
+
+Teaching art and creativity
+Developing practical skills
+Craft training', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 11),
   ('faca0000-0000-0000-0000-000000000012', 'a1000000-0000-0000-0000-000000000006', 'What are the uses of pottery in medical science?', 'Ancient medical systems (like Siddha and Ayurveda) utilized specialized pottery for:
 - Storing powerful herbal medicines and acidic chemical preparations without contamination.
-- Creating heat-resistant vessels for boiling, distilling, and extracting medical compounds.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 12),
+- Creating heat-resistant vessels for boiling, distilling, and extracting medical compounds.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Pottery is used to prepare medical containers, storage vessels and laboratory equipment.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 12),
   ('faca0000-0000-0000-0000-000000000013', 'a1000000-0000-0000-0000-000000000006', 'What materials are found in black and red ware?', 'Archaeological excavations of **Black and Red Ware** commonly reveal everyday household items such as:
 - Shallow eating bowls and serving plates.
-- Heat-resistant cooking pots and massive cylindrical grain storage vessels.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 13),
+- Heat-resistant cooking pots and massive cylindrical grain storage vessels.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Black and red ware contains:
+
+Bowls
+Pots
+Plates
+Storage vessels', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 13),
   ('faca0000-0000-0000-0000-000000000014', 'a1000000-0000-0000-0000-000000000006', 'What symbols are found on pottery?', 'Ancient pottery frequently features engraved geometric and nature-inspired symbols, including:
-- The Swastika, the Sun, the Moon, Fish motifs, and abstract geometric marks representing clans or elements.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 14),
-  ('faca0000-0000-0000-0000-000000000015', 'a1000000-0000-0000-0000-000000000006', 'In which part of Tamil Nadu were pots with the Swastika symbol found?', '- Remarkable ancient pottery bearing the **Swastika symbol** was excavated at the highly significant archaeological sites of **Kodumanal** and **Keeladi** in Tamil Nadu.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 15),
-  ('faca0000-0000-0000-0000-000000000016', 'a1000000-0000-0000-0000-000000000006', 'During which period did people use symbols to express their thoughts?', '- People primarily used engraved symbols (like graffiti marks on pots) to express their thoughts, beliefs, and ownership during the **Prehistoric Period**, thousands of years before formal written language and scripts were developed.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 16),
+- The Swastika, the Sun, the Moon, Fish motifs, and abstract geometric marks representing clans or elements.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Common symbols include:
+
+Swastika
+Sun
+Moon
+Fish
+Geometric marks', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 14),
+  ('faca0000-0000-0000-0000-000000000015', 'a1000000-0000-0000-0000-000000000006', 'In which part of Tamil Nadu were pots with the Swastika symbol found?', '- Remarkable ancient pottery bearing the **Swastika symbol** was excavated at the highly significant archaeological sites of **Kodumanal** and **Keeladi** in Tamil Nadu.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Such pottery was found at Kodumanal and Keeladi excavation sites.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 15),
+  ('faca0000-0000-0000-0000-000000000016', 'a1000000-0000-0000-0000-000000000006', 'During which period did people use symbols to express their thoughts?', '- People primarily used engraved symbols (like graffiti marks on pots) to express their thoughts, beliefs, and ownership during the **Prehistoric Period**, thousands of years before formal written language and scripts were developed.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+People used symbols during the Prehistoric Period before the development of writing.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 2-Mark', 16),
   ('faca0000-0000-0000-0000-000000000017', 'a1000000-0000-0000-0000-000000000006', 'How was the weaving industry during the Sangam period? Explain the various stages involved in making clothing.', '# The Weaving Industry in the Sangam Period
 
 ## Introduction
@@ -68,7 +160,26 @@ graph TD
 
 - **Mass Employment**: It provided stable employment to millions, from farmers to spinners, dyers, and merchants.
 - **Global Export Powerhouse**: Tamil textiles were a massive export commodity. Roman records and the *Periplus of the Erythraean Sea* detail how Roman merchants traded immense amounts of gold for fine Tamil cloth.
-- **Technological Supremacy**: The sheer fineness of the cloth produced proved that ancient Tamils had engineered highly advanced handloom technologies well ahead of their time.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 17),
+- **Technological Supremacy**: The sheer fineness of the cloth produced proved that ancient Tamils had engineered highly advanced handloom technologies well ahead of their time.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The weaving industry was one of the most important occupations during the Sangam age. Tamil weavers produced fine cotton and silk fabrics that were famous throughout India and abroad.
+
+Stages of Cloth Production:
+Collection of cotton.
+Cleaning and separating fibers.
+Spinning fibers into thread.
+Dyeing the yarn.
+Preparing warp and weft threads.
+Weaving on looms.
+Finishing and polishing cloth.
+Marketing and export.
+Importance:
+Provided employment.
+Supported foreign trade.
+Enhanced economic prosperity.
+Demonstrated advanced technological skills.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 17),
   ('faca0000-0000-0000-0000-000000000018', 'a1000000-0000-0000-0000-000000000006', 'What are glossy and unpolished pottery? Explain the process of making pottery.', '# Ancient Pottery: Glossy vs Unpolished Ware & The Manufacturing Process
 
 ## Introduction
@@ -98,7 +209,30 @@ The creation of high-quality ceramics requires a rigorous, multi-stage engineeri
 6. **Firing in the Kiln**: The dried pots are stacked inside a massive earthen oven (kiln) and baked at extremely high temperatures (often exceeding 800°C). This chemical reaction permanently hardens the clay into ceramic.
 
 ## Conclusion
-The mastery of pottery manufacturing demonstrates the ancient Tamils'' profound understanding of thermal engineering and materials science, leaving behind artifacts that survive for thousands of years.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 18),
+The mastery of pottery manufacturing demonstrates the ancient Tamils'' profound understanding of thermal engineering and materials science, leaving behind artifacts that survive for thousands of years.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Glossy Pottery
+
+Pottery with a smooth polished surface.
+
+Unpolished Pottery
+
+Pottery without polishing and having a rough surface.
+
+Pottery-Making Process:
+Collection of clay.
+Cleaning impurities.
+Mixing clay with water.
+Shaping on potter''s wheel.
+Drying.
+Decorating.
+Firing in kiln.
+Polishing if required.
+Importance:
+
+Pottery was used for storage, cooking, trade and rituals.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 18),
   ('faca0000-0000-0000-0000-000000000019', 'a1000000-0000-0000-0000-000000000006', 'Explain in detail about Black and Red Ware.', '# Black and Red Ware (BRW) in Ancient Tamil Nadu
 
 ## Introduction
@@ -129,7 +263,26 @@ Archaeological excavations at Keeladi, Adichanallur, and Kodumanal have unearthe
 > [!TIP]
 > Black and Red Ware is considered the "index fossil" of the South Indian Iron Age.
 
-Finding BRW at an excavation site immediately tells historians that the site belongs to a highly advanced, settled civilization with a deep understanding of controlled-temperature kiln technology. It stands as a testament to the scientific brilliance of ancient Tamil artisans.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 19),
+Finding BRW at an excavation site immediately tells historians that the site belongs to a highly advanced, settled civilization with a deep understanding of controlled-temperature kiln technology. It stands as a testament to the scientific brilliance of ancient Tamil artisans.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Black and Red Ware is one of the most important archaeological findings in South India.
+
+Characteristics:
+Interior black color.
+Exterior red color.
+Strong and durable.
+Made using controlled firing techniques.
+Uses:
+Cooking
+Storage
+Religious activities
+Trade
+Significance:
+Indicates advanced ceramic technology.
+Helps archaeologists determine historical periods.
+Found in many Sangam-age sites.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 19),
   ('faca0000-0000-0000-0000-000000000020', 'a1000000-0000-0000-0000-000000000006', 'Write in detail about the incised marks and symbols engraved on ancient Indian pottery.', '# Incised Marks and Symbols on Ancient Indian Pottery
 
 ## Introduction
@@ -162,7 +315,34 @@ Symbols like the Swastika or the Sun were carved onto pots used in religious cer
 > [!IMPORTANT]
 > Graffiti marks are widely considered to be the evolutionary stepping stone between primitive cave paintings and formal written language.
 
-At excavation sites like **Keeladi**, archaeologists have found pots that feature both ancient graffiti symbols *and* early Tamil-Brahmi script side-by-side. This incredible discovery proves that these symbols were part of an evolving communication system that eventually gave birth to the written Tamil language we know today.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 20),
+At excavation sites like **Keeladi**, archaeologists have found pots that feature both ancient graffiti symbols *and* early Tamil-Brahmi script side-by-side. This incredible discovery proves that these symbols were part of an evolving communication system that eventually gave birth to the written Tamil language we know today.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Ancient pottery contains many symbols and incised marks.
+
+Common Symbols:
+```mermaid
+mindmap
+  root((Ancient Symbols))
+    Nature
+      Sun
+      Moon
+      Star
+    Animals
+      Fish
+    Patterns
+      Swastika
+      Geometric
+```
+Purpose:
+Identification of owners.
+Indication of clans.
+Trade marks.
+Religious beliefs.
+Historical Importance:
+
+These symbols help researchers understand ancient culture, language and social organization.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 20),
   ('faca0000-0000-0000-0000-000000000021', 'a1000000-0000-0000-0000-000000000006', 'Explain the efforts taken to preserve ancient weaving and pottery technologies.', '# Preservation of Ancient Tamil Weaving and Pottery Technologies
 
 ## Introduction
@@ -187,45 +367,136 @@ Universities and historians are aggressively recording the precise step-by-step 
 
 ## Conclusion
 > [!TIP]
-> Preserving these technologies is crucial not just for nostalgia, but because ancient techniques (like using natural vegetable dyes and eco-friendly clay) offer sustainable, highly relevant solutions for today''s environmental challenges. Protecting them ensures that the brilliant legacy of Tamil craftsmanship endures for future generations.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 21),
+> Preserving these technologies is crucial not just for nostalgia, but because ancient techniques (like using natural vegetable dyes and eco-friendly clay) offer sustainable, highly relevant solutions for today''s environmental challenges. Protecting them ensures that the brilliant legacy of Tamil craftsmanship endures for future generations.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Ancient weaving and pottery technologies are important cultural heritages.
+
+Preservation Efforts:
+Archaeological excavations.
+Museum conservation.
+Government support schemes.
+Training centers for artisans.
+Handloom development programs.
+Documentation and research.
+Cultural exhibitions.
+Educational awareness programs.
+Conclusion:
+
+Preserving these technologies helps protect Tamil heritage and traditional craftsmanship for future generations.', NULL, '22GE201 - Tamils and Technology', 'Unit 1 - 16-Mark', 21),
   ('faca0000-0000-0000-0000-000000000022', 'a1000000-0000-0000-0000-000000000006', 'What is Architecture?', '- **Architecture** is the art and science of designing and constructing buildings, monuments, and temples.
-- In ancient Tamil history, it reflects the advanced mathematical engineering and aesthetic brilliance of dynasties like the Cholas, Pandyas, and Pallavas.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 22),
+- In ancient Tamil history, it reflects the advanced mathematical engineering and aesthetic brilliance of dynasties like the Cholas, Pandyas, and Pallavas.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Architecture is the art and science of designing and constructing buildings, monuments, temples, and other structures.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 22),
   ('faca0000-0000-0000-0000-000000000023', 'a1000000-0000-0000-0000-000000000006', 'Name some construction materials used during the Sangam period.', 'The ancient Tamils used locally sourced, highly durable materials for their architecture, such as:
 - Carved Stone and Baked Bricks
 - Strong Wood (like Teak for pillars)
-- Natural Clay and Lime Mortar (*Suthai*) for binding and sculpting.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 23),
+- Natural Clay and Lime Mortar (*Suthai*) for binding and sculpting.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Stone
+Brick
+Wood
+Clay
+Lime mortar', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 23),
   ('faca0000-0000-0000-0000-000000000024', 'a1000000-0000-0000-0000-000000000006', 'Which script is predominantly found on hero stones discovered in Tamil Nadu?', '- Hero stones (*Nadukkal*), planted to honor fallen warriors, primarily feature ancient inscriptions written in the **Tamil-Brahmi** script.
-- In later centuries, hero stones were engraved using the evolved **Vatteluttu** script.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 24),
+- In later centuries, hero stones were engraved using the evolved **Vatteluttu** script.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Most hero stones contain inscriptions written in Tamil-Brahmi and later Vatteluttu scripts.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 24),
   ('faca0000-0000-0000-0000-000000000025', 'a1000000-0000-0000-0000-000000000006', 'What are moats?', '- **Moats** (*Agazhi*) are incredibly deep and wide trenches dug around the massive outer walls of forts and palaces.
-- They were permanently filled with water (often housing crocodiles) to serve as a formidable primary defense system against invading armies.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 25),
+- They were permanently filled with water (often housing crocodiles) to serve as a formidable primary defense system against invading armies.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Moats are deep trenches filled with water surrounding forts and palaces for protection from enemies.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 25),
   ('faca0000-0000-0000-0000-000000000026', 'a1000000-0000-0000-0000-000000000006', 'What are the types of temples built in India?', 'The three major architectural styles of Hindu temples in India are:
 - **Dravidian Style**: Prominent in South India (characterized by pyramidal towers or *Vimanas*).
 - **Nagara Style**: Prominent in North India (characterized by curvilinear, beehive-shaped spires).
-- **Vesara Style**: A hybrid blend of both styles, largely found in Central India.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 26),
-  ('faca0000-0000-0000-0000-000000000027', 'a1000000-0000-0000-0000-000000000006', 'Which is considered the tallest temple gopuram in Tamil Nadu?', '- The massive **Rajagopuram of the Srirangam Ranganathaswamy Temple** holds the absolute record as the tallest temple tower in Tamil Nadu (and all of Asia), towering over 236 feet (73 meters) high.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 27),
+- **Vesara Style**: A hybrid blend of both styles, largely found in Central India.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Dravidian Style
+Nagara Style
+Vesara Style', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 26),
+  ('faca0000-0000-0000-0000-000000000027', 'a1000000-0000-0000-0000-000000000006', 'Which is considered the tallest temple gopuram in Tamil Nadu?', '- The massive **Rajagopuram of the Srirangam Ranganathaswamy Temple** holds the absolute record as the tallest temple tower in Tamil Nadu (and all of Asia), towering over 236 feet (73 meters) high.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The Rajagopuram of Srirangam Ranganathaswamy Temple is considered the tallest temple gopuram in Tamil Nadu.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 27),
   ('faca0000-0000-0000-0000-000000000028', 'a1000000-0000-0000-0000-000000000006', 'What are the six stages of hero stones mentioned by Tholkappiyar?', 'The ancient grammatical text *Tholkappiyam* lists six strict sequential rituals for planting a hero stone:
 1. **Katchi** (Locating the perfect stone)
 2. **Kalkol** (Carving the stone)
 3. **Neerppadai** (Purifying it with holy water)
 4. **Naduthal** (Planting the stone securely)
 5. **Perumpadai** (Offering food and weapons)
-6. **Vaazhththal** (Praising the fallen hero)', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 28),
+6. **Vaazhththal** (Praising the fallen hero)
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Katchi
+Kalkol
+Neerppadai
+Naduthal
+Perumpadai
+Vaazhththal', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 28),
   ('faca0000-0000-0000-0000-000000000029', 'a1000000-0000-0000-0000-000000000006', 'Name some grand temples built by the Cholas.', 'The majestic "Great Living Chola Temples" (recognized by UNESCO) include:
 - The **Brihadeeswarar Temple** at Thanjavur (built by Rajaraja I).
 - The **Gangaikonda Cholapuram Temple** (built by Rajendra I).
-- The **Airavatesvara Temple** at Darasuram (built by Rajaraja II).', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 29),
+- The **Airavatesvara Temple** at Darasuram (built by Rajaraja II).
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Brihadeeswarar Temple, Thanjavur
+Gangaikonda Cholapuram Temple
+Airavatesvara Temple', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 29),
   ('faca0000-0000-0000-0000-000000000030', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note on Thirumalai Nayakkar Palace.', '- The Palace was built in the 17th century by King Thirumalai Nayak in Madurai.
-- It is a magnificent, sprawling example of **Indo-Saracenic** and **Dravidian** architectural fusion, world-famous for its massive, beautifully painted stucco pillars and grand courtyards.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 30),
-  ('faca0000-0000-0000-0000-000000000031', 'a1000000-0000-0000-0000-000000000006', 'Who built the Shore Temple at Mahabalipuram?', '- The exquisite Shore Temple, beautifully overlooking the Bay of Bengal, was constructed by the visionary Pallava King **Narasimhavarman II** (also historically known as Rajasimha Pallava) in the 8th century CE.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 31),
+- It is a magnificent, sprawling example of **Indo-Saracenic** and **Dravidian** architectural fusion, world-famous for its massive, beautifully painted stucco pillars and grand courtyards.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+It was built by King Thirumalai Nayak in Madurai in the 17th century and is famous for its large pillars and Indo-Dravidian architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 30),
+  ('faca0000-0000-0000-0000-000000000031', 'a1000000-0000-0000-0000-000000000006', 'Who built the Shore Temple at Mahabalipuram?', '- The exquisite Shore Temple, beautifully overlooking the Bay of Bengal, was constructed by the visionary Pallava King **Narasimhavarman II** (also historically known as Rajasimha Pallava) in the 8th century CE.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The Shore Temple was built by Narasimhavarman II (Rajasimha Pallava).', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 31),
   ('faca0000-0000-0000-0000-000000000032', 'a1000000-0000-0000-0000-000000000006', 'What are the other names of Mahabalipuram?', 'The historic coastal town of Mahabalipuram is also famously known as:
 - **Mamallapuram**: Named after the great Pallava wrestler-king, Narasimhavarman I, who held the title ''Mamallan'' (Great Wrestler).
-- **Seven Pagodas**: A navigational name given by early European sailors who saw the temple peaks from the ocean.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 32),
+- **Seven Pagodas**: A navigational name given by early European sailors who saw the temple peaks from the ocean.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Mamallapuram
+Mahabalipuram', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 32),
   ('faca0000-0000-0000-0000-000000000033', 'a1000000-0000-0000-0000-000000000006', 'What is the Pancha Pandava Rathas?', '- The **Pancha Rathas** are an architectural marvel at Mahabalipuram consisting of five distinct monolithic temples.
-- Unbelievably, each entire "Ratha" (chariot temple) is intricately carved out of a single, solid piece of pink granite stone by brilliant Pallava artisans.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 33),
-  ('faca0000-0000-0000-0000-000000000034', 'a1000000-0000-0000-0000-000000000006', 'What is a rock-cut cave temple?', '- A **rock-cut cave temple** is a shrine created entirely by excavating and carving directly into the face of a solid rock hill or mountain, rather than building it upward using loose stone blocks or bricks.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 34),
-  ('faca0000-0000-0000-0000-000000000035', 'a1000000-0000-0000-0000-000000000006', 'Who built the Aayiram Kaal Mandapam in Madurai Meenakshi Temple?', '- The spectacular "Hall of Thousand Pillars" (*Aayiram Kaal Mandapam*) inside the Madurai Meenakshi Temple was commissioned and built by **Ariyanatha Mudaliyar**, the brilliant prime minister and general of the Madurai Nayak dynasty in 1569.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 35),
+- Unbelievably, each entire "Ratha" (chariot temple) is intricately carved out of a single, solid piece of pink granite stone by brilliant Pallava artisans.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+They are five monolithic rock-cut temples built during the Pallava period at Mahabalipuram.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 33),
+  ('faca0000-0000-0000-0000-000000000034', 'a1000000-0000-0000-0000-000000000006', 'What is a rock-cut cave temple?', '- A **rock-cut cave temple** is a shrine created entirely by excavating and carving directly into the face of a solid rock hill or mountain, rather than building it upward using loose stone blocks or bricks.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+A temple carved directly into a rock hill or mountain is called a rock-cut cave temple.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 34),
+  ('faca0000-0000-0000-0000-000000000035', 'a1000000-0000-0000-0000-000000000006', 'Who built the Aayiram Kaal Mandapam in Madurai Meenakshi Temple?', '- The spectacular "Hall of Thousand Pillars" (*Aayiram Kaal Mandapam*) inside the Madurai Meenakshi Temple was commissioned and built by **Ariyanatha Mudaliyar**, the brilliant prime minister and general of the Madurai Nayak dynasty in 1569.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+It was built by Ariyanatha Mudaliyar, the minister of the Madurai Nayak rulers.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 35),
   ('faca0000-0000-0000-0000-000000000036', 'a1000000-0000-0000-0000-000000000006', 'Write a short note on Indo-Saracenic Architecture.', '- **Indo-Saracenic Architecture** is a unique fusion style developed by British architects in India during the 19th and 20th centuries.
-- It beautifully combines Indian, Islamic, Mughal, and Gothic European architectural elements (e.g., placing Rajput domes on top of Victorian buildings with stained glass).', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 36),
+- It beautifully combines Indian, Islamic, Mughal, and Gothic European architectural elements (e.g., placing Rajput domes on top of Victorian buildings with stained glass).
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Indo-Saracenic architecture combines Indian, Islamic, Mughal, Gothic, and European architectural styles. It became popular during British rule.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 2-Mark', 36),
   ('faca0000-0000-0000-0000-000000000037', 'a1000000-0000-0000-0000-000000000006', 'Describe the Architectural Styles of the Pallava Period.', '# Architectural Mastery of the Pallava Dynasty
 
 ## Introduction
@@ -260,7 +531,47 @@ graph TD
 
 ## Conclusion
 > [!IMPORTANT]
-> The Pallavas were the ultimate pioneers of South Indian stone architecture. By transitioning from cave excavation to assembling free-standing stone structures, they provided the architectural blueprint that the later Chola and Vijayanagara empires used to build their massive mega-temples.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 37),
+> The Pallavas were the ultimate pioneers of South Indian stone architecture. By transitioning from cave excavation to assembling free-standing stone structures, they provided the architectural blueprint that the later Chola and Vijayanagara empires used to build their massive mega-temples.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+The Pallavas ruled South India between the 4th and 9th centuries CE. They were pioneers in temple architecture and introduced many innovative construction techniques.
+
+Evolution of Pallava Architecture
+```mermaid
+graph TD
+  RockcutCaves["Rock-cut Caves"] --> MonolithicRathas["Monolithic Rathas"]
+  MonolithicRathas["Monolithic Rathas"] --> StructuralTemples["Structural Temples"]
+```
+A. Rock-Cut Cave Temples
+Introduced by Mahendravarman I.
+Carved directly into hills.
+Pillars decorated with lion motifs.
+Example: Mandagapattu Cave Temple.
+B. Monolithic Rathas
+Built during Narasimhavarman I.
+Entire temples carved from a single rock.
+Located at Mahabalipuram.
+Famous Pancha Rathas.
+C. Structural Temples
+Built using granite blocks.
+Represent mature Pallava architecture.
+Example: Shore Temple.
+Features
+Feature	Description
+Lion Pillars	Symbol of Pallava power
+Sculptures	Detailed mythological carvings
+Vimanas	Multi-tier temple towers
+Stone Construction	Durable structures
+Importance
+Foundation of Dravidian architecture.
+Influenced Chola and Vijayanagara architecture.
+UNESCO-recognized monuments.
+Conclusion
+
+The Pallavas transformed South Indian architecture from cave temples to magnificent stone temples.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 37),
   ('faca0000-0000-0000-0000-000000000038', 'a1000000-0000-0000-0000-000000000006', 'Explain the Hero Stone Worship Tradition (Nadukkal Worship System).', '# The Hero Stone (Nadukkal) Tradition of Ancient Tamils
 
 ## Introduction
@@ -295,7 +606,24 @@ The final stage involved the community gathering around the stone to sing ballad
 
 ## Historical Significance
 > [!TIP]
-> Hero stones act as invaluable historical archives. The ancient **Tamil-Brahmi** and **Vatteluttu** inscriptions carved onto them have allowed modern historians to perfectly reconstruct the names, battles, and political boundaries of ancient Tamil dynasties.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 38),
+> Hero stones act as invaluable historical archives. The ancient **Tamil-Brahmi** and **Vatteluttu** inscriptions carved onto them have allowed modern historians to perfectly reconstruct the names, battles, and political boundaries of ancient Tamil dynasties.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Hero stones (Nadukkal) were memorial stones erected in honor of warriors who died in battle.
+
+Six Stages Mentioned in Tholkappiyam
+```mermaid
+graph TD
+  Katchi["Katchi"] --> Kalkol["Kalkol"]
+  Kalkol["Kalkol"] --> Neerppadai["Neerppadai"]
+  Neerppadai["Neerppadai"] --> Naduthal["Naduthal"]
+  Naduthal["Naduthal"] --> Perumpadai["Perumpadai"]
+  Perumpadai["Perumpadai"] --> Vaazhththal["Vaazhththal"]
+```
+Explanation', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 38),
   ('faca0000-0000-0000-0000-000000000039', 'a1000000-0000-0000-0000-000000000006', 'Discuss the Stage Construction Methods Mentioned in Silappadikaram.', '# Ancient Stage Architecture in Silappadikaram
 
 ## Introduction
@@ -326,7 +654,43 @@ The epic describes a highly sophisticated, mechanized curtain system used for dr
 
 ## Conclusion
 > [!IMPORTANT]
-> The *Silappadikaram* proves that ancient Tamil theatre was not a primitive affair. The construction of the *Arangam* required a master-level understanding of geometry, structural engineering, acoustics, and optics, rivaling the grand theatres of ancient Greece.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 39),
+> The *Silappadikaram* proves that ancient Tamil theatre was not a primitive affair. The construction of the *Arangam* required a master-level understanding of geometry, structural engineering, acoustics, and optics, rivaling the grand theatres of ancient Greece.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Silappadikaram provides valuable information about ancient Tamil theatre and stage construction.
+
+Components of a Stage
+```mermaid
+graph TD
+  StagePlatform["Stage Platform"] --> Pillars["Pillars"]
+  Pillars["Pillars"] --> Decorations["Decorations"]
+  Decorations["Decorations"] --> Lighting["Lighting"]
+  Lighting["Lighting"] --> AudienceArea["Audience Area"]
+```
+Features
+Stage Design
+Elevated platform.
+Strong wooden support.
+Decorations
+Floral arrangements.
+Cloth curtains.
+Lighting
+Oil lamps used.
+Strategic placement for visibility.
+Acoustics
+Designed for voice projection.
+Audience Arrangement
+Separate seating based on status.
+Importance
+Promoted performing arts.
+Reflected advanced engineering skills.
+Supported cultural development.
+Conclusion
+
+Ancient Tamils possessed sophisticated knowledge of theatre architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 39),
   ('faca0000-0000-0000-0000-000000000040', 'a1000000-0000-0000-0000-000000000006', 'Describe the Grand Temples and Other Worship Sites of the Chola Period.', '# The Grand Temples of the Imperial Cholas
 
 ## Introduction
@@ -365,7 +729,44 @@ graph TD
 
 ## The Socio-Economic Role of Chola Temples
 > [!TIP]
-> Under the Cholas, the temple acted like a central bank. It employed thousands of people—architects, dancers, musicians, accountants, and guards. The temple received massive land donations, granted loans to farmers, funded massive irrigation projects, and operated schools, making it the very heart of the empire''s economy.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 40),
+> Under the Cholas, the temple acted like a central bank. It employed thousands of people—architects, dancers, musicians, accountants, and guards. The temple received massive land donations, granted loans to farmers, funded massive irrigation projects, and operated schools, making it the very heart of the empire''s economy.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+The Cholas built some of the finest temples in Indian history.
+
+Major Temples
+Brihadeeswarar Temple
+Built by Rajaraja Chola I.
+UNESCO World Heritage Site.
+Massive granite structure.
+Gangaikonda Cholapuram
+Built by Rajendra Chola I.
+Symbol of imperial power.
+Airavatesvara Temple
+Built by Rajaraja II.
+Known for artistic sculptures.
+Temple Layout
+```mermaid
+graph TD
+  Gopuram["Gopuram"] --> Mandapam["Mandapam"]
+  Mandapam["Mandapam"] --> Sanctum["Sanctum"]
+  Sanctum["Sanctum"] --> Prakaram["Prakaram"]
+```
+Functions of Temples
+Religious center.
+Educational center.
+Cultural center.
+Economic center.
+Importance
+
+The temples demonstrate the engineering, artistic, and administrative excellence of the Cholas.
+
+Conclusion
+
+Chola temples remain masterpieces of world architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 40),
   ('faca0000-0000-0000-0000-000000000041', 'a1000000-0000-0000-0000-000000000006', 'Explain the Distinctive Features of Chettinad House Architecture.', '# Distinctive Architecture of Chettinad Houses
 
 ## Introduction
@@ -401,7 +802,43 @@ Before modern air conditioning, Chettinad houses were engineered to remain cool 
 
 ## Conclusion
 > [!IMPORTANT]
-> Chettinad houses are the ultimate symbol of Tamil mercantile success. They are architectural masterclasses in combining sheer, unimaginable luxury with highly practical, climate-friendly, and sustainable design principles.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 41),
+> Chettinad houses are the ultimate symbol of Tamil mercantile success. They are architectural masterclasses in combining sheer, unimaginable luxury with highly practical, climate-friendly, and sustainable design principles.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Chettinad houses were built by the Nagarathar community and are famous for luxury and craftsmanship.
+
+Layout
+```mermaid
+graph TD
+  Entrance["Entrance"] --> ReceptionHall["Reception Hall"]
+  ReceptionHall["Reception Hall"] --> CentralCourtyard["Central Courtyard"]
+  CentralCourtyard["Central Courtyard"] --> LivingRooms["Living Rooms"]
+  LivingRooms["Living Rooms"] --> Kitchen["Kitchen"]
+```
+Features
+Spacious Courtyards
+Natural ventilation.
+Sunlight circulation.
+Imported Materials
+Burmese teak.
+Italian marble.
+Belgian glass.
+Artistic Work
+Wooden carvings.
+Decorative pillars.
+Climate Adaptation
+Thick walls reduce heat.
+Large windows improve airflow.
+Importance
+Environment-friendly design.
+Symbol of Tamil heritage.
+Architectural excellence.
+Conclusion
+
+Chettinad houses represent a perfect blend of beauty, functionality, and sustainability.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 41),
   ('faca0000-0000-0000-0000-000000000042', 'a1000000-0000-0000-0000-000000000006', 'Explain the Key Features of Indo-Saracenic Architecture During British Rule.', '# Indo-Saracenic Architecture During British Rule
 
 ## Introduction
@@ -432,7 +869,40 @@ Chennai serves as the absolute capital of Indo-Saracenic architecture in India. 
 
 ## Conclusion
 > [!TIP]
-> Indo-Saracenic architecture was ultimately a tool of empire—a way for the British to claim they were the natural successors to the Mughals and Indian kings. However, today, these spectacular buildings stand as beloved, iconic heritage monuments that define the modern urban identity of cities like Chennai.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 42),
+> Indo-Saracenic architecture was ultimately a tool of empire—a way for the British to claim they were the natural successors to the Mughals and Indian kings. However, today, these spectacular buildings stand as beloved, iconic heritage monuments that define the modern urban identity of cities like Chennai.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Indo-Saracenic architecture emerged during British rule by combining Indian and European styles.
+
+Architectural Fusion
+```mermaid
+graph TD
+  Indian["Indian"] --> IndoSaracenic["Indo-Saracenic"]
+  Islamic["Islamic"] --> IndoSaracenic["Indo-Saracenic"]
+  Mughal["Mughal"] --> IndoSaracenic["Indo-Saracenic"]
+  Gothic["Gothic"] --> IndoSaracenic["Indo-Saracenic"]
+  European["European"] --> IndoSaracenic["Indo-Saracenic"]
+```
+Features
+Large domes
+Pointed arches
+Minarets
+Decorative balconies
+Symmetrical layouts
+Famous Examples
+Madras High Court
+Chennai Central Railway Station
+Mysore Palace
+Significance
+Cultural integration.
+Unique colonial architecture.
+Historical landmarks.
+Conclusion
+
+Indo-Saracenic architecture symbolizes the blending of Eastern and Western architectural traditions.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 42),
   ('faca0000-0000-0000-0000-000000000043', 'a1000000-0000-0000-0000-000000000006', 'Describe the Shore Temple and Cave Temples of Mahabalipuram.', '# The Shore Temple and Cave Temples of Mahabalipuram
 
 ## Introduction
@@ -470,24 +940,106 @@ Built slightly later by King **Narasimhavarman II (Rajasimha)** in the 8th centu
 
 ## Conclusion
 > [!IMPORTANT]
-> The monuments of Mahabalipuram physically document the exact moment in history when South Indian architecture evolved from carving caves in mountains to building towering stone temples in the sky, setting the stage for all future Dravidian architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 43),
+> The monuments of Mahabalipuram physically document the exact moment in history when South Indian architecture evolved from carving caves in mountains to building towering stone temples in the sky, setting the stage for all future Dravidian architecture.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Mahabalipuram is a UNESCO World Heritage Site and a masterpiece of Pallava architecture.
+
+Shore Temple
+Builder
+
+Narasimhavarman II (Rajasimha)
+
+Features
+Built with granite.
+Dedicated to Shiva and Vishnu.
+Located on the Bay of Bengal coast.
+One of the earliest structural temples.
+Cave Temples
+Examples
+Varaha Cave
+Mahishasuramardini Cave
+Krishna Cave
+Features
+Rock-cut architecture.
+Mythological sculptures.
+Decorative pillars.
+Comparison
+Shore Temple	Cave Temples
+Structural Temple	Rock-cut Temple
+Granite Blocks	Carved from rock
+Open Architecture	Excavated Architecture
+Importance
+Major Contributions of Mahabalipuram Monuments
+
+```mermaid
+xychart-beta
+    title "Major Contributions"
+    x-axis ["Architecture", "Sculpture", "Tourism", "Heritage"]
+    y-axis "Importance" 0 --> 120
+    bar [100, 90, 80, 110]
+```
+Conclusion
+
+The Shore Temple and Cave Temples showcase the highest achievements of Pallava engineering, sculpture, and temple architecture.', NULL, '22GE201 - Tamils and Technology', 'Unit 2 - 16-Mark', 43),
   ('faca0000-0000-0000-0000-000000000044', 'a1000000-0000-0000-0000-000000000006', 'What are the other names for rafters (construction beams)?', 'In traditional Tamil construction, large wooden rafters are also known as:
 - **Roof beams**
 - **Wooden support beams**
-- **Structural timbers** (historically referred to as *Kai-maram* or *Uthiram* in Tamil).', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 44),
+- **Structural timbers** (historically referred to as *Kai-maram* or *Uthiram* in Tamil).
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Rafters are also called:
+
+Roof beams
+Wooden support beams
+Structural timbers', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 44),
   ('faca0000-0000-0000-0000-000000000045', 'a1000000-0000-0000-0000-000000000006', 'How many types of boats are mentioned in Sangam literature?', 'Sangam literature mentions several distinct types of watercraft, varying by size and purpose:
 - **Kappal** and **Navai**: Massive, heavy, ocean-going trade ships.
-- **Thoni**, **Ambi**, and **Odam**: Smaller, highly maneuverable boats used for river transport and local coastal fishing.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 45),
+- **Thoni**, **Ambi**, and **Odam**: Smaller, highly maneuverable boats used for river transport and local coastal fishing.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Sangam literature mentions several types of boats such as:
+
+Kappal
+Navai
+Thoni
+Ambi
+Odam', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 45),
   ('faca0000-0000-0000-0000-000000000046', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about the Parathavar.', '- The **Parathavar** were a prominent ancient Tamil maritime community who lived along the coastal regions (the *Neithal* landscape).
-- They were highly skilled experts in deep-sea fishing, treacherous pearl diving, and conducting massive international ocean trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 46),
+- They were highly skilled experts in deep-sea fishing, treacherous pearl diving, and conducting massive international ocean trade.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The Parathavar were ancient Tamil maritime people engaged in fishing, pearl diving, and overseas trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 46),
   ('faca0000-0000-0000-0000-000000000047', 'a1000000-0000-0000-0000-000000000006', 'What is bipolar electric discharge?', '- Bipolar electric discharge is an industrial or scientific process where electricity flows powerfully between two oppositely charged poles (an anode and a cathode).
-- This intense discharge produces extreme heat and bright light, a concept heavily used in modern plasma tools and ancient metallurgical analogies.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 47),
+- This intense discharge produces extreme heat and bright light, a concept heavily used in modern plasma tools and ancient metallurgical analogies.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+It is a discharge of electricity between two opposite poles, producing heat and light.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 47),
   ('faca0000-0000-0000-0000-000000000048', 'a1000000-0000-0000-0000-000000000006', 'Write about ancient smelting furnaces.', '- Ancient Tamil **smelting furnaces** were highly engineered, heat-resistant clay ovens.
-- They were used by master blacksmiths to heat raw metal ores (like iron) to extreme temperatures, effectively separating the pure metal from the rock using carbon reduction.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 48),
+- They were used by master blacksmiths to heat raw metal ores (like iron) to extreme temperatures, effectively separating the pure metal from the rock using carbon reduction.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Ancient smelting furnaces were used to extract metals from ores through heating and reduction processes.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 48),
   ('faca0000-0000-0000-0000-000000000049', 'a1000000-0000-0000-0000-000000000006', 'How is iron mentioned in Sangam literature?', '- In Sangam literature, **iron** is frequently mentioned as a vital, hard metal crucial to the survival, agriculture, and military power of the kingdoms.
-- It was mass-produced by skilled blacksmiths to forge unbreakable swords, spears, and heavy agricultural plows.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 49),
+- It was mass-produced by skilled blacksmiths to forge unbreakable swords, spears, and heavy agricultural plows.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Iron is mentioned as an important metal used for weapons, agricultural tools, and daily necessities.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 49),
   ('faca0000-0000-0000-0000-000000000050', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about ancient coins.', '- Ancient Tamil coins (issued by the Sangam Chera, Chola, and Pandya dynasties) were typically minted from valuable copper, silver, or gold.
-- They prominently featured royal emblems (like the tiger, bow, or fish) and were primarily used to standardize local markets and facilitate massive international trade with empires like Rome.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 50),
+- They prominently featured royal emblems (like the tiger, bow, or fish) and were primarily used to standardize local markets and facilitate massive international trade with empires like Rome.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Ancient coins were used for trade and administration and often contained symbols of rulers and kingdoms.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 50),
   ('faca0000-0000-0000-0000-000000000051', 'a1000000-0000-0000-0000-000000000006', 'List the names of the nine gemstones (Navaratnas).', 'The **Navaratnas** (Nine Sacred Gemstones) widely traded, cut, and used by ancient Tamils are:
 - Ruby (*Manikkam*)
 - Pearl (*Muthu*)
@@ -497,27 +1049,82 @@ Built slightly later by King **Narasimhavarman II (Rajasimha)** in the 8th centu
 - Diamond (*Vairam*)
 - Blue Sapphire (*Neelam*)
 - Hessonite (*Gomedhakam*)
-- Cat''s Eye (*Vaiduriyam*)', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 51),
+- Cat''s Eye (*Vaiduriyam*)
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Ruby
+Pearl
+Coral
+Emerald
+Yellow Sapphire
+Diamond
+Blue Sapphire
+Hessonite
+Cat''s Eye', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 51),
   ('faca0000-0000-0000-0000-000000000052', 'a1000000-0000-0000-0000-000000000006', 'Who are the Kammiyar?', '- The **Kammiyar** were a highly respected and essential class of ancient Tamil artisans.
-- They were master metalworkers, blacksmiths, and goldsmiths responsible for forging indestructible iron weapons, precision agricultural tools, and royal gold ornaments.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 52),
+- They were master metalworkers, blacksmiths, and goldsmiths responsible for forging indestructible iron weapons, precision agricultural tools, and royal gold ornaments.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Kammiyar were skilled metalworkers and blacksmiths who manufactured tools, weapons, and ornaments.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 52),
   ('faca0000-0000-0000-0000-000000000053', 'a1000000-0000-0000-0000-000000000006', 'Who are the Kuyinar?', '- The **Kuyinar** were the specialized artisan community in ancient Tamil society exclusively associated with pottery and ceramic production.
-- They possessed advanced, closely guarded knowledge of clay chemistry, wheel-throwing, and extreme high-temperature kiln-firing techniques.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 53),
+- They possessed advanced, closely guarded knowledge of clay chemistry, wheel-throwing, and extreme high-temperature kiln-firing techniques.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Kuyinar were artisans associated with pottery and ceramic production.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 53),
   ('faca0000-0000-0000-0000-000000000054', 'a1000000-0000-0000-0000-000000000006', 'Name the different shapes of beads.', 'Ancient excavations (like at Keeladi) reveal that beads were manufactured using micro-drills into precise geometrical shapes:
 - **Spherical** (Perfectly Round)
 - **Cylindrical** (Long and tube-like)
 - **Barrel-shaped** (Thick in the middle, tapered at ends)
 - **Disc-shaped** (Flat and circular)
-- **Oval**', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 54),
+- **Oval**
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Spherical
+Cylindrical
+Barrel-shaped
+Disc-shaped
+Oval', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 54),
   ('faca0000-0000-0000-0000-000000000055', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note about colored glass beads.', '- **Colored glass beads** were beautiful, artificial decorative objects manufactured by ancient Tamils using highly complex, high-temperature sand-and-mineral melting techniques.
-- They were mass-produced in coastal port cities like **Arikamedu** and heavily exported to foreign empires like Rome and Egypt.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 55),
+- They were mass-produced in coastal port cities like **Arikamedu** and heavily exported to foreign empires like Rome and Egypt.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Colored glass beads were decorative objects used in ornaments and trade and were produced using advanced manufacturing techniques.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 55),
   ('faca0000-0000-0000-0000-000000000056', 'a1000000-0000-0000-0000-000000000006', 'How many shapes of beads are there? What are they?', 'Ancient Tamil bead-makers produced five primary shapes using precise stone drilling techniques:
-- Round, Oval, Cylindrical, Barrel, and Disc shapes.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 56),
+- Round, Oval, Cylindrical, Barrel, and Disc shapes.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Common bead shapes include:
+
+Round
+Oval
+Cylindrical
+Barrel
+Disc', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 56),
   ('faca0000-0000-0000-0000-000000000057', 'a1000000-0000-0000-0000-000000000006', 'Which beads are mentioned in Silappathikaram?', '- The epic *Silappathikaram* provides an extensive, detailed catalogue of luxury beads sold in the bustling markets of Poompuhar.
-- It specifically mentions flawless **Pearl beads**, brilliant **Gemstone beads**, bright red **Coral beads**, and pure **Gold beads**.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 57),
+- It specifically mentions flawless **Pearl beads**, brilliant **Gemstone beads**, bright red **Coral beads**, and pure **Gold beads**.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Silappathikaram mentions pearl beads, gemstone beads, coral beads, and gold beads.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 57),
   ('faca0000-0000-0000-0000-000000000058', 'a1000000-0000-0000-0000-000000000006', 'What kinds of objects were made from beads?', 'Micro-drilled beads were expertly strung together with extremely fine gold wire or strong silk threads to create luxury jewelry such as:
 - Elaborate Multi-strand Necklaces
 - Heavy Bracelets and Bangles
-- Intricate Earrings and Ankle ornaments', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 58),
+- Intricate Earrings and Ankle ornaments
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Beads were used to make:
+
+Necklaces
+Bracelets
+Earrings
+Decorative ornaments', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 2-Mark', 58),
   ('faca0000-0000-0000-0000-000000000059', 'a1000000-0000-0000-0000-000000000006', 'Explain the Ancient Tamil Shipbuilding Technology', '# Ancient Tamil Shipbuilding and Maritime Technology
 
 ## Introduction
@@ -554,7 +1161,61 @@ Unlike modern ships built with nails, early ancient Tamil ships were marvels of 
 
 ## The Great Trade Network
 > [!IMPORTANT]
-> By mastering shipbuilding and understanding the Monsoon wind patterns, Tamil ports like **Poompuhar**, **Korkai**, and **Musiri** became the wealthiest international trade hubs of the ancient world. Roman gold poured into Tamil Nadu in exchange for pepper, pearls, and Wootz steel.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 59),
+> By mastering shipbuilding and understanding the Monsoon wind patterns, Tamil ports like **Poompuhar**, **Korkai**, and **Musiri** became the wealthiest international trade hubs of the ancient world. Roman gold poured into Tamil Nadu in exchange for pepper, pearls, and Wootz steel.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Ancient Tamils were among the greatest maritime traders of the Indian Ocean. Their shipbuilding technology enabled trade with Southeast Asia, Rome, Egypt, Sri Lanka, and Arabia.
+
+Evolution of Tamil Maritime Technology
+```mermaid
+graph TD
+  FishingRafts["Fishing Rafts"] --> WoodenBoats["Wooden Boats"]
+  WoodenBoats["Wooden Boats"] --> LargeTradingVessels["Large Trading Vessels"]
+  LargeTradingVessels["Large Trading Vessels"] --> OceangoingShips["Ocean-going Ships"]
+```
+Types of Ships
+Type	Purpose
+Thoni	River transport
+Odam	Coastal trade
+Navai	Cargo transport
+Kappal	Long-distance trade
+Ambi	Fishing and transport
+Ship Construction Process
+```mermaid
+graph TD
+  SelectionofTimber["Selection of Timber"] --> WoodCutting["Wood Cutting"]
+  WoodCutting["Wood Cutting"] --> HullConstruction["Hull Construction"]
+  HullConstruction["Hull Construction"] --> MastInstallation["Mast Installation"]
+  MastInstallation["Mast Installation"] --> SailAttachment["Sail Attachment"]
+  SailAttachment["Sail Attachment"] --> Waterproofing["Waterproofing"]
+  Waterproofing["Waterproofing"] --> SeaTesting["Sea Testing"]
+```
+Maritime Trade Network
+Ancient Tamil Maritime Connections
+
+```mermaid
+xychart-beta
+    title "Maritime Connections"
+    x-axis ["Sri Lanka", "Rome", "Arabia", "Southeast Asia", "Egypt"]
+    y-axis "Trade Importance" 0 --> 120
+    bar [60, 90, 80, 70, 50]
+```
+Major Ports
+Poompuhar
+Korkai
+Musiri
+Arikamedu
+Significance
+Encouraged international trade
+Increased wealth of Tamil kingdoms
+Promoted cultural exchange
+Demonstrated engineering excellence
+Conclusion
+
+Tamil shipbuilding technology was among the most advanced maritime technologies of the ancient world.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 59),
   ('faca0000-0000-0000-0000-000000000060', 'a1000000-0000-0000-0000-000000000006', 'Describe the Metallurgical Skills of Ancient Tamils with Supporting Evidence', '# The Metallurgical Genius of Ancient Tamils
 
 ## Introduction
@@ -591,7 +1252,63 @@ flowchart LR
 
 - **The Process**: Iron was placed in a sealed clay crucible along with carbon-rich organic matter (like specific leaves and wood). It was heated for days until the iron absorbed the carbon, creating high-carbon steel.
 - **The Result**: A steel that was unbelievably sharp, flexible, and virtually unbreakable, featuring a beautiful, watery pattern on the blade.
-- **Global Impact**: Wootz steel was highly prized by the Roman Empire and was exported to the Middle East, where it was later famously known as "Damascus Steel."', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 60),
+- **Global Impact**: Wootz steel was highly prized by the Roman Empire and was exported to the Middle East, where it was later famously known as "Damascus Steel."
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Ancient Tamils possessed remarkable knowledge of metallurgy, including iron extraction, steel production, copper working, and goldsmithing.
+
+Metallurgical Process
+```mermaid
+graph TD
+  Mining["Mining"] --> OreCollection["Ore Collection"]
+  OreCollection["Ore Collection"] --> Smelting["Smelting"]
+  Smelting["Smelting"] --> Purification["Purification"]
+  Purification["Purification"] --> Forging["Forging"]
+  Forging["Forging"] --> FinishedProducts["Finished Products"]
+```
+Metals Used
+Metal	Usage
+Iron	Weapons, tools
+Copper	Utensils
+Bronze	Statues
+Gold	Ornaments
+Silver	Coins
+Evidence
+Archaeological Evidence
+Adichanallur excavations
+Kodumanal excavations
+Keeladi findings
+Literary Evidence
+Purananuru
+Akananuru
+Silappathikaram
+Famous Achievement: Wootz Steel
+
+Ancient Tamil blacksmiths produced Wootz Steel, one of the finest steels in the world.
+
+Features
+High carbon content
+Exceptional strength
+Exported internationally
+Applications
+```mermaid
+graph TD
+  Agriculture["Agriculture"] --> Ploughs["Ploughs"]
+```
+```mermaid
+graph TD
+  Weapons["Weapons"] --> SwordsSpears["Swords & Spears"]
+```
+```mermaid
+graph TD
+  Trade["Trade"] --> MetalGoods["Metal Goods"]
+```
+Conclusion
+
+The metallurgical knowledge of ancient Tamils laid the foundation for advanced manufacturing and international trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 60),
   ('faca0000-0000-0000-0000-000000000061', 'a1000000-0000-0000-0000-000000000006', 'Write a Note on Ancient Coins and Their Historical Significance', '# Ancient Coins (Nanayam) and Their Historical Significance
 
 ## Introduction
@@ -628,7 +1345,45 @@ The quality and metal of the coin perfectly reflect the wealth of the kingdom du
 > [!TIP]
 > One of the greatest historical discoveries in Tamil Nadu was the unearthing of massive hoards of pure gold **Roman Coins** (bearing the faces of Emperors like Augustus and Tiberius) in places like Coimbatore and Arikamedu.
 
-Finding thousands of Roman coins buried deep in Tamil soil provides absolute, undeniable proof of the massive, highly lucrative spice trade between the Roman Empire and ancient Tamil Nadu.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 61),
+Finding thousands of Roman coins buried deep in Tamil soil provides absolute, undeniable proof of the massive, highly lucrative spice trade between the Roman Empire and ancient Tamil Nadu.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Coins are valuable historical sources that reveal economic, political, and cultural developments.
+
+Types of Ancient Coins
+Tamil Kingdom Coins
+Chola Coins
+Chera Coins
+Pandya Coins
+Foreign Coins
+Roman Coins
+Greek Coins
+Information Derived from Coins
+```mermaid
+graph TD
+  Coins["Coins"] --> Rulers["Rulers"]
+  Rulers["Rulers"] --> Economy["Economy"]
+  Economy["Economy"] --> Religion["Religion"]
+  Religion["Religion"] --> Trade["Trade"]
+  Trade["Trade"] --> Chronology["Chronology"]
+```
+Materials Used
+Material	Purpose
+Gold	High-value trade
+Silver	Commerce
+Copper	Daily transactions
+Bronze	Regional circulation
+Historical Importance
+Evidence of foreign trade
+Helps date historical events
+Shows political authority
+Reveals economic prosperity
+Conclusion
+
+Ancient coins serve as miniature historical documents preserving valuable information about civilization.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 61),
   ('faca0000-0000-0000-0000-000000000062', 'a1000000-0000-0000-0000-000000000006', 'Explain the Shapes and Types of Beads with Archaeological Evidence', '# The Manufacturing and Significance of Ancient Beads
 
 ## Introduction
@@ -654,7 +1409,51 @@ Creating a stone bead without modern power tools was an incredibly laborious, hi
 > [!IMPORTANT]
 > Excavations at **Kodumanal** have revealed an entire, massive industrial complex dedicated exclusively to gemstone bead manufacturing. Thousands of unfinished beads and broken drill bits were found, proving it was a major factory supplying the ancient world.
 
-Similarly, excavations at **Arikamedu** have uncovered millions of colored glass beads, proving it was one of the largest glass bead manufacturing centers in the world, exporting heavily to the Roman Empire.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 62),
+Similarly, excavations at **Arikamedu** have uncovered millions of colored glass beads, proving it was one of the largest glass bead manufacturing centers in the world, exporting heavily to the Roman Empire.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Beads are among the earliest manufactured products of human civilization.
+
+Manufacturing Process
+```mermaid
+graph TD
+  RawMaterial["Raw Material"] --> Cutting["Cutting"]
+  Cutting["Cutting"] --> Shaping["Shaping"]
+  Shaping["Shaping"] --> Drilling["Drilling"]
+  Drilling["Drilling"] --> Polishing["Polishing"]
+  Polishing["Polishing"] --> FinishedBead["Finished Bead"]
+```
+Types of Beads
+Type	Material
+Glass Beads	Glass
+Stone Beads	Agate, Carnelian
+Shell Beads	Shell
+Metal Beads	Gold, Copper
+Pearl Beads	Pearls
+Shapes
+Round
+Oval
+Barrel
+Cylindrical
+Disc
+Tubular
+Archaeological Sites
+Site	Discovery
+Arikamedu	Glass beads
+Kodumanal	Gemstone beads
+Keeladi	Ornament beads
+Adichanallur	Decorative beads
+Uses
+Jewellery
+Trade
+Religious activities
+Social status symbols
+Conclusion
+
+Beads provide important evidence of technological advancement and trade relations.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 62),
   ('faca0000-0000-0000-0000-000000000063', 'a1000000-0000-0000-0000-000000000006', 'Explain the Details About Beads Mentioned by Ilango Adigal in Silappathikaram', '# Gemstones and Beads in the Silappathikaram
 
 ## Introduction
@@ -679,48 +1478,179 @@ The text provides a specific classification of flawless gems (*Navaratnas*) used
 - When Kovalan is falsely executed for stealing the Queen''s anklet, Kannagi smashes her own anklet on the floor of the king''s court. The rubies shatter out, proving the king''s fatal mistake, as the queen''s anklet only contained pearls.
 
 ## Conclusion
-The extensive, highly technical descriptions of gems and beads in the *Silappathikaram* prove that ancient Tamils possessed an incredibly advanced gemological science. They knew exactly how to evaluate a stone for flaws (like internal cracks or bad color) and had a massive, booming economy built entirely around the luxury jewelry trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 63),
+The extensive, highly technical descriptions of gems and beads in the *Silappathikaram* prove that ancient Tamils possessed an incredibly advanced gemological science. They knew exactly how to evaluate a stone for flaws (like internal cracks or bad color) and had a massive, booming economy built entirely around the luxury jewelry trade.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Silappathikaram contains detailed references to precious gems and beads, reflecting the prosperity of ancient Tamil society.
+
+Gems Mentioned
+Pearl
+Coral
+Ruby
+Emerald
+Sapphire
+Diamond
+Relationship with Trade
+```mermaid
+graph TD
+  GemMining["Gem Mining"] --> Processing["Processing"]
+  Processing["Processing"] --> JewelleryProduction["Jewellery Production"]
+  JewelleryProduction["Jewellery Production"] --> DomesticTrade["Domestic Trade"]
+  DomesticTrade["Domestic Trade"] --> InternationalTrade["International Trade"]
+```
+Cultural Importance
+Economic Value
+Major trade commodity.
+Social Status
+Worn by royalty and wealthy merchants.
+Religious Importance
+Used in temple ornaments.
+Classification of Beads
+Types of Beads Mentioned in Literary Sources
+
+```mermaid
+pie title "Types of Beads"
+    "Pearl" : 30
+    "Glass" : 25
+    "Gemstone" : 20
+    "Gold" : 15
+    "Coral" : 10
+```
+Literary Importance
+
+Silappathikaram provides evidence for:
+
+Advanced jewellery industry
+Gemstone trade
+International commerce
+Craft specialization
+Conclusion
+
+The references to beads in Silappathikaram demonstrate the technological skill, economic prosperity, and artistic excellence of ancient Tamil society.', NULL, '22GE201 - Tamils and Technology', 'Unit 3 - 16-Mark', 63),
   ('faca0000-0000-0000-0000-000000000064', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Kallanai (Grand Anicut).', '- **Kallanai** (The Grand Anicut) is an ancient, massive, and awe-inspiring water-regulating dam built across the mighty, fast-flowing Cauvery River.
-- It was masterfully constructed by the great Chola King, **Karikala Chola**, around the 2nd century CE using unhewn stone. Incredibly, it is still fully functional today, irrigating millions of acres!', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 64),
+- It was masterfully constructed by the great Chola King, **Karikala Chola**, around the 2nd century CE using unhewn stone. Incredibly, it is still fully functional today, irrigating millions of acres!
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Kallanai is one of the world''s oldest water-regulating dams built across the Cauvery River by Karikala Chola around the 2nd century CE.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 64),
   ('faca0000-0000-0000-0000-000000000065', 'a1000000-0000-0000-0000-000000000006', 'Who were the Neer Vettiyar?', '- The **Neer Vettiyar** were specialized, highly respected water-management officials in ancient Tamil villages.
-- Their primary duty was to strictly regulate, measure, and distribute irrigation water fairly among all farmers, preventing devastating water disputes during droughts.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 65),
+- Their primary duty was to strictly regulate, measure, and distribute irrigation water fairly among all farmers, preventing devastating water disputes during droughts.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Neer Vettiyar were officials responsible for distributing irrigation water fairly among farmers.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 65),
   ('faca0000-0000-0000-0000-000000000066', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Kumizhi Thoombu.', '- **Kumizhi Thoombu** was a genius ancient Tamil water-lifting and filtration sluice device.
-- It was cleverly placed at the very bottom of lakes to draw out water while simultaneously sucking in and flushing out accumulated mud, naturally preventing the lake from silting up over time.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 66),
+- It was cleverly placed at the very bottom of lakes to draw out water while simultaneously sucking in and flushing out accumulated mud, naturally preventing the lake from silting up over time.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Kumizhi Thoombu was an ancient water-lifting device used to draw water from wells and tanks for irrigation.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 66),
   ('faca0000-0000-0000-0000-000000000067', 'a1000000-0000-0000-0000-000000000006', 'Who constructed the Thiraiyan Eri?', '- The massive **Thiraiyan Eri** (Thiraiyan Lake) was constructed by the early, visionary Pallava King **Thondaiman Ilanthiraiyan**.
-- It served as a critical, life-saving reservoir for massive agricultural irrigation and drinking water storage in the region.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 67),
+- It served as a critical, life-saving reservoir for massive agricultural irrigation and drinking water storage in the region.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Thiraiyan Eri was constructed by King Thiraiyan for irrigation and water storage.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 67),
   ('faca0000-0000-0000-0000-000000000068', 'a1000000-0000-0000-0000-000000000006', 'Which kings ruled by establishing the Seven Committees (Ezhu Variyams)?', '- The **Chola Kings** (especially during the Imperial period) ruled their local villages using a highly democratic and highly decentralized system of elected committees.
-- This system was called the **Ezhu Variyam** (Seven Committees), which independently managed everything from tank irrigation (*Eri Variyam*) to garden maintenance and local justice.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 68),
+- This system was called the **Ezhu Variyam** (Seven Committees), which independently managed everything from tank irrigation (*Eri Variyam*) to garden maintenance and local justice.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The Chola kings established and maintained the Ezhu Variyam administrative system.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 68),
   ('faca0000-0000-0000-0000-000000000069', 'a1000000-0000-0000-0000-000000000006', 'Who were the Neeranikkararkal?', '- **Neeranikkararkal** were the elite, technically skilled water-supervising engineers appointed by the king or the local village assembly.
-- They oversaw the structural integrity of massive water storage structures, reservoir safety during heavy monsoons, and the macro-level distribution of vast irrigation networks.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 69),
+- They oversaw the structural integrity of massive water storage structures, reservoir safety during heavy monsoons, and the macro-level distribution of vast irrigation networks.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Neeranikkararkal were officials who supervised water storage, distribution, and irrigation management.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 69),
   ('faca0000-0000-0000-0000-000000000070', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Madai.', '- A **Madai** is a highly engineered, manually lockable sluice gate built heavily into the thick bunds (walls) of ancient tanks and reservoirs.
-- It was operated by guards to control the exact flow, volume, and pressure of water released to the agricultural fields below.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 70),
+- It was operated by guards to control the exact flow, volume, and pressure of water released to the agricultural fields below.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Madai is a sluice gate used to regulate water flow from tanks and reservoirs to agricultural fields.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 70),
   ('faca0000-0000-0000-0000-000000000071', 'a1000000-0000-0000-0000-000000000006', 'Write a note about water resources in ancient Tamil society.', '- Ancient Tamil society heavily depended on diverse water resources, recognizing water as the ultimate source of wealth.
-- They meticulously engineered and maintained perennial Rivers (like Cauvery and Vaigai), massive artificial Tanks (*Eri*), Ponds (*Kulam*), Lakes, Canals, and deep step-Wells for both agriculture and survival.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 71),
+- They meticulously engineered and maintained perennial Rivers (like Cauvery and Vaigai), massive artificial Tanks (*Eri*), Ponds (*Kulam*), Lakes, Canals, and deep step-Wells for both agriculture and survival.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Water resources included rivers, tanks, ponds, lakes, canals, wells, and reservoirs.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 71),
   ('faca0000-0000-0000-0000-000000000072', 'a1000000-0000-0000-0000-000000000006', 'Write a note about Muraipanai.', '- **Muraipanai** was a strict, highly democratic rotational water-sharing system employed in ancient agricultural villages.
-- Governed by the village assembly, it ensured the fair, timed distribution of irrigation water among all farmers, effectively preventing violent conflicts during dry summer months.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 72),
+- Governed by the village assembly, it ensured the fair, timed distribution of irrigation water among all farmers, effectively preventing violent conflicts during dry summer months.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Muraipanai was a rotational water-sharing system ensuring fair distribution among farmers.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 72),
   ('faca0000-0000-0000-0000-000000000073', 'a1000000-0000-0000-0000-000000000006', 'Which water bodies are mentioned in Tamil literature?', 'Sangam literature extensively categorizes water bodies based on their structural size and specific usage:
 - Rivers (*Aaru*) and massive Lakes (*Eri*) for macro-irrigation.
 - Ponds (*Kulam* or *Ooruni*) for drinking water.
-- Canals (*Vaikal*) and deep Wells (*Kinaru*).', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 73),
+- Canals (*Vaikal*) and deep Wells (*Kinaru*).
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Rivers
+Lakes
+Tanks
+Ponds
+Canals
+Wells', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 73),
   ('faca0000-0000-0000-0000-000000000074', 'a1000000-0000-0000-0000-000000000006', 'Write a note about pastoral occupations.', '- Pastoral occupations were the absolute primary livelihood of the people living in the **Mullai** (forest/pasture) landscape.
-- It involved extensive cattle rearing, goat herding, sheep farming, and the large-scale economic production of valuable dairy products (like milk, butter, and ghee).', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 74),
+- It involved extensive cattle rearing, goat herding, sheep farming, and the large-scale economic production of valuable dairy products (like milk, butter, and ghee).
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Pastoral occupations involved cattle rearing, goat herding, sheep farming, and dairy production.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 74),
   ('faca0000-0000-0000-0000-000000000075', 'a1000000-0000-0000-0000-000000000006', 'What were the water sources for cattle?', '- Large roaming herds of cattle primarily drank from natural Rivers and forest Streams.
-- During severe droughts, herdsmen relied entirely on man-made Ponds (*Kulam*), Lakes, and massive rural Reservoirs specifically built by kings to sustain the livestock economy.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 75),
+- During severe droughts, herdsmen relied entirely on man-made Ponds (*Kulam*), Lakes, and massive rural Reservoirs specifically built by kings to sustain the livestock economy.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Rivers
+Ponds
+Lakes
+Wells
+Reservoirs', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 75),
   ('faca0000-0000-0000-0000-000000000076', 'a1000000-0000-0000-0000-000000000006', 'Explain Vanpulam and Menpulam.', 'Ancient Tamils scientifically classified agricultural soil into two types based on fertility and water retention:
 - **Vanpulam**: Dry, hard, rocky land suitable only for rain-fed, low-water crops like millets and pulses.
-- **Menpulam**: Highly fertile, soft, river-irrigated alluvial land absolutely perfect for wet-cultivation crops like paddy (rice) and sugarcane.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 76),
+- **Menpulam**: Highly fertile, soft, river-irrigated alluvial land absolutely perfect for wet-cultivation crops like paddy (rice) and sugarcane.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Vanpulam – Dry, hard land suitable for millets.
+Menpulam – Fertile land suitable for wet cultivation like paddy.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 76),
   ('faca0000-0000-0000-0000-000000000077', 'a1000000-0000-0000-0000-000000000006', 'Name some sea birds mentioned in ancient texts.', 'The *Neithal* (coastal) landscape poems of Sangam literature frequently and vividly mention coastal birds such as:
 - Seagulls (*Kadalagam*)
 - Pelicans
 - Herons (*Kurugu*)
-- Cormorants', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 77),
+- Cormorants
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Seagulls
+Pelicans
+Herons
+Cormorants', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 77),
   ('faca0000-0000-0000-0000-000000000078', 'a1000000-0000-0000-0000-000000000006', 'Write a note about pearl diving.', '- Pearl diving was an extremely dangerous, highly lucrative occupation practiced exclusively by the **Parathavar** community in the treacherous Gulf of Mannar.
-- Divers would hold their breath, dive deep to the ocean floor holding a heavy stone, and collect pearl oysters for highly profitable international export to Rome.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 78),
+- Divers would hold their breath, dive deep to the ocean floor holding a heavy stone, and collect pearl oysters for highly profitable international export to Rome.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Pearl diving involved collecting pearl oysters from the sea and extracting pearls for trade and ornamentation.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 78),
   ('faca0000-0000-0000-0000-000000000079', 'a1000000-0000-0000-0000-000000000006', 'List four benefits of ponds.', 'Ancient constructed ponds (*Ooruni* or *Kulam*) provided four massive survival benefits to villages:
 1. Safe, filtered drinking water for the community.
 2. Micro-irrigation for backyard vegetable gardens.
 3. Rapid, sustainable groundwater recharge.
-4. An essential, permanent water supply for livestock.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 79),
+4. An essential, permanent water supply for livestock.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Irrigation
+Drinking water
+Groundwater recharge
+Livestock usage', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 2-Mark', 79),
   ('faca0000-0000-0000-0000-000000000080', 'a1000000-0000-0000-0000-000000000006', 'Write in Detail About Water Management and Irrigation Systems During the Sangam Period', '# Water Management and Irrigation Systems in the Sangam Period
 
 ## Introduction
@@ -757,7 +1687,68 @@ Building a lake was not enough; managing the water was critical. The Cholas esta
 
 ## Conclusion
 > [!IMPORTANT]
-> The ancient Tamil water management system is a masterclass in hydraulic engineering and democratic governance. Their massive reservoirs (*Eris*) were so perfectly designed that thousands of them are still the primary source of irrigation for Tamil Nadu''s farmers today.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 80),
+> The ancient Tamil water management system is a masterclass in hydraulic engineering and democratic governance. Their massive reservoirs (*Eris*) were so perfectly designed that thousands of them are still the primary source of irrigation for Tamil Nadu''s farmers today.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Water management was the backbone of Sangam-age civilization. Ancient Tamils developed sophisticated systems to collect, store, regulate, and distribute water.
+
+Water Management Structure
+```mermaid
+graph TD
+  Rainfall["Rainfall"] --> Rivers["Rivers"]
+  Rivers["Rivers"] --> ReservoirsTanks["Reservoirs - Tanks"]
+  ReservoirsTanks["Reservoirs - Tanks"] --> Canals["Canals"]
+  Canals["Canals"] --> AgriculturalFields["Agricultural Fields"]
+  AgriculturalFields["Agricultural Fields"] --> FoodProduction["Food Production"]
+```
+Major Water Sources
+Source	Purpose
+Rivers	Irrigation
+Tanks (Eri)	Water storage
+Ponds (Kulam)	Domestic use
+Wells	Drinking water
+Canals	Distribution
+Irrigation Methods
+Tank Irrigation
+Most common system.
+Stored monsoon water.
+Canal Irrigation
+Transported river water.
+Well Irrigation
+Used during dry seasons.
+Reservoir Irrigation
+Large-scale water storage.
+Water Administration
+```mermaid
+graph TD
+  King["King"] --> VillageAssembly["Village Assembly"]
+  VillageAssembly["Village Assembly"] --> Neeranikkararkal["Neeranikkararkal"]
+  Neeranikkararkal["Neeranikkararkal"] --> NeerVettiyar["Neer Vettiyar"]
+  NeerVettiyar["Neer Vettiyar"] --> Farmers["Farmers"]
+```
+Importance
+Increased agricultural production.
+Reduced drought impact.
+Supported population growth.
+Improved food security.
+Key Features
+
+✔ Community participation
+
+✔ Water-sharing regulations
+
+✔ Seasonal planning
+
+✔ Maintenance systems
+
+✔ Sustainable resource use
+
+Conclusion
+
+The Sangam-period irrigation system represents one of the earliest examples of scientific water resource management in the world.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 80),
   ('faca0000-0000-0000-0000-000000000081', 'a1000000-0000-0000-0000-000000000006', 'Explain the Kallanai Dam – Construction, Purpose, and Historical Significance', '# The Kallanai Dam (Grand Anicut): A Marvel of Ancient Engineering
 
 ## Introduction
@@ -785,7 +1776,66 @@ Building a dam across a powerful, constantly flowing river with a soft, sandy be
 
 - **Agricultural Boom**: It diverted water through complex canals, turning the Thanjavur district into the "Rice Bowl of South India."
 - **Flood Control**: It permanently saved thousands of lives from monsoon flooding.
-- **Economic Dominance**: By guaranteeing a massive surplus of rice, it gave the Cholas the economic fuel required to build their massive empire and fund international trade.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 81),
+- **Economic Dominance**: By guaranteeing a massive surplus of rice, it gave the Cholas the economic fuel required to build their massive empire and fund international trade.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Kallanai (Grand Anicut) is one of the oldest functioning dams in the world and a remarkable engineering achievement of ancient Tamil civilization.
+
+Builder
+
+Karikala Chola
+
+Approximate period: 2nd Century CE
+
+Construction
+Materials Used
+Massive stone blocks
+Granite rocks
+Natural river foundation
+Structure
+```mermaid
+graph TD
+  CauveryRiver["Cauvery River"] --> StoneDamKallanai["Stone Dam Kallanai"]
+  StoneDamKallanai["Stone Dam Kallanai"] --> WaterDiversion["Water Diversion"]
+  WaterDiversion["Water Diversion"] --> Canals["Canals"]
+  Canals["Canals"] --> AgriculturalFields["Agricultural Fields"]
+```
+Objectives
+Water conservation
+Irrigation expansion
+Flood control
+Agricultural development
+Engineering Excellence
+Feature	Importance
+Stone Construction	Durability
+Water Diversion	Efficient irrigation
+Wide Structure	Flood control
+Natural Foundation	Stability
+Historical Importance
+Economic Impact
+Increased rice production.
+Improved trade.
+Social Impact
+Enhanced rural development.
+Improved livelihoods.
+Engineering Impact
+Inspiration for modern dams.
+Global Significance
+Major Contributions of Kallanai
+
+```mermaid
+xychart-beta
+    title "Benefits of Kallanai"
+    x-axis ["Irrigation", "Agriculture", "Flood Control", "Storage", "Economy"]
+    y-axis "Impact" 0 --> 120
+    bar [110, 100, 85, 90, 75]
+```
+Conclusion
+
+Kallanai stands as a symbol of ancient Tamil engineering brilliance and continues to serve farmers even today.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 81),
   ('faca0000-0000-0000-0000-000000000082', 'a1000000-0000-0000-0000-000000000006', 'Describe the Agricultural Practices of Ancient Tamils During the Sangam Period', '# Agricultural Practices of Ancient Tamils
 
 ## Introduction
@@ -820,7 +1870,57 @@ graph TD
 > [!IMPORTANT]
 > A prosperous agricultural sector was the absolute prerequisite for a powerful kingdom. A surplus of grain allowed kings to feed massive standing armies, trade rice for foreign gold, and employ millions of people. 
 
-The system was incredibly sustainable, ensuring food security while perfectly maintaining the ecological balance of the land for thousands of years.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 82),
+The system was incredibly sustainable, ensuring food security while perfectly maintaining the ecological balance of the land for thousands of years.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Agriculture was the primary occupation of Sangam-age Tamil society.
+
+Agricultural Cycle
+```mermaid
+graph TD
+  LandPreparation["Land Preparation"] --> Ploughing["Ploughing"]
+  Ploughing["Ploughing"] --> Sowing["Sowing"]
+  Sowing["Sowing"] --> Irrigation["Irrigation"]
+  Irrigation["Irrigation"] --> CropProtection["Crop Protection"]
+  CropProtection["Crop Protection"] --> Harvesting["Harvesting"]
+  Harvesting["Harvesting"] --> Storage["Storage"]
+```
+Major Crops
+Crop	Region
+Paddy	Menpulam
+Millet	Vanpulam
+Sugarcane	River Basins
+Pulses	Dry Areas
+Cotton	Semi-Arid Regions
+Agricultural Tools
+Iron ploughs
+Sickles
+Hoes
+Water-lifting devices
+Farming Methods
+Wet Cultivation
+
+Used for paddy cultivation.
+
+Dry Cultivation
+
+Used for millets and pulses.
+
+Mixed Farming
+
+Combination of crops and livestock.
+
+Importance
+Food security
+Economic prosperity
+Trade development
+Social stability
+Conclusion
+
+Ancient Tamil agriculture was scientifically planned and supported by effective irrigation systems.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 82),
   ('faca0000-0000-0000-0000-000000000083', 'a1000000-0000-0000-0000-000000000006', 'Explain Pearl Harvesting and Pearl Diving in Ancient Times', '# Pearl Harvesting and Pearl Diving in Ancient Tamilakam
 
 ## Introduction
@@ -853,7 +1953,58 @@ Once brought to the shore, the oysters were piled up on the beach and left to ro
 
 - Roman Emperors (like Julius Caesar) issued edicts stating that only royalty were allowed to wear Tamil pearls.
 - Pliny the Elder, a famous Roman historian, bitterly complained that Rome was going bankrupt because Roman women were obsessed with buying pearls from the Pandyan Kingdom.
-- The pearls brought an unbelievable influx of foreign gold and silver into Tamil Nadu, making the Pandya kings incredibly wealthy and powerful.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 83),
+- The pearls brought an unbelievable influx of foreign gold and silver into Tamil Nadu, making the Pandya kings incredibly wealthy and powerful.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Pearl diving was one of the most profitable maritime industries of ancient Tamilakam.
+
+Major Pearl Centers
+Korkai
+Gulf of Mannar
+Coastal Pandya Kingdom
+Pearl Harvesting Process
+```mermaid
+graph TD
+  PearlOysterBeds["Pearl Oyster Beds"] --> DiversEnterSea["Divers Enter Sea"]
+  DiversEnterSea["Divers Enter Sea"] --> CollectionofOysters["Collection of Oysters"]
+  CollectionofOysters["Collection of Oysters"] --> Sorting["Sorting"]
+  Sorting["Sorting"] --> OpeningShells["Opening Shells"]
+  OpeningShells["Opening Shells"] --> PearlExtraction["Pearl Extraction"]
+  PearlExtraction["Pearl Extraction"] --> TradeExport["Trade & Export"]
+```
+Divers
+Skills Required
+Breath control
+Swimming expertise
+Underwater navigation
+Economic Importance
+Export commodity
+International trade
+Royal revenue
+Foreign Trade
+
+Pearls were exported to:
+
+Rome
+Egypt
+Arabia
+Southeast Asia
+Significance
+Major Uses of Ancient Tamil Pearls
+
+```mermaid
+pie title "Uses of Ancient Pearls"
+    "Jewellery" : 40
+    "Trade" : 30
+    "Royal Gifts" : 20
+    "Religious Use" : 10
+```
+Conclusion
+
+Pearl diving contributed significantly to the wealth and global trade reputation of ancient Tamil kingdoms.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 83),
   ('faca0000-0000-0000-0000-000000000084', 'a1000000-0000-0000-0000-000000000006', 'Write About Cattle Rearing, Livestock Management, and Animal Husbandry During the Sangam Period', '# Cattle Rearing and Animal Husbandry in the Sangam Period
 
 ## Introduction
@@ -881,43 +2032,183 @@ The ancient Tamils maintained diverse herds, scientifically utilizing every sing
 - Retrieving stolen cattle (**Karanthai Thinai**) was considered an act of supreme heroism. Many **Hero Stones (Nadukkal)** in Tamil Nadu are dedicated specifically to brave warriors who died defending their village''s cattle from thieves.
 
 ## Conclusion
-Animal husbandry in the Sangam age was a perfectly optimized, sustainable economic system. The symbiotic relationship between the cattle (providing plowing power and fertilizer) and the agriculture (providing grain and fodder) formed an unbreakable cycle of prosperity that fed the entire Tamil civilization.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 84),
+Animal husbandry in the Sangam age was a perfectly optimized, sustainable economic system. The symbiotic relationship between the cattle (providing plowing power and fertilizer) and the agriculture (providing grain and fodder) formed an unbreakable cycle of prosperity that fed the entire Tamil civilization.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Livestock formed an essential component of the Sangam economy and agricultural system.
+
+Types of Livestock
+Animal	Purpose
+Cattle	Farming and milk
+Buffaloes	Ploughing
+Goats	Meat and milk
+Sheep	Wool and meat
+Horses	Transport
+Livestock Management System
+```mermaid
+graph TD
+  Breeding["Breeding"] --> Feeding["Feeding"]
+  Feeding["Feeding"] --> WaterSupply["Water Supply"]
+  WaterSupply["Water Supply"] --> HealthCare["Health Care"]
+  HealthCare["Health Care"] --> Protection["Protection"]
+  Protection["Protection"] --> ProductUtilization["Product Utilization"]
+```
+Uses of Livestock
+Agricultural Use
+Ploughing
+Transportation
+Economic Use
+Dairy products
+Trade
+Social Use
+Wealth indicator
+Cultural importance
+Pastoral Communities
+Aayar
+Idaiyar
+Konar
+Benefits
+
+✔ Organic manure
+
+✔ Milk production
+
+✔ Agricultural support
+
+✔ Rural economy
+
+✔ Trade opportunities
+
+Conclusion
+
+Livestock management was a highly organized and economically significant activity in Sangam society, supporting both agriculture and trade.
+
+Exam Topper Formula for Unit IV
+
+For every 16-mark answer:
+
+```mermaid
+graph TD
+  Introduction["Introduction"] --> Definition["Definition"]
+  Definition["Definition"] --> HistoricalBackground["Historical Background"]
+  HistoricalBackground["Historical Background"] --> FlowDiagram["Flow Diagram"]
+  FlowDiagram["Flow Diagram"] --> ClassificationTable["Classification Table"]
+  ClassificationTable["Classification Table"] --> ProcessExplanation["Process Explanation"]
+  ProcessExplanation["Process Explanation"] --> Importance["Importance"]
+  Importance["Importance"] --> ModernRelevance["Modern Relevance"]
+  ModernRelevance["Modern Relevance"] --> Conclusion["Conclusion"]
+```
+
+Using this structure consistently can make long answers more complete, organized, and easier for examiners to evaluate.', NULL, '22GE201 - Tamils and Technology', 'Unit 4 - 16-Mark', 84),
   ('faca0000-0000-0000-0000-000000000085', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Computational Tamil (Kanithamizh).', '- **Computational Tamil** (*Kanithamizh*) refers to the deep integration of the ancient Tamil language with modern computer science, digital devices, and software engineering.
-- It involves developing highly complex Tamil unicode fonts, digital keyboards, spell-checkers, AI translation engines, and Natural Language Processing (NLP) tools.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 85),
+- It involves developing highly complex Tamil unicode fonts, digital keyboards, spell-checkers, AI translation engines, and Natural Language Processing (NLP) tools.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Kanithamizh refers to the use of Tamil language in computers, digital devices, software, and information technology systems.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 85),
   ('faca0000-0000-0000-0000-000000000086', 'a1000000-0000-0000-0000-000000000006', 'In which year was the Tamil Virtual Academy established?', '- The **Tamil Virtual Academy** (TVA), formerly known as the Tamil Virtual University, was officially established in the year **2001** by the Government of Tamil Nadu.
-- Its massive goal is to promote Tamil computing and provide online Tamil education to the global diaspora.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 86),
+- Its massive goal is to promote Tamil computing and provide online Tamil education to the global diaspora.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The Tamil Virtual Academy was established in 2001 by the Government of Tamil Nadu.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 86),
   ('faca0000-0000-0000-0000-000000000087', 'a1000000-0000-0000-0000-000000000006', 'Name three e-learning systems.', 'Modern e-learning systems heavily utilized for teaching and preserving Tamil education include:
 - Interactive **E-books** and downloadable multimedia PDFs.
 - Web-based **Online Learning Platforms** (like Moodle or Canvas LMS portals).
-- Live, real-time **Virtual Classrooms** (utilizing video conferencing software).', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 87),
+- Live, real-time **Virtual Classrooms** (utilizing video conferencing software).
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+E-books
+Online Learning Platforms
+Virtual Classrooms', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 87),
   ('faca0000-0000-0000-0000-000000000088', 'a1000000-0000-0000-0000-000000000006', 'List the institutions where Tamil software is developed.', 'Major institutions and organizations spearheading Tamil software development include:
 - The **Tamil Virtual Academy** (TVA)
 - **Anna University** (through its highly active *Kani Tamil Peravai*)
 - **Tamil University** located in Thanjavur
-- Various global Open Source Tamil Computing Communities (like Ubuntu Tamil).', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 88),
+- Various global Open Source Tamil Computing Communities (like Ubuntu Tamil).
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Tamil Virtual Academy
+Anna University
+Tamil University
+Open Source Tamil Computing Communities', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 88),
   ('faca0000-0000-0000-0000-000000000089', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Digital Libraries.', '- **Digital Libraries** are massive, cloud-based online repositories that electronically scan, index, and store physical books, ancient fragile palm-leaf manuscripts, journals, and research papers.
-- They ensure ancient Tamil literature is preserved forever from physical decay and is instantly accessible globally for free.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 89),
+- They ensure ancient Tamil literature is preserved forever from physical decay and is instantly accessible globally for free.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Digital libraries are online repositories that store books, journals, manuscripts, and research materials in electronic form.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 89),
   ('faca0000-0000-0000-0000-000000000090', 'a1000000-0000-0000-0000-000000000006', 'Write about Online Dictionaries.', '- **Online Dictionaries** (like the *Agarathi* project) are vast internet-based lexical databases.
-- They provide instant meanings, precise audio pronunciations, synonyms, and multi-language translations, making complex Tamil vocabulary highly accessible to researchers and students worldwide.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 90),
+- They provide instant meanings, precise audio pronunciations, synonyms, and multi-language translations, making complex Tamil vocabulary highly accessible to researchers and students worldwide.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Online dictionaries provide meanings, pronunciation, synonyms, and translations through internet-based platforms.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 90),
   ('faca0000-0000-0000-0000-000000000091', 'a1000000-0000-0000-0000-000000000006', 'How many components are there in the Madhuram Online Dictionary?', '- The **Madhuram Online Dictionary** consists of several highly integrated lexical components.
-- It provides precise meanings, complex grammatical structures, extensive synonyms, and real-world usage examples for thousands of Tamil words.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 91),
+- It provides precise meanings, complex grammatical structures, extensive synonyms, and real-world usage examples for thousands of Tamil words.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+The Madhuram Online Dictionary consists of multiple lexical components including meanings, grammar, synonyms, and usage information.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 91),
   ('faca0000-0000-0000-0000-000000000092', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Tamil Wiktionary.', '- **Tamil Wiktionary** is a massive, completely free, community-driven online collaborative dictionary.
-- Built by volunteers worldwide, it contains hundreds of thousands of Tamil words, providing detailed meanings, audio pronunciations, and deep historical etymologies.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 92),
+- Built by volunteers worldwide, it contains hundreds of thousands of Tamil words, providing detailed meanings, audio pronunciations, and deep historical etymologies.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Tamil Wiktionary is a free online collaborative dictionary containing Tamil words, meanings, pronunciations, and etymologies.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 92),
   ('faca0000-0000-0000-0000-000000000093', 'a1000000-0000-0000-0000-000000000006', 'What is Sorkuvai Thittam?', '- The **Sorkuvai Thittam** (Word Corpus Project) is a massive, ongoing initiative launched by the Tamil Nadu Government.
-- It is specifically aimed at collecting, officially organizing, and permanently standardizing new Tamil technical, medical, and scientific terminology.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 93),
+- It is specifically aimed at collecting, officially organizing, and permanently standardizing new Tamil technical, medical, and scientific terminology.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Sorkuvai Thittam is a project aimed at collecting, organizing, and standardizing Tamil technical and scientific terminology.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 93),
   ('faca0000-0000-0000-0000-000000000094', 'a1000000-0000-0000-0000-000000000006', 'What are the primary objectives of a Sorkuvai?', 'The primary objectives of the Sorkuvai project are:
 - To continuously develop precise native Tamil terminology for modern, fast-evolving science and IT.
 - To permanently standardize scientific words so textbook authors and teachers use a unified vocabulary.
-- To heavily promote the use of Tamil in higher education and global technology.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 94),
-  ('faca0000-0000-0000-0000-000000000095', 'a1000000-0000-0000-0000-000000000006', 'What was the previous name of Tamil Virtual Academy?', '- Before its rebranding to reflect its massive digital scope and modern educational approach, the Tamil Virtual Academy (TVA) was officially known as the **Tamil Virtual University** (TVU).', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 95),
+- To heavily promote the use of Tamil in higher education and global technology.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Develop Tamil terminology.
+Standardize scientific words.
+Promote Tamil in education and technology.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 94),
+  ('faca0000-0000-0000-0000-000000000095', 'a1000000-0000-0000-0000-000000000006', 'What was the previous name of Tamil Virtual Academy?', '- Before its rebranding to reflect its massive digital scope and modern educational approach, the Tamil Virtual Academy (TVA) was officially known as the **Tamil Virtual University** (TVU).
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+It was previously known as the Tamil Virtual University (TVU).', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 95),
   ('faca0000-0000-0000-0000-000000000096', 'a1000000-0000-0000-0000-000000000006', 'Write a note on Blogs.', '- **Blogs** (*Valaipookkal*) are dynamic, frequently updated websites or online personal journals.
-- They allow individuals (bloggers) to instantly publish personal articles, opinions, and technical tutorials to a global audience without needing a traditional publisher.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 96),
+- They allow individuals (bloggers) to instantly publish personal articles, opinions, and technical tutorials to a global audience without needing a traditional publisher.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Blogs are websites or online journals where individuals share information, opinions, and articles regularly.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 96),
   ('faca0000-0000-0000-0000-000000000097', 'a1000000-0000-0000-0000-000000000006', 'Write about the development of Tamil in Blogs.', '- The explosion of Tamil blogs in the early 2000s massively increased the volume of native Tamil content available on the internet.
-- It broke the strict monopoly of traditional print media, promoting massive digital literacy, creative writing, and free speech among global Tamil-speaking communities.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 97),
-  ('faca0000-0000-0000-0000-000000000098', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note on Online Tamil Dictionaries.', '- **Online Tamil dictionaries** provide instant, highly optimized search-driven access to complex vocabulary, grammar rules, and multi-language translations directly on mobile phones and computers, replacing heavy physical books.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 98),
+- It broke the strict monopoly of traditional print media, promoting massive digital literacy, creative writing, and free speech among global Tamil-speaking communities.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Blogs have increased Tamil content on the internet and promoted digital literacy among Tamil-speaking communities.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 97),
+  ('faca0000-0000-0000-0000-000000000098', 'a1000000-0000-0000-0000-000000000006', 'Write a brief note on Online Tamil Dictionaries.', '- **Online Tamil dictionaries** provide instant, highly optimized search-driven access to complex vocabulary, grammar rules, and multi-language translations directly on mobile phones and computers, replacing heavy physical books.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Online Tamil dictionaries provide quick access to vocabulary, meanings, grammar, and translations.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 98),
   ('faca0000-0000-0000-0000-000000000099', 'a1000000-0000-0000-0000-000000000006', 'What are the benefits of Tamil software development?', 'Developing native Tamil software provides massive, society-changing benefits:
 - It heavily promotes Tamil computing and digital inclusion for rural students who may not know English.
-- It completely ensures the ancient language survives, adapts, and thrives purely in the modern digital age.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 99),
+- It completely ensures the ancient language survives, adapts, and thrives purely in the modern digital age.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Promotes Tamil computing.
+Enhances accessibility.
+Supports education.
+Preserves language digitally.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 2-Mark', 99),
   ('faca0000-0000-0000-0000-000000000100', 'a1000000-0000-0000-0000-000000000006', 'Explain in Detail the Development of Computer Tamil (Kanithamizh)', '# The Development of Computer Tamil (Kanithamizh)
 
 ## Introduction
@@ -951,7 +2242,70 @@ Modern Tamil computing relies on complex software engineering:
 > [!IMPORTANT]
 > The absolute frontier of Tamil computing is **Natural Language Processing (NLP)** and **Artificial Intelligence**. 
 
-Tech giants and universities are heavily training Machine Learning models (like ChatGPT and Google Translate) using massive Tamil datasets to perfectly translate complex English medical and engineering texts into flawless, grammatically correct Tamil in milliseconds. This ensures Tamil remains a language of global scientific research.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 100),
+Tech giants and universities are heavily training Machine Learning models (like ChatGPT and Google Translate) using massive Tamil datasets to perfectly translate complex English medical and engineering texts into flawless, grammatically correct Tamil in milliseconds. This ensures Tamil remains a language of global scientific research.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Computer Tamil (Kanithamizh) refers to the integration of Tamil language with modern computing technologies. It enables Tamil users to access computers, mobile devices, software, and internet resources in their native language.
+
+Evolution of Tamil Computing
+```mermaid
+graph TD
+  TraditionalTamilWriting["Traditional Tamil Writing"] --> Typewriters["Typewriters"]
+  Typewriters["Typewriters"] --> TamilFonts["Tamil Fonts"]
+  TamilFonts["Tamil Fonts"] --> UnicodeStandard["Unicode Standard"]
+  UnicodeStandard["Unicode Standard"] --> TamilSoftware["Tamil Software"]
+  TamilSoftware["Tamil Software"] --> InternetTamil["Internet Tamil"]
+  InternetTamil["Internet Tamil"] --> AIDigitalTamil["AI & Digital Tamil"]
+```
+Major Milestones
+Period	Development
+1980s	Tamil font creation
+1990s	Tamil word processors
+2000s	Unicode implementation
+2010s	Mobile Tamil applications
+Present	AI-based Tamil computing
+Components of Tamil Computing
+```mermaid
+mindmap
+  root((Tamil Computing))
+    Input Systems
+      Tamil Keyboard
+      Transliteration Tools
+      Speech Input
+    Processing Systems
+      Spell Checkers
+      Grammar Tools
+      Translation Software
+    Output Systems
+      Websites
+      Mobile Apps
+      Digital Documents
+```
+Benefits
+Preserves Tamil language.
+Promotes digital inclusion.
+Supports education and research.
+Enables global communication.
+Growth Areas
+Growth Areas in Tamil Computing
+
+```mermaid
+xychart-beta
+    title "Growth Areas in Tamil Computing"
+    x-axis ["Education", "Mobile Apps", "AI Tools", "Translation", "Publishing"]
+    y-axis "Growth" 0 --> 120
+    bar [100, 90, 85, 75, 65]
+```
+Challenges
+Technical terminology creation.
+Software localization.
+NLP resource development.
+Conclusion
+
+Computer Tamil has transformed Tamil from a traditional language into a globally accessible digital language.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 100),
   ('faca0000-0000-0000-0000-000000000101', 'a1000000-0000-0000-0000-000000000006', 'Explain About E-Books', '# E-Books (Minnool) in Tamil Education
 
 ## Introduction
@@ -986,7 +2340,48 @@ Modern Tamil educational e-books are interactive. They don''t just have text; th
 
 ## Environmental and Economic Impact
 > [!TIP]
-> E-books are aggressively eco-friendly. By completely eliminating the need to cut down millions of trees for paper and avoiding the carbon emissions from shipping heavy books via trucks, e-books represent the most sustainable future for Tamil publishing. Furthermore, production costs drop to zero after the first copy, making education vastly cheaper for rural students.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 101),
+> E-books are aggressively eco-friendly. By completely eliminating the need to cut down millions of trees for paper and avoiding the carbon emissions from shipping heavy books via trucks, e-books represent the most sustainable future for Tamil publishing. Furthermore, production costs drop to zero after the first copy, making education vastly cheaper for rural students.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+E-books (Electronic Books) are digital versions of printed books that can be read using computers, smartphones, tablets, and e-readers.
+
+E-Book Lifecycle
+```mermaid
+graph TD
+  Author["Author"] --> DigitalCreation["Digital Creation"]
+  DigitalCreation["Digital Creation"] --> Editing["Editing"]
+  Editing["Editing"] --> Publishing["Publishing"]
+  Publishing["Publishing"] --> OnlineDistribution["Online Distribution"]
+  OnlineDistribution["Online Distribution"] --> ReaderAccess["Reader Access"]
+```
+Features of E-Books
+Accessibility
+Available anytime.
+Accessible worldwide.
+Storage
+Thousands of books in one device.
+Searchability
+Quick keyword search.
+Multimedia Integration
+Images
+Audio
+Video
+Advantages
+Feature	Benefit
+Portability	Easy to carry
+Cost-effective	Lower production cost
+Eco-friendly	Saves paper
+Instant Access	Immediate download
+Importance in Education
+Distance learning.
+Research support.
+Digital classrooms.
+Conclusion
+
+E-books have revolutionized learning by making knowledge accessible anytime and anywhere.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 101),
   ('faca0000-0000-0000-0000-000000000102', 'a1000000-0000-0000-0000-000000000006', 'Explain About Online Dictionaries or E-Dictionaries', '# Online Dictionaries (E-Dictionaries) for the Tamil Language
 
 ## Introduction
@@ -1018,7 +2413,56 @@ A Tamil diaspora student living in Canada or a researcher in Germany can access 
 
 ## Conclusion
 > [!IMPORTANT]
-> Online dictionaries are the absolute backbone of digital content creation. By providing instant, flawless translations and meanings, they empower software developers, journalists, and students to generate high-quality Tamil content rapidly, ensuring the language remains grammatically pure in the digital space.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 102),
+> Online dictionaries are the absolute backbone of digital content creation. By providing instant, flawless translations and meanings, they empower software developers, journalists, and students to generate high-quality Tamil content rapidly, ensuring the language remains grammatically pure in the digital space.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+An online dictionary is a digital platform that provides word meanings, pronunciations, grammar, and translations through the internet.
+
+Working Process
+```mermaid
+graph TD
+  UserQuery["User Query"] --> DatabaseSearch["Database Search"]
+  DatabaseSearch["Database Search"] --> MeaningRetrieval["Meaning Retrieval"]
+  MeaningRetrieval["Meaning Retrieval"] --> GrammarInformation["Grammar Information"]
+  GrammarInformation["Grammar Information"] --> DisplayResults["Display Results"]
+```
+Components
+Vocabulary Database
+
+Stores thousands of words.
+
+Grammar Module
+
+Provides grammatical information.
+
+Pronunciation System
+
+Guides correct pronunciation.
+
+Translation Module
+
+Provides multilingual support.
+
+Examples
+Tamil Wiktionary
+Madhuram Dictionary
+Online Tamil Lexicon
+Advantages
+Fast access
+Updated information
+Easy search
+Global accessibility
+Applications
+Education
+Translation
+Research
+Content Creation
+Conclusion
+
+Online dictionaries play a crucial role in modern language learning and digital communication.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 102),
   ('faca0000-0000-0000-0000-000000000103', 'a1000000-0000-0000-0000-000000000006', 'Describe the Sorkuvai Thittam and Its Objectives', '# Sorkuvai Thittam: The Tamil Vocabulary Project
 
 ## Introduction
@@ -1055,7 +2499,53 @@ The project is highly active in highly specialized fields:
 
 ## Conclusion
 > [!IMPORTANT]
-> The Sorkuvai Thittam is not just a dictionary project; it is a vital defense mechanism for the Tamil language. By constantly generating modern vocabulary, it ensures that Tamil is fully equipped to teach, research, and innovate in the 21st century.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 103),
+> The Sorkuvai Thittam is not just a dictionary project; it is a vital defense mechanism for the Tamil language. By constantly generating modern vocabulary, it ensures that Tamil is fully equipped to teach, research, and innovate in the 21st century.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Sorkuvai Thittam is a language development initiative designed to create and standardize Tamil terminology, especially in science and technology.
+
+Process of Sorkuvai Development
+```mermaid
+graph TD
+  NewConcept["New Concept"] --> Research["Research"]
+  Research["Research"] --> TamilEquivalentCreation["Tamil Equivalent Creation"]
+  TamilEquivalentCreation["Tamil Equivalent Creation"] --> ExpertReview["Expert Review"]
+  ExpertReview["Expert Review"] --> Standardization["Standardization"]
+  Standardization["Standardization"] --> PublicUsage["Public Usage"]
+```
+Objectives
+Language Development
+
+Expand Tamil vocabulary.
+
+Scientific Advancement
+
+Enable scientific education in Tamil.
+
+Standardization
+
+Ensure consistent terminology.
+
+Technology Integration
+
+Support Tamil computing.
+
+Areas Covered
+Field	Example
+Science	Scientific terms
+Engineering	Technical vocabulary
+Medicine	Medical terminology
+Computing	Digital terminology
+Importance
+Strengthens Tamil language.
+Supports higher education.
+Enhances technical communication.
+Conclusion
+
+Sorkuvai Thittam is essential for making Tamil a modern scientific and technological language.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 103),
   ('faca0000-0000-0000-0000-000000000104', 'a1000000-0000-0000-0000-000000000006', 'Write an Essay on Scientific Tamil', '# Scientific Tamil (Ariviyal Thamizh): Bridging Classical Language and Modern Science
 
 ## Introduction
@@ -1089,5 +2579,106 @@ flowchart LR
 
 ## Conclusion
 > [!TIP]
-> The ultimate success of Scientific Tamil lies in proving that a 3,000-year-old classical language is not a static museum piece. By actively developing an incredibly precise scientific vocabulary, Tamil has seamlessly transformed into a dynamic, hyper-modern language capable of driving the technological innovations of the future.', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 104)
+> The ultimate success of Scientific Tamil lies in proving that a 3,000-year-old classical language is not a static museum piece. By actively developing an incredibly precise scientific vocabulary, Tamil has seamlessly transformed into a dynamic, hyper-modern language capable of driving the technological innovations of the future.
+
+---
+**Short Answer (சுருக்கமான பதில்):**
+Introduction
+
+Scientific Tamil refers to the use of Scientific Tamil language for expressing scientific, technological, engineering, and medical concepts accurately.
+
+Need for Scientific Tamil
+```mermaid
+graph TD
+  ScienceGrowth["Science Growth"] --> NeedforNativeLanguage["Need for Native Language"]
+  NeedforNativeLanguage["Need for Native Language"] --> ScientificTamil["Scientific Tamil"]
+  ScientificTamil["Scientific Tamil"] --> EducationResearch["Education & Research"]
+  EducationResearch["Education & Research"] --> KnowledgeDissemination["Knowledge Dissemination"]
+```
+Characteristics
+Precision
+
+Scientific concepts are expressed clearly.
+
+Standardization
+
+Uniform terminology is used.
+
+Accessibility
+
+Knowledge becomes available to Tamil speakers.
+
+Adaptability
+
+New terms are continuously created.
+
+Major Contributors
+Tamil Scholars
+Linguists
+Tamil Virtual Academy
+Universities
+Government Agencies
+Fields of Application
+Field	Usage
+Physics	Scientific concepts
+Chemistry	Technical terms
+Biology	Medical vocabulary
+Engineering	Technical education
+Computing	Digital terminology
+Contribution of Digital Technology
+Internet
+   +
+Unicode
+   +
+Tamil Software
+   +
+```mermaid
+graph TD
+  AITools["AI Tools"] --> ScientificTamilExpansion["Scientific Tamil Expansion"]
+```
+Impact of Scientific Tamil
+Impact Areas of Scientific Tamil
+
+Major sectors benefited by scientific Tamil development.
+
+Education
+Government
+Publishing
+Research
+Technology
+Future Scope
+Artificial Intelligence in Tamil
+Natural Language Processing (NLP)
+Voice Assistants
+Machine Translation
+Smart Educational Systems
+Conclusion
+
+Scientific Tamil serves as a bridge between modern scientific knowledge and Tamil-speaking society. It ensures that Tamil remains relevant, dynamic, and capable of expressing the most advanced concepts of the modern world.
+
+FINAL EXAM REVISION MAP (ALL 5 UNITS)
+```mermaid
+graph TD
+  UnitI["Unit I"] --> WeavingPottery["Weaving & Pottery"]
+```
+
+```mermaid
+graph TD
+  UnitII["Unit II"] --> ArchitectureConstruction["Architecture & Construction"]
+```
+
+```mermaid
+graph TD
+  UnitIII["Unit III"] --> ManufacturingTechnology["Manufacturing Technology"]
+```
+
+```mermaid
+graph TD
+  UnitIV["Unit IV"] --> AgricultureIrrigation["Agriculture & Irrigation"]
+```
+
+```mermaid
+graph TD
+  UnitV["Unit V"] --> ScientificTamilComputing["Scientific Tamil & Computing"]
+```', NULL, '22GE201 - Tamils and Technology', 'Unit 5 - 16-Mark', 104)
 ON CONFLICT (id) DO UPDATE SET question = EXCLUDED.question, answer = EXCLUDED.answer, notes = EXCLUDED.notes, order_index = EXCLUDED.order_index;

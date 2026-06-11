@@ -263,9 +263,11 @@ def parse_text(text):
         for q_block in q_splits[1:]:
             if 'Answer:' in q_block:
                 q, a = q_block.split('Answer:', 1)
+                short_a = a.strip()
                 questions.append({
                     'q': q.strip(),
-                    'a': convert_flow(a.strip()),
+                    'a': convert_flow(short_a),
+                    'short_a': short_a,
                     'type': '2-Mark',
                     'unit': unit_idx + 1
                 })
@@ -279,9 +281,11 @@ def parse_text(text):
                     q, a = q_block.split('Answer:', 1)
                 else:
                     q, a = q_block.split('\n', 1) # First line is question
+                short_a = a.strip()
                 questions.append({
                     'q': q.strip(),
-                    'a': convert_flow(a.strip()),
+                    'a': convert_flow(short_a),
+                    'short_a': short_a,
                     'type': '16-Mark',
                     'unit': unit_idx + 1
                 })
@@ -306,7 +310,8 @@ def main():
         uid = f"faca0000-0000-0000-0000-{i+1:012d}"
         
         question_text = q['q'].replace("'", "''")
-        answer_text = q['a'].replace("'", "''")
+        full_answer = q['a'] + "\n\n---\n**Short Answer (சுருக்கமான பதில்):**\n" + q.get('short_a', q['a'])
+        answer_text = full_answer.replace("'", "''")
         note = f"Unit {q['unit']} - {q['type']}"
         
         values = f"  ('{uid}', '{subject_id}', '{question_text}', '{answer_text}', NULL, '{subject_name}', '{note}', {i+1})"
