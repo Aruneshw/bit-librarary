@@ -13,6 +13,7 @@ import TutorialModal from '@/components/tutorial/TutorialModal';
 import MobileActionDock from '@/components/dashboard/MobileActionDock';
 import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
 import FeatureNotice from '@/components/dashboard/FeatureNotice';
+import BroadcastBanner from '@/components/dashboard/BroadcastBanner';
 import AdminPostFeed from '@/components/dashboard/AdminPostFeed';
 import MediaFeed from '@/components/dashboard/MediaFeed';
 import PostComposer from '@/components/dashboard/PostComposer';
@@ -416,8 +417,9 @@ export default function DashboardPage() {
       ) : (
         <>
           <PwaInstallBanner />
+          <BroadcastBanner />
 
-          {/* HUD Front Page / Boot sequence */}
+            {/* HUD Front Page / Boot sequence */}
           {showIntro && (
             <HudFrontPage
               onEnter={handleIntroComplete}

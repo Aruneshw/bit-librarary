@@ -73,6 +73,7 @@ export default function AdminDashboard() {
   const [storageProvider, setStorageProvider] = useState<'supabase' | 'vercel_blob'>('supabase');
   const [hasBlobToken, setHasBlobToken] = useState(false);
   const [userSearch, setUserSearch] = useState('');
+  const [registryFilter, setRegistryFilter] = useState<'all' | 'online' | 'most_logins' | 'recent'>('all');
   const [showPollComposer, setShowPollComposer] = useState(false);
 
   const fetchSystemMetrics = useCallback(async () => {
@@ -613,17 +614,36 @@ export default function AdminDashboard() {
               <span className="w-2 h-2 rounded-full bg-arc-blue shadow-[0_0_8px_rgba(0,217,255,1)] animate-pulse" />
               Registered Personnel Directory
             </h2>
-            <div className="mt-4 relative">
-              <input
-                value={userSearch}
-                onChange={(e) => setUserSearch(e.target.value)}
-                placeholder="Search by name or email..."
-                className="w-full max-w-md bg-black/60 border border-arc-blue/30 rounded p-2.5 pl-9 text-white font-mono text-sm focus:outline-none focus:border-arc-blue"
-              />
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-arc-blue/50">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
+            <div className="mt-4 flex flex-col sm:flex-row gap-3">
+              <div className="flex gap-1.5 flex-wrap">
+                {(['all', 'online', 'most_logins', 'recent'] as const).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setRegistryFilter(mode)}
+                    className={`px-3 py-1.5 font-orbitron text-[10px] tracking-wider rounded-md border transition-all ${
+                      registryFilter === mode
+                        ? mode === 'online'
+                          ? 'bg-terminal-green/20 border-terminal-green text-terminal-green shadow-[0_0_8px_rgba(0,255,65,0.15)]'
+                          : 'bg-arc-blue/20 border-arc-blue text-arc-blue shadow-[0_0_8px_rgba(0,217,255,0.15)]'
+                        : 'border-arc-blue/20 text-white/40 hover:text-white/70 hover:border-arc-blue/40'
+                    }`}
+                  >
+                    {mode === 'all' ? 'All' : mode === 'online' ? '● Online' : mode === 'most_logins' ? 'Most Logins' : 'Recently Joined'}
+                  </button>
+                ))}
+              </div>
+              <div className="relative flex-1 max-w-md">
+                <input
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  placeholder="Search by name or email..."
+                  className="w-full bg-black/60 border border-arc-blue/30 rounded p-2.5 pl-9 text-white font-mono text-sm focus:outline-none focus:border-arc-blue"
+                />
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-3 top-1/2 -translate-y-1/2 text-arc-blue/50">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </div>
             </div>
           </div>
           
@@ -646,12 +666,20 @@ export default function AdminDashboard() {
                   </tr>
                 ) : (
                   (() => {
-                    const filtered = userSearch
+                    let filtered = userSearch
                       ? users.filter(u =>
                           (u.name || '').toLowerCase().includes(userSearch.toLowerCase()) ||
                           u.email.toLowerCase().includes(userSearch.toLowerCase())
                         )
-                      : users;
+                      : [...users];
+
+                    if (registryFilter === 'online') {
+                      filtered = filtered.filter(u => onlineUserIds.includes(u.id));
+                    } else if (registryFilter === 'most_logins') {
+                      filtered.sort((a, b) => (b.login_count || 0) - (a.login_count || 0));
+                    } else if (registryFilter === 'recent') {
+                      filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+                    }
                     return filtered.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="p-8 text-center text-white/50 font-mono">
@@ -709,7 +737,10 @@ export default function AdminDashboard() {
             <div className="px-6 py-3 border-t border-arc-blue/10 flex justify-between items-center">
               <span className="font-mono text-[10px] text-white/30">
                 Total: {users.length} personnel
-                {userSearch && ` (${users.filter(u => (u.name || '').toLowerCase().includes(userSearch.toLowerCase()) || u.email.toLowerCase().includes(userSearch.toLowerCase())).length} matching)`}
+                {registryFilter !== 'all' && (
+                  <span className="text-arc-blue/60"> [{registryFilter === 'online' ? 'Online' : registryFilter === 'most_logins' ? 'Most Logins' : 'Recently Joined'}]</span>
+                )}
+                {userSearch && ` (matching)`}
               </span>
             </div>
           </div>
