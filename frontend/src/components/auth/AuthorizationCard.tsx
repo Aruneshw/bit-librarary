@@ -4,6 +4,22 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { useState } from 'react';
 
+// Pre-computed SHA-256 hash of the valid passcode (never store plaintext)
+const VALID_PASSCODE_HASH = '06ceef9715535b739e13f0eff2d08f2a4d57b537aaa549facff529eaa2af02d0';
+
+/**
+ * Hash a password string using SHA-256.
+ * The plaintext password never leaves the browser — only the hash is sent over the network.
+ * This prevents the password from being visible in the Chrome DevTools Network tab.
+ */
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
 export default function AuthorizationCard() {
   const { signInWithGoogle } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
@@ -28,10 +44,12 @@ export default function AuthorizationCard() {
     setIsLoading(true);
     setError(null);
     try {
+      // 🔒 Hash the password before sending — the Network tab will only show the hash
+      const credential = await hashPassword(finalPass);
       const res = await fetch('/api/auth/bypass', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: selectedUser, password: finalPass }),
+        body: JSON.stringify({ username: selectedUser, credential }),
       });
       const data = await res.json();
       if (data.success && data.actionLink) {
@@ -57,7 +75,9 @@ export default function AuthorizationCard() {
       return;
     }
 
-    if (trimmedUser.toLowerCase() === 'adminah' && trimmedPass === '12345') {
+    // Compare hash of entered password against stored hash (never compare plaintext)
+    const enteredHash = await hashPassword(trimmedPass);
+    if (trimmedUser.toLowerCase() === 'adminah' && enteredHash === VALID_PASSCODE_HASH) {
       setShowAdminSelector(true);
       return;
     }

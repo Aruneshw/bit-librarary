@@ -1,9 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
+// Pre-computed SHA-256 hash of the valid passcode
+// The plaintext password is NEVER stored in source code
+const VALID_CREDENTIAL_HASH = '06ceef9715535b739e13f0eff2d08f2a4d57b537aaa549facff529eaa2af02d0';
+
 export async function POST(request: Request) {
   try {
-    const { username, password } = await request.json();
+    const { username, credential } = await request.json();
+
+    // Validate that credential is a hex SHA-256 hash (64 chars)
+    if (!credential || typeof credential !== 'string' || !/^[a-f0-9]{64}$/.test(credential)) {
+      return NextResponse.json({ error: 'Invalid credentials format.' }, { status: 400 });
+    }
 
     const validUsers = [
       { user: 'adminah', email: 'aruneshownsty1@gmail.com', name: 'Aruneshwaran' },
@@ -15,7 +24,8 @@ export async function POST(request: Request) {
       (u) => u.user.toLowerCase() === username?.trim().toLowerCase()
     );
 
-    if (matchedUser && password === '12345') {
+    // Compare the incoming hash against the stored hash (never plaintext comparison)
+    if (matchedUser && credential === VALID_CREDENTIAL_HASH) {
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -87,3 +97,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error?.message || 'Server error.' }, { status: 500 });
   }
 }
+
