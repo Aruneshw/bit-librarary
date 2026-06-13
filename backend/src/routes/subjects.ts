@@ -83,38 +83,41 @@ subjectsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
       }
     }
 
+    // Fetch total question counts for all subjects in a single operation
+    let questionCountsMap: Record<string, number> | null = null;
+    questionCountsMap = await safeRedisGet<Record<string, number>>('subject_question_counts_map');
+
+    if (!questionCountsMap) {
+      const { data: allQuestions } = await supabaseAdmin
+        .from('questions')
+        .select('subject_id');
+
+      const counts: Record<string, number> = {};
+      if (allQuestions) {
+        for (const q of allQuestions) {
+          if (q.subject_id) {
+            counts[q.subject_id] = (counts[q.subject_id] || 0) + 1;
+          }
+        }
+      }
+      questionCountsMap = counts;
+      await safeRedisSet('subject_question_counts_map', questionCountsMap, { ex: 3600 }); // Cache for 1 hour
+    }
+
     // Get completion for each subject
-    const subjectsWithCompletion = await Promise.all(
-      (subjects || []).map(async (subject) => {
-        let totalCount = 0;
-        const totalCountCacheKey = `subject_question_count:${subject.id}`;
+    const subjectsWithCompletion = (subjects || []).map((subject) => {
+      const totalCount = questionCountsMap?.[subject.id] || 0;
+      const viewedCount = viewsBySubject.get(subject.id) || 0;
+      const completion = totalCount > 0 ? Math.round((viewedCount / totalCount) * 100 * 10) / 10 : 0;
 
-        const cachedCount = await safeRedisGet<number>(totalCountCacheKey);
-        if (cachedCount !== null && cachedCount !== undefined) {
-          totalCount = Number(cachedCount);
-        }
-
-        if (totalCount === 0) {
-          const { count: total } = await supabaseAdmin
-            .from('questions')
-            .select('*', { count: 'exact', head: true })
-            .eq('subject_id', subject.id);
-          totalCount = total || 0;
-          await safeRedisSet(totalCountCacheKey, totalCount, { ex: 86400 }); // Cache for 24 hours
-        }
-
-        const viewedCount = viewsBySubject.get(subject.id) || 0;
-        const completion = totalCount > 0 ? Math.round((viewedCount / totalCount) * 100 * 10) / 10 : 0;
-
-        return {
-          ...subject,
-          total_questions: totalCount,
-          viewed_count: viewedCount,
-          completion_percent: completion,
-          mastered: completion >= 100,
-        };
-      })
-    );
+      return {
+        ...subject,
+        total_questions: totalCount,
+        viewed_count: viewedCount,
+        completion_percent: completion,
+        mastered: completion >= 100,
+      };
+    });
 
     res.json({ subjects: subjectsWithCompletion });
   } catch {

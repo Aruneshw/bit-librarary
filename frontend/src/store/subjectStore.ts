@@ -63,38 +63,53 @@ export const useSubjectStore = create<SubjectState>((set, get) => ({
         return;
       }
 
-      const subjectsWithProgress: SubjectWithProgress[] = await Promise.all(
-        subjects.map(async (subject: any) => {
-          // Count total questions
-          const { count: totalQuestions } = await supabase
-            .from('questions')
-            .select('*', { count: 'exact', head: true })
-            .eq('subject_id', subject.id);
+      // Fetch all question counts in a single query
+      const { data: allQuestions } = await supabase
+        .from('questions')
+        .select('subject_id');
 
-          // Count viewed questions
-          const { count: viewedCount } = await supabase
-            .from('question_views')
-            .select('*', { count: 'exact', head: true })
-            .eq('subject_id', subject.id)
-            .eq('user_id', user.id)
-            .eq('viewed', true);
+      const questionCounts: Record<string, number> = {};
+      if (allQuestions) {
+        for (const q of allQuestions) {
+          if (q.subject_id) {
+            questionCounts[q.subject_id] = (questionCounts[q.subject_id] || 0) + 1;
+          }
+        }
+      }
 
-          const total = totalQuestions || 0;
-          const viewed = viewedCount || 0;
-          const completion = total > 0 ? Math.round((viewed / total) * 100 * 10) / 10 : 0;
+      // Fetch all viewed counts for this user in a single query
+      const { data: allViews } = await supabase
+        .from('question_views')
+        .select('subject_id')
+        .eq('user_id', user.id)
+        .eq('viewed', true);
 
-          return {
-            ...subject,
-            total_questions: total,
-            viewed_count: viewed,
-            completion_percent: completion,
-            mastered: completion >= 100,
-          };
-        })
-      );
+      const viewedCounts: Record<string, number> = {};
+      if (allViews) {
+        for (const v of allViews) {
+          if (v.subject_id) {
+            viewedCounts[v.subject_id] = (viewedCounts[v.subject_id] || 0) + 1;
+          }
+        }
+      }
+
+      const subjectsWithProgress: SubjectWithProgress[] = subjects.map((subject: any) => {
+        const total = questionCounts[subject.id] || 0;
+        const viewed = viewedCounts[subject.id] || 0;
+        const completion = total > 0 ? Math.round((viewed / total) * 100 * 10) / 10 : 0;
+
+        return {
+          ...subject,
+          total_questions: total,
+          viewed_count: viewed,
+          completion_percent: completion,
+          mastered: completion >= 100,
+        };
+      });
 
       set({ subjects: subjectsWithProgress, isLoading: false });
-    } catch {
+    } catch (err) {
+      console.error('Error fetching subjects fallback:', err);
       set({ subjects: [], isLoading: false });
     }
   },
