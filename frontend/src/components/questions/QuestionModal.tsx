@@ -85,12 +85,17 @@ const Mermaid = memo(function Mermaid({ chart }: { chart: string }) {
         try {
           const mermaidModule = await import('mermaid');
           const mermaid = mermaidModule.default || mermaidModule;
-          mermaid.initialize({
-            startOnLoad: false,
-            theme: 'dark',
-            securityLevel: 'loose',
-            fontFamily: 'Rajdhani, sans-serif',
-          });
+          
+          if (!(window as any).__mermaid_initialized) {
+            mermaid.initialize({
+              startOnLoad: false,
+              theme: 'dark',
+              securityLevel: 'loose',
+              fontFamily: 'Rajdhani, sans-serif',
+            });
+            (window as any).__mermaid_initialized = true;
+          }
+          
           const sanitizedChart = chart.replace(/"([^"]+)"\s*-->\s*"([^"]+)"/g, (match, p1, p2) => {
             const id1 = p1.replace(/[^a-zA-Z0-9]/g, '') || 'NodeA';
             const id2 = p2.replace(/[^a-zA-Z0-9]/g, '') || 'NodeB';

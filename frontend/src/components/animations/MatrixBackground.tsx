@@ -6,6 +6,9 @@ export default function MatrixBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // Skip animation entirely if user prefers reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -16,10 +19,11 @@ export default function MatrixBackground() {
     canvas.height = window.innerHeight;
 
     // Characters for the matrix rain
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+~`|}{[]:;?><,./-=';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*';
     const charArray = chars.split('');
     const fontSize = 14;
-    const columns = Math.ceil(canvas.width / fontSize);
+    // Use every other column to reduce draw calls by 50%
+    const columns = Math.ceil(canvas.width / (fontSize * 2));
     
     // Array of drops (y coordinate)
     const drops: number[] = [];
@@ -27,38 +31,49 @@ export default function MatrixBackground() {
       drops[x] = Math.random() * canvas.height / fontSize; 
     }
 
-    const draw = () => {
-      // Translucent black background creates the trail effect
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    let lastTime = performance.now();
+    let animationFrameId: number;
+
+    const render = (currentTime: number) => {
+      animationFrameId = requestAnimationFrame(render);
+
+      const deltaTime = (currentTime - lastTime) / 1000;
+      if (deltaTime <= 0) return;
+      lastTime = currentTime;
+
+      // Limit deltaTime to avoid huge jumps when tab is inactive
+      const activeDelta = Math.min(deltaTime, 0.1);
+
+      // Decayed trail fill scaled to frame rate (exponential decay equivalence)
+      const baseDecay = 0.05; // 5% at 30 FPS
+      const decayAlpha = 1 - Math.pow(1 - baseDecay, activeDelta * 30);
+      ctx.fillStyle = `rgba(0, 0, 0, ${Math.max(0.01, Math.min(0.2, decayAlpha))})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Arc Blue color with slight opacity for the characters
+      // Arc Blue characters
       ctx.fillStyle = 'rgba(0, 217, 255, 0.4)';
-      ctx.font = `${fontSize}px "Share Tech Mono", monospace`;
+      ctx.font = `${fontSize}px monospace`;
+
+      const speed = 18; // Row units per second
 
       for (let i = 0; i < drops.length; i++) {
+        // Increment drop position based on delta time
+        drops[i] += speed * activeDelta;
+
         const text = charArray[Math.floor(Math.random() * charArray.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        const x = i * fontSize * 2;
+        const y = Math.floor(drops[i]) * fontSize;
 
-        // Reset drop randomly if it's past the bottom
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
+        // Draw only if on screen
+        if (y >= 0 && y <= canvas.height + fontSize) {
+          ctx.fillText(text, x, y);
         }
-        drops[i]++;
-      }
-    };
 
-    let animationFrameId: number;
-    let lastDrawTime = 0;
-    const fps = 30;
-    const interval = 1000 / fps;
-
-    const render = (time: number) => {
-      if (time - lastDrawTime > interval) {
-        draw();
-        lastDrawTime = time;
+        // Reset drop to a staggered starting point above the screen
+        if (y > canvas.height) {
+          drops[i] = -Math.random() * 20;
+        }
       }
-      animationFrameId = requestAnimationFrame(render);
     };
 
     animationFrameId = requestAnimationFrame(render);
@@ -66,9 +81,9 @@ export default function MatrixBackground() {
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      const newColumns = Math.ceil(canvas.width / fontSize);
+      const newColumns = Math.ceil(canvas.width / (fontSize * 2));
       for (let x = drops.length; x < newColumns; x++) {
-        drops[x] = Math.random() * canvas.height / fontSize;
+        drops[x] = -Math.random() * 20;
       }
     };
 
@@ -88,3 +103,4 @@ export default function MatrixBackground() {
     />
   );
 }
+

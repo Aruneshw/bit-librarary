@@ -16,10 +16,7 @@ export const metadata: Metadata = {
   },
 };
 
-import MatrixBackground from "@/components/animations/MatrixBackground";
-import { PostHogProvider } from "@/components/providers/PostHogProvider";
-import PresenceProvider from "@/components/providers/PresenceProvider";
-import StudyTrackerProvider from "@/components/providers/StudyTrackerProvider";
+import ClientProviders from "@/components/providers/ClientProviders";
 import PwaRegister from "@/components/providers/PwaRegister";
 import GoogleTranslatePatch from "@/components/providers/GoogleTranslatePatch";
 
@@ -33,14 +30,11 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col notranslate">
         <GoogleTranslatePatch />
         <PwaRegister />
-        <PostHogProvider>
-          <PresenceProvider />
-          <StudyTrackerProvider />
-          <MatrixBackground />
+        <ClientProviders>
           <div className="app-container flex-1 flex flex-col">
             {children}
           </div>
-        </PostHogProvider>
+        </ClientProviders>
       </body>
     </html>
   );

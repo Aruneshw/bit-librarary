@@ -57,40 +57,62 @@ export default function ArcReactor({ size = 180, isCharging = false }: ArcReacto
       });
     };
 
-    const draw = () => {
+    let lastTime = performance.now();
+    let particleAccumulator = 0;
+
+    const draw = (activeDelta: number) => {
       ctx.clearRect(0, 0, size, size);
 
-      // Generate particles
-      if (Math.random() < (isCharging ? 0.8 : 0.3)) {
+      // Frame-rate independent particle emission
+      const emissionRate = isCharging ? 24 : 9; // particles per second
+      particleAccumulator += activeDelta * emissionRate;
+      
+      while (particleAccumulator >= 1) {
         createParticle();
+        particleAccumulator -= 1;
       }
 
-      // Update and draw particles
-      particles.forEach((p, idx) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= isCharging ? 0.012 : 0.018;
+      // Update and draw particles backwards to allow safe splicing
+      const speedMultiplier = activeDelta * 30; // Scale standard 30fps movement
+      const alphaDecay = (isCharging ? 0.012 : 0.018) * speedMultiplier;
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx * speedMultiplier;
+        p.y += p.vy * speedMultiplier;
+        p.alpha -= alphaDecay;
 
         if (p.alpha <= 0) {
-          particles.splice(idx, 1);
-          return;
+          particles.splice(i, 1);
+          continue;
         }
 
         ctx.save();
         ctx.globalAlpha = p.alpha;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = p.color;
         ctx.fillStyle = p.color;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
-      });
-
-      animationFrameId = requestAnimationFrame(draw);
+      }
     };
 
-    draw();
+    const render = (currentTime: number) => {
+      const deltaTime = (currentTime - lastTime) / 1000;
+      if (deltaTime <= 0) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+      lastTime = currentTime;
+
+      // Limit delta to prevent jumps when tab is inactive
+      const activeDelta = Math.min(deltaTime, 0.1);
+
+      draw(activeDelta);
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    animationFrameId = requestAnimationFrame(render);
 
     return () => {
       cancelAnimationFrame(animationFrameId);

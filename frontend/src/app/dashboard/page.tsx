@@ -3,33 +3,36 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useAuthStore } from '@/store/authStore';
 import { useSubjectStore } from '@/store/subjectStore';
 import { usePresenceStore } from '@/store/presenceStore';
-import SubjectOrbit from '@/components/dashboard/SubjectOrbit';
-import SubjectCardStack from '@/components/dashboard/SubjectCardStack';
-import ArcReactor from '@/components/dashboard/ArcReactor';
-import HudFrontPage from '@/components/animations/HudFrontPage';
-import TutorialModal from '@/components/tutorial/TutorialModal';
-import MobileActionDock from '@/components/dashboard/MobileActionDock';
-import PwaInstallBanner from '@/components/dashboard/PwaInstallBanner';
-import FeatureNotice from '@/components/dashboard/FeatureNotice';
-import BroadcastBanner from '@/components/dashboard/BroadcastBanner';
-import AdminPostFeed from '@/components/dashboard/AdminPostFeed';
-import MediaFeed from '@/components/dashboard/MediaFeed';
-import PostComposer from '@/components/dashboard/PostComposer';
-import PollComposer from '@/components/admin/PollComposer';
-import FeedbackForm from '@/components/dashboard/FeedbackForm';
-import NotificationCenter from '@/components/dashboard/NotificationCenter';
-import NotificationSync from '@/components/dashboard/NotificationSync';
 import { useNotificationStore } from '@/store/notificationStore';
 import { createClient } from '@/lib/supabase';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import { useNotification } from '@/hooks/useNotification';
 import { logAccess } from '@/lib/dailyAccess';
 import { useJourneyStore } from '@/store/journeyStore';
-import WelcomeBanner from '@/components/journey/WelcomeBanner';
-import TitleUnlockAnimation from '@/components/journey/TitleUnlockAnimation';
+
+/* ── Lazy-loaded heavy components (loaded on demand, not in initial bundle) ── */
+const SubjectOrbit = dynamic(() => import('@/components/dashboard/SubjectOrbit'), { ssr: false });
+const SubjectCardStack = dynamic(() => import('@/components/dashboard/SubjectCardStack'), { ssr: false });
+const ArcReactor = dynamic(() => import('@/components/dashboard/ArcReactor'), { ssr: false });
+const HudFrontPage = dynamic(() => import('@/components/animations/HudFrontPage'), { ssr: false });
+const TutorialModal = dynamic(() => import('@/components/tutorial/TutorialModal'), { ssr: false });
+const MobileActionDock = dynamic(() => import('@/components/dashboard/MobileActionDock'), { ssr: false });
+const PwaInstallBanner = dynamic(() => import('@/components/dashboard/PwaInstallBanner'), { ssr: false });
+const FeatureNotice = dynamic(() => import('@/components/dashboard/FeatureNotice'), { ssr: false });
+const BroadcastBanner = dynamic(() => import('@/components/dashboard/BroadcastBanner'), { ssr: false });
+const AdminPostFeed = dynamic(() => import('@/components/dashboard/AdminPostFeed'), { ssr: false });
+const MediaFeed = dynamic(() => import('@/components/dashboard/MediaFeed'), { ssr: false });
+const PostComposer = dynamic(() => import('@/components/dashboard/PostComposer'), { ssr: false });
+const PollComposer = dynamic(() => import('@/components/admin/PollComposer'), { ssr: false });
+const FeedbackForm = dynamic(() => import('@/components/dashboard/FeedbackForm'), { ssr: false });
+const NotificationCenter = dynamic(() => import('@/components/dashboard/NotificationCenter'), { ssr: false });
+const NotificationSync = dynamic(() => import('@/components/dashboard/NotificationSync'), { ssr: false });
+const WelcomeBanner = dynamic(() => import('@/components/journey/WelcomeBanner'), { ssr: false });
+const TitleUnlockAnimation = dynamic(() => import('@/components/journey/TitleUnlockAnimation'), { ssr: false });
 
 function SystemClock() {
   const [time, setTime] = useState<string>('');
