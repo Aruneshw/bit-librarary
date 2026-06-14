@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS user_sessions (
 CREATE INDEX IF NOT EXISTS idx_user_sessions_last_seen
 ON user_sessions (last_seen DESC);
 
+-- Enable Row Level Security (RLS) to prevent direct public/anon access
+ALTER TABLE user_sessions ENABLE ROW LEVEL SECURITY;
+
 -- RPC: Upsert user session (heartbeat)
 CREATE OR REPLACE FUNCTION upsert_user_session(p_user_id UUID)
 RETURNS void

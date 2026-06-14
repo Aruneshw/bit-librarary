@@ -3,6 +3,7 @@ import { type User } from '@supabase/supabase-js';
 import { type Profile, type Department } from '@/types';
 import { createClient } from '@/lib/supabase';
 import { isAdminEmail } from '@/lib/adminEmails';
+import { getAuthToken } from '@/lib/authHelpers';
 
 const ALLOWED_EMAIL_DOMAIN = '@bitsathy.ac.in';
 const ALLOWED_DEPARTMENTS: Department[] = ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
@@ -234,6 +235,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await supabase.removeChannel(profileSubscription);
       profileSubscription = null;
     }
+
+    try {
+      const token = await getAuthToken();
+      if (token) {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        if (apiUrl) {
+          await fetch(`${apiUrl}/presence/heartbeat?offline=true`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to mark user offline during signout:', err);
+    }
+
     await supabase.auth.signOut();
     set({ user: null, isAuthenticated: false, isAdmin: false });
   },

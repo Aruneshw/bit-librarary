@@ -449,7 +449,7 @@ export default function DashboardPage() {
               </div>
 
               <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 pointer-events-auto max-w-[55%] sm:max-w-none">
-                <VisitorCount />
+                {isAdmin && <VisitorCount />}
                 <SystemClock />
 <PushToggle />
                 {user?.department && (

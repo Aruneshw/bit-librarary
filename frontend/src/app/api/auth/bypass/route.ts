@@ -43,6 +43,8 @@ export async function POST(request: Request) {
       const targetEmail = matchedUser.email;
       const displayName = matchedUser.name;
 
+      let profileId: string | undefined;
+
       // 1. Update/Ensure user metadata and database profile name are correct
       try {
         const { data: profileData } = await supabase
@@ -52,6 +54,7 @@ export async function POST(request: Request) {
           .maybeSingle();
 
         if (profileData?.id) {
+          profileId = profileData.id;
           // Update auth user metadata
           await supabase.auth.admin.updateUserById(profileData.id, {
             user_metadata: { full_name: displayName }
@@ -89,6 +92,7 @@ export async function POST(request: Request) {
         // Sign the RS256 token for admin bypass access
         const payload = {
           sub: 'adminah',
+          userId: profileId,
           role: 'admin',
           email: targetEmail,
           name: displayName,

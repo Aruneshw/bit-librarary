@@ -128,8 +128,27 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
   });
 });
 
+// Periodic stale user sessions cleanup (every 6 hours)
+const SESSION_CLEANUP_INTERVAL = 6 * 60 * 60 * 1000;
+const runSessionCleanup = async () => {
+  try {
+    const { supabaseAdmin } = await import('./config/supabase');
+    const { error } = await supabaseAdmin.rpc('cleanup_old_sessions');
+    if (error) {
+      console.error('[Session Cleanup] Error pruning old user sessions:', error);
+    } else {
+      console.log('[Session Cleanup] Stale presence sessions cleaned up successfully.');
+    }
+  } catch (err) {
+    console.error('[Session Cleanup] Failed to run session cleanup:', err);
+  }
+};
+
 app.listen(PORT, () => {
   console.log(`🚀 ARC_OS API running on port ${PORT}`);
+  // Run once on startup, then on interval
+  runSessionCleanup();
+  setInterval(runSessionCleanup, SESSION_CLEANUP_INTERVAL);
 });
 
 export default app;

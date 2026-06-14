@@ -22,3 +22,41 @@ export function signRS256(payload: any, privateKeyPem: string): string {
   
   return `${headerStr}.${payloadStr}.${base64url(signature)}`;
 }
+
+function base64urlDecode(str: string): string {
+  const base64 = str.replace(/-/g, '+').replace(/_/g, '/') + '=='.slice(0, (4 - str.length % 4) % 4);
+  return Buffer.from(base64, 'base64').toString('utf8');
+}
+
+/**
+ * Verifies a token using the RS256 algorithm with a public RSA key.
+ * Returns the decoded payload if valid, otherwise returns null.
+ */
+export function verifyRS256(token: string, publicKeyPem: string): any {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    
+    const [headerStr, payloadStr, signatureStr] = parts;
+    
+    const base64Sig = signatureStr.replace(/-/g, '+').replace(/_/g, '/') + '=='.slice(0, (4 - signatureStr.length % 4) % 4);
+    const signature = Buffer.from(base64Sig, 'base64');
+    
+    const verify = crypto.createVerify('RSA-SHA256');
+    verify.update(`${headerStr}.${payloadStr}`);
+    
+    const isValid = verify.verify(publicKeyPem, signature);
+    if (!isValid) return null;
+    
+    const payload = JSON.parse(base64urlDecode(payloadStr));
+    
+    if (payload.exp && Date.now() / 1000 > payload.exp) {
+      return null;
+    }
+    
+    return payload;
+  } catch (err) {
+    console.error('RS256 verification error:', err);
+    return null;
+  }
+}

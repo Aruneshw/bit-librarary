@@ -6,7 +6,7 @@ import { useAuthStore } from '@/store/authStore';
 import { usePresenceStore } from '@/store/presenceStore';
 import { getAuthToken } from '@/lib/authHelpers';
 
-const HEARTBEAT_MS = 20000;
+const HEARTBEAT_MS = 45000;
 
 export default function PresenceProvider() {
   const { user, isAuthenticated } = useAuthStore();
@@ -100,35 +100,9 @@ export default function PresenceProvider() {
     };
     document.addEventListener('visibilitychange', onVisibility);
 
-    /* ── Tab close: untrack + sendBeacon ── */
-    const onBeforeUnload = () => {
-      try { channelRef.current?.untrack(); } catch {}
-
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      if (apiUrl) {
-        (async () => {
-          try {
-            const token = await getAuthToken();
-            if (token) {
-              const blob = new Blob(
-                [JSON.stringify({ offline: true })],
-                { type: 'application/json' },
-              );
-              navigator.sendBeacon(
-                `${apiUrl}/presence/heartbeat?token=${encodeURIComponent(token)}`,
-                blob,
-              );
-            }
-          } catch {}
-        })();
-      }
-    };
-    window.addEventListener('beforeunload', onBeforeUnload);
-
     return () => {
       clearInterval(heartbeatId);
       document.removeEventListener('visibilitychange', onVisibility);
-      window.removeEventListener('beforeunload', onBeforeUnload);
       supabase.removeChannel(channel);
       channelRef.current = null;
       supabaseRef.current = null;
