@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { usePresenceStore } from '@/store/presenceStore';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
+import { getAuthToken } from '@/lib/authHelpers';
 import FileManager from '@/components/admin/FileManager';
 import AnalyticsCarousel from '@/components/admin/AnalyticsCarousel';
 import PollComposer from '@/components/admin/PollComposer';
@@ -314,14 +315,14 @@ export default function AdminDashboard() {
       setPostMessage('Publishing post...');
 
       if (apiUrl) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        const token = await getAuthToken();
+        if (token) {
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), 30000);
           const res = await fetch(`${apiUrl}/posts`, {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${session.access_token}`,
+              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({

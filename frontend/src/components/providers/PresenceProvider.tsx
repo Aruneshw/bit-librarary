@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { usePresenceStore } from '@/store/presenceStore';
+import { getAuthToken } from '@/lib/authHelpers';
 
 const HEARTBEAT_MS = 20000;
 
@@ -64,14 +65,14 @@ export default function PresenceProvider() {
       } catch {}
 
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.access_token) {
+        const token = await getAuthToken();
+        if (token) {
           const apiUrl = process.env.NEXT_PUBLIC_API_URL;
           if (apiUrl) {
             await fetch(`${apiUrl}/presence/heartbeat`, {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${session.access_token}`,
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
               },
             });
@@ -107,14 +108,14 @@ export default function PresenceProvider() {
       if (apiUrl) {
         (async () => {
           try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.access_token) {
+            const token = await getAuthToken();
+            if (token) {
               const blob = new Blob(
                 [JSON.stringify({ offline: true })],
                 { type: 'application/json' },
               );
               navigator.sendBeacon(
-                `${apiUrl}/presence/heartbeat?token=${encodeURIComponent(session.access_token)}`,
+                `${apiUrl}/presence/heartbeat?token=${encodeURIComponent(token)}`,
                 blob,
               );
             }

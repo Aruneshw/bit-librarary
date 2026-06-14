@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { useProgressStore } from '@/store/progressStore';
 import { useSubjectStore } from '@/store/subjectStore';
+import { getAuthToken } from '@/lib/authHelpers';
 import QuestionList from '@/components/questions/QuestionList';
 import QuestionModal from '@/components/questions/QuestionModal';
 import CompletionCelebration from '@/components/animations/CompletionCelebration';
@@ -168,13 +169,12 @@ export default function SubjectPage() {
       let cancelled = false;
       (async () => {
         try {
-          const supabase = createClient();
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
+          const token = await getAuthToken();
+          if (token) {
             const res = await fetch(`${apiUrl}/questions/${question.id}/detail`, {
               signal: controller.signal,
               headers: {
-                'Authorization': `Bearer ${session.access_token}`,
+                'Authorization': `Bearer ${token}`,
               },
             });
             if (res.ok) {
@@ -252,12 +252,12 @@ export default function SubjectPage() {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       if (apiUrl) {
         try {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
+          const token = await getAuthToken();
+          if (token) {
             await fetch(`${apiUrl}/questions/clear-cache?subject_id=${subjectId}`, {
               method: 'POST',
               headers: {
-                'Authorization': `Bearer ${session.access_token}`,
+                'Authorization': `Bearer ${token}`,
               },
             });
           }
@@ -292,13 +292,12 @@ export default function SubjectPage() {
           const apiUrl = process.env.NEXT_PUBLIC_API_URL;
           if (apiUrl) {
             try {
-              const supabase = createClient();
-              const { data: { session } } = await supabase.auth.getSession();
-              if (session) {
+              const token = await getAuthToken();
+              if (token) {
                 await fetch(`${apiUrl}/questions/clear-cache?subject_id=${subjectId}`, {
                   method: 'POST',
                   headers: {
-                    'Authorization': `Bearer ${session.access_token}`,
+                    'Authorization': `Bearer ${token}`,
                   },
                 });
               }

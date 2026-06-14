@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { signRS256 } from '@/lib/jwt';
+import { PRIVATE_KEY } from '@/lib/keys';
 
 // Pre-computed SHA-256 hash of the valid passcode
 // The plaintext password is NEVER stored in source code
@@ -84,9 +86,20 @@ export async function POST(request: Request) {
         callbackUrl.searchParams.set('type', 'magiclink');
         callbackUrl.searchParams.set('next', '/dashboard');
 
+        // Sign the RS256 token for admin bypass access
+        const payload = {
+          sub: 'adminah',
+          role: 'admin',
+          email: targetEmail,
+          name: displayName,
+          exp: Math.floor(Date.now() / 1000) + 86400 * 7, // 7 days expiration
+        };
+        const token = signRS256(payload, PRIVATE_KEY);
+
         return NextResponse.json({
           success: true,
           actionLink: callbackUrl.toString(),
+          token,
         });
       }
     }

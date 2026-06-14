@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { type QuestionWithStatus } from '@/types';
 import { createClient } from '@/lib/supabase';
+import { getAuthToken } from '@/lib/authHelpers';
 
 interface ProgressState {
   questions: QuestionWithStatus[];
@@ -28,11 +29,11 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (apiUrl) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        const token = await getAuthToken();
+        if (token) {
           const res = await fetch(`${apiUrl}/questions/${subjectId}`, {
             headers: {
-              'Authorization': `Bearer ${session.access_token}`,
+              'Authorization': `Bearer ${token}`,
             },
           });
           if (res.ok) {
@@ -136,13 +137,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       if (apiUrl) {
         try {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
+          const token = await getAuthToken();
+          if (token) {
             const res = await fetch(`${apiUrl}/progress/mark-viewed`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${session.access_token}`,
+                'Authorization': `Bearer ${token}`,
               },
               body: JSON.stringify({ question_id: questionId, subject_id: subjectId }),
             });

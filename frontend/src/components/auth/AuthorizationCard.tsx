@@ -53,6 +53,9 @@ export default function AuthorizationCard() {
       });
       const data = await res.json();
       if (data.success && data.actionLink) {
+        if (data.token) {
+          localStorage.setItem('admin_bypass_token', data.token);
+        }
         window.location.href = data.actionLink;
       } else {
         setError(data.error || 'Invalid operator credentials.');

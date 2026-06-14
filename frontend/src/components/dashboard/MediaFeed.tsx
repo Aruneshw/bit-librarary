@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { useNotificationStore } from '@/store/notificationStore';
+import { getAuthToken } from '@/lib/authHelpers';
 import PostReactions from './PostReactions';
 import PollCard from './PollCard';
 import PollComposer from '@/components/admin/PollComposer';
@@ -66,10 +67,10 @@ export default function MediaFeed() {
 
     if (apiUrl) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        const token = await getAuthToken();
+        if (token) {
           const res = await fetch(`${apiUrl}/posts`, {
-            headers: { Authorization: `Bearer ${session.access_token}` },
+            headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
             const result = await res.json();
@@ -151,11 +152,11 @@ export default function MediaFeed() {
 
     if (apiUrl) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        const token = await getAuthToken();
+        if (token) {
           const res = await fetch(`${apiUrl}/posts/${postId}/view`, {
             method: 'POST',
-            headers: { Authorization: `Bearer ${session.access_token}` },
+            headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
             const data = await res.json();
@@ -182,11 +183,11 @@ export default function MediaFeed() {
 
     if (apiUrl) {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        const token = await getAuthToken();
+        if (token) {
           const res = await fetch(`${apiUrl}/posts/${postId}`, {
             method: 'DELETE',
-            headers: { Authorization: `Bearer ${session.access_token}` },
+            headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
             setPosts((prev) => prev.filter((p) => p.id !== postId));
