@@ -1,8 +1,14 @@
 import { Router, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../config/supabase';
+import { z } from 'zod';
+import { validateBody } from '../middleware/validate';
 
 export const settingsRouter = Router();
+
+const updateSettingsSchema = z.object({
+  tutorial_seen: z.boolean(),
+});
 
 // GET /settings
 settingsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
@@ -32,23 +38,13 @@ settingsRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) 
 });
 
 // PATCH /settings
-settingsRouter.patch('/', authMiddleware, async (req: AuthRequest, res: Response) => {
+settingsRouter.patch('/', authMiddleware, validateBody(updateSettingsSchema), async (req: AuthRequest, res: Response) => {
   try {
-    const updates: Record<string, unknown> = {};
-    if (typeof req.body.tutorial_seen === 'boolean') {
-      updates.tutorial_seen = req.body.tutorial_seen;
-    }
-
-    if (Object.keys(updates).length === 0) {
-      res.status(400).json({
-        error: { code: 'BAD_REQUEST', message: 'No valid fields to update', status: 400 },
-      });
-      return;
-    }
+    const { tutorial_seen } = req.body;
 
     const { data, error } = await supabaseAdmin
       .from('settings')
-      .update(updates)
+      .update({ tutorial_seen })
       .eq('user_id', req.userId!)
       .select()
       .single();

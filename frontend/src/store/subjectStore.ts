@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { type SubjectWithProgress } from '@/types';
 import { createClient } from '@/lib/supabase';
-import { getAuthToken } from '@/lib/authHelpers';
+import { getAuthHeaders } from '@/lib/authHelpers';
 
 interface SubjectState {
   subjects: SubjectWithProgress[];
@@ -22,19 +22,15 @@ export const useSubjectStore = create<SubjectState>((set, get) => ({
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (apiUrl) {
       try {
-        const token = await getAuthToken();
-        if (token) {
-          const res = await fetch(`${apiUrl}/subjects?department=${department}${department === 'ALL' ? '&all=true' : ''}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.subjects) {
-              set({ subjects: data.subjects, isLoading: false });
-              return;
-            }
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${apiUrl}/subjects?department=${department}${department === 'ALL' ? '&all=true' : ''}`, {
+          headers,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.subjects) {
+            set({ subjects: data.subjects, isLoading: false });
+            return;
           }
         }
       } catch (err) {

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { useProgressStore } from '@/store/progressStore';
 import { useSubjectStore } from '@/store/subjectStore';
-import { getAuthToken } from '@/lib/authHelpers';
+import { getAuthHeaders } from '@/lib/authHelpers';
 import QuestionList from '@/components/questions/QuestionList';
 import QuestionModal from '@/components/questions/QuestionModal';
 import CompletionCelebration from '@/components/animations/CompletionCelebration';
@@ -169,19 +169,15 @@ export default function SubjectPage() {
       let cancelled = false;
       (async () => {
         try {
-          const token = await getAuthToken();
-          if (token) {
-            const res = await fetch(`${apiUrl}/questions/${question.id}/detail`, {
-              signal: controller.signal,
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-            if (res.ok) {
-              const detail = await res.json();
-              if (!cancelled) setSelectedQuestion(detail);
-              return;
-            }
+          const headers = await getAuthHeaders();
+          const res = await fetch(`${apiUrl}/questions/${question.id}/detail`, {
+            signal: controller.signal,
+            headers,
+          });
+          if (res.ok) {
+            const detail = await res.json();
+            if (!cancelled) setSelectedQuestion(detail);
+            return;
           }
         } catch (err: any) {
           if (err?.name === 'AbortError') { cancelled = true; return; }
@@ -252,15 +248,11 @@ export default function SubjectPage() {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       if (apiUrl) {
         try {
-          const token = await getAuthToken();
-          if (token) {
-            await fetch(`${apiUrl}/questions/clear-cache?subject_id=${subjectId}`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-          }
+          const headers = await getAuthHeaders();
+          await fetch(`${apiUrl}/questions/clear-cache?subject_id=${subjectId}`, {
+            method: 'POST',
+            headers,
+          });
         } catch (err) {
           console.warn('Failed to clear cache on delete:', err);
         }
@@ -292,15 +284,11 @@ export default function SubjectPage() {
           const apiUrl = process.env.NEXT_PUBLIC_API_URL;
           if (apiUrl) {
             try {
-              const token = await getAuthToken();
-              if (token) {
-                await fetch(`${apiUrl}/questions/clear-cache?subject_id=${subjectId}`, {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${token}`,
-                  },
-                });
-              }
+              const headers = await getAuthHeaders();
+              await fetch(`${apiUrl}/questions/clear-cache?subject_id=${subjectId}`, {
+                method: 'POST',
+                headers,
+              });
             } catch (err) {
               console.warn('Failed to clear cache on add:', err);
             }

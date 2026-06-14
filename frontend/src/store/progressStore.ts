@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { type QuestionWithStatus } from '@/types';
 import { createClient } from '@/lib/supabase';
-import { getAuthToken } from '@/lib/authHelpers';
+import { getAuthHeaders } from '@/lib/authHelpers';
 
 interface ProgressState {
   questions: QuestionWithStatus[];
@@ -29,25 +29,21 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     if (apiUrl) {
       try {
-        const token = await getAuthToken();
-        if (token) {
-          const res = await fetch(`${apiUrl}/questions/${subjectId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data && data.questions) {
-              set({
-                questions: data.questions,
-                isLoading: false,
-                totalQuestions: data.total_questions || 0,
-                viewedCount: data.viewed_count || 0,
-                completionPercent: data.completion_percent || 0,
-              });
-              return;
-            }
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${apiUrl}/questions/${subjectId}`, {
+          headers,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.questions) {
+            set({
+              questions: data.questions,
+              isLoading: false,
+              totalQuestions: data.total_questions || 0,
+              viewedCount: data.viewed_count || 0,
+              completionPercent: data.completion_percent || 0,
+            });
+            return;
           }
         }
       } catch (err) {
@@ -137,18 +133,16 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       if (apiUrl) {
         try {
-          const token = await getAuthToken();
-          if (token) {
-            const res = await fetch(`${apiUrl}/progress/mark-viewed`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-              },
-              body: JSON.stringify({ question_id: questionId, subject_id: subjectId }),
-            });
-            if (res.ok) return;
-          }
+          const headers = await getAuthHeaders();
+          const res = await fetch(`${apiUrl}/progress/mark-viewed`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...headers,
+            },
+            body: JSON.stringify({ question_id: questionId, subject_id: subjectId }),
+          });
+          if (res.ok) return;
         } catch (err) {
           console.warn('Failed to post mark-viewed to backend, trying direct Supabase upsert:', err);
         }

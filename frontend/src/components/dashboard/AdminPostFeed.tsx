@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
-import { getAuthToken } from '@/lib/authHelpers';
+import { getAuthHeaders } from '@/lib/authHelpers';
 import PostReactions from './PostReactions';
 import PollCard from './PollCard';
 import PollComposer from '@/components/admin/PollComposer';
@@ -41,16 +41,14 @@ export default function AdminPostFeed() {
 
     if (apiUrl) {
       try {
-        const token = await getAuthToken();
-        if (token) {
-          const res = await fetch(`${apiUrl}/posts`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setPosts((data.posts || []).filter((p: AdminPost) => !p.image_url && !p.video_url && !p.pdf_url));
-            return;
-          }
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${apiUrl}/posts`, {
+          headers,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPosts((data.posts || []).filter((p: AdminPost) => !p.image_url && !p.video_url && !p.pdf_url));
+          return;
         }
       } catch {
         // fall through to Supabase
@@ -101,22 +99,20 @@ export default function AdminPostFeed() {
 
     if (apiUrl) {
       try {
-        const token = await getAuthToken();
-        if (token) {
-          const res = await fetch(`${apiUrl}/posts/${postId}/view`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.view_count !== undefined) {
-              setPosts((prev) =>
-                prev.map((p) => (p.id === postId ? { ...p, view_count: data.view_count } : p))
-              );
-            }
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${apiUrl}/posts/${postId}/view`, {
+          method: 'POST',
+          headers,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.view_count !== undefined) {
+            setPosts((prev) =>
+              prev.map((p) => (p.id === postId ? { ...p, view_count: data.view_count } : p))
+            );
           }
-          return;
         }
+        return;
       } catch {}
     }
 
@@ -131,16 +127,14 @@ export default function AdminPostFeed() {
 
     if (apiUrl) {
       try {
-        const token = await getAuthToken();
-        if (token) {
-          const res = await fetch(`${apiUrl}/posts/${postId}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            setPosts((prev) => prev.filter((p) => p.id !== postId));
-            return;
-          }
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${apiUrl}/posts/${postId}`, {
+          method: 'DELETE',
+          headers,
+        });
+        if (res.ok) {
+          setPosts((prev) => prev.filter((p) => p.id !== postId));
+          return;
         }
       } catch {
         // fall through

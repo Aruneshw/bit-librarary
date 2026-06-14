@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase';
+import { getDeviceFingerprint } from './fingerprint';
 
 /**
  * Retrieves the authorization token for API requests.
@@ -25,4 +26,21 @@ export async function getAuthToken(): Promise<string | null> {
   const supabase = createClient();
   const { data: { session } } = await supabase.auth.getSession();
   return session?.access_token || null;
+}
+
+/**
+ * Retrieves authorization and security headers including device fingerprint.
+ */
+export async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = {};
+  const token = await getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  // Enforce device fingerprint (Layer 5 requirement)
+  const fingerprint = await getDeviceFingerprint();
+  headers['x-device-fingerprint'] = fingerprint;
+  
+  return headers;
 }

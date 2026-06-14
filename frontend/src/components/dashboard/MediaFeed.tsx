@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { useNotificationStore } from '@/store/notificationStore';
-import { getAuthToken } from '@/lib/authHelpers';
+import { getAuthHeaders } from '@/lib/authHelpers';
 import PostReactions from './PostReactions';
 import PollCard from './PollCard';
 import PollComposer from '@/components/admin/PollComposer';
@@ -67,28 +67,26 @@ export default function MediaFeed() {
 
     if (apiUrl) {
       try {
-        const token = await getAuthToken();
-        if (token) {
-          const res = await fetch(`${apiUrl}/posts`, {
-            headers: { Authorization: `Bearer ${token}` },
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${apiUrl}/posts`, {
+          headers,
+        });
+        if (res.ok) {
+          const result = await res.json();
+          const posts = result.posts.filter((p: MediaPost) => p.image_url || p.video_url || p.pdf_url);
+          posts.forEach((p: MediaPost) => {
+            if (!knownIds.current.has(p.id)) {
+              knownIds.current.add(p.id);
+              addNotification({
+                type: 'media',
+                title: p.title || 'New Media',
+                body: p.body.slice(0, 120),
+                data: { url: '/dashboard' },
+              });
+            }
           });
-          if (res.ok) {
-            const result = await res.json();
-            const posts = result.posts.filter((p: MediaPost) => p.image_url || p.video_url || p.pdf_url);
-            posts.forEach((p: MediaPost) => {
-              if (!knownIds.current.has(p.id)) {
-                knownIds.current.add(p.id);
-                addNotification({
-                  type: 'media',
-                  title: p.title || 'New Media',
-                  body: p.body.slice(0, 120),
-                  data: { url: '/dashboard' },
-                });
-              }
-            });
-            setPosts(posts);
-            return;
-          }
+          setPosts(posts);
+          return;
         }
       } catch { /* fallback to direct query */ }
     }
@@ -152,22 +150,20 @@ export default function MediaFeed() {
 
     if (apiUrl) {
       try {
-        const token = await getAuthToken();
-        if (token) {
-          const res = await fetch(`${apiUrl}/posts/${postId}/view`, {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.view_count !== undefined) {
-              setPosts((prev) =>
-                prev.map((p) => (p.id === postId ? { ...p, view_count: data.view_count } : p))
-              );
-            }
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${apiUrl}/posts/${postId}/view`, {
+          method: 'POST',
+          headers,
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.view_count !== undefined) {
+            setPosts((prev) =>
+              prev.map((p) => (p.id === postId ? { ...p, view_count: data.view_count } : p))
+            );
           }
-          return;
         }
+        return;
       } catch {}
     }
 
@@ -183,16 +179,14 @@ export default function MediaFeed() {
 
     if (apiUrl) {
       try {
-        const token = await getAuthToken();
-        if (token) {
-          const res = await fetch(`${apiUrl}/posts/${postId}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) {
-            setPosts((prev) => prev.filter((p) => p.id !== postId));
-            return;
-          }
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${apiUrl}/posts/${postId}`, {
+          method: 'DELETE',
+          headers,
+        });
+        if (res.ok) {
+          setPosts((prev) => prev.filter((p) => p.id !== postId));
+          return;
         }
       } catch {
         // fall through

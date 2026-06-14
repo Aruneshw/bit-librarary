@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 import { usePresenceStore } from '@/store/presenceStore';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
-import { getAuthToken } from '@/lib/authHelpers';
+import { getAuthHeaders } from '@/lib/authHelpers';
 import FileManager from '@/components/admin/FileManager';
 import AnalyticsCarousel from '@/components/admin/AnalyticsCarousel';
 import PollComposer from '@/components/admin/PollComposer';
@@ -315,15 +315,15 @@ export default function AdminDashboard() {
       setPostMessage('Publishing post...');
 
       if (apiUrl) {
-        const token = await getAuthToken();
-        if (token) {
+        try {
+          const headers = await getAuthHeaders();
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), 30000);
           const res = await fetch(`${apiUrl}/posts`, {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
+              ...headers,
             },
             body: JSON.stringify({
               title: postTitle.trim() || null,
@@ -362,11 +362,12 @@ export default function AdminDashboard() {
             setPosting(false);
             fetchStorageConfig();
             return;
+          } else {
+            console.warn('API route publishing returned non-ok status, falling back to direct Supabase query');
           }
-          const errBody = await res.json().catch(() => null);
-          throw new Error(errBody?.error?.message || `Server error (${res.status})`);
+        } catch (err) {
+          console.warn('API route publishing failed, falling back to direct Supabase query:', err);
         }
-        throw new Error('No auth session — try logging in again');
       }
 
       const { error } = await supabase.from('admin_posts').insert({

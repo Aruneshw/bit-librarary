@@ -1,10 +1,16 @@
 import { Router, Response } from 'express';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../config/supabase';
+import { z } from 'zod';
+import { validateBody } from '../middleware/validate';
 
 export const profileRouter = Router();
 
-const VALID_DEPARTMENTS = ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
+const VALID_DEPARTMENTS = ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'] as const;
+
+const updateDepartmentSchema = z.object({
+  department: z.enum(VALID_DEPARTMENTS),
+});
 
 // GET /profile
 profileRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) => {
@@ -27,16 +33,9 @@ profileRouter.get('/', authMiddleware, async (req: AuthRequest, res: Response) =
 });
 
 // PATCH /profile/department
-profileRouter.patch('/department', authMiddleware, async (req: AuthRequest, res: Response) => {
+profileRouter.patch('/department', authMiddleware, validateBody(updateDepartmentSchema), async (req: AuthRequest, res: Response) => {
   try {
     const { department } = req.body;
-
-    if (!department || !VALID_DEPARTMENTS.includes(department)) {
-      res.status(400).json({
-        error: { code: 'BAD_REQUEST', message: `Invalid department. Must be one of: ${VALID_DEPARTMENTS.join(', ')}`, status: 400 },
-      });
-      return;
-    }
 
     const { data, error } = await supabaseAdmin
       .from('profiles')
