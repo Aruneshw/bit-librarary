@@ -22,7 +22,6 @@ const { VueLoaderPlugin } = require('vue-loader');
 const nextConfig: NextConfig = {
   // Turbopack can be re-enabled if desired since custom webpack is removed
   turbopack: {},
-  outputFileTracingRoot: process.cwd(),
   async headers() {
     return [
       { source: '/hub/:path*', headers: [{ key: 'Cache-Control', value: 'private, no-store' }] },
