@@ -1,3 +1,5 @@
+> **Current app:** BIT HUB now opens at `/hub`, with student discovery, discussion bubbles, teams, project portfolios, and approved-project XP. BIT Library remains at `/dashboard`. The current stack is Next.js, React, and Supabase. See [BIT HUB setup and validation](docs/BIT_HUB.md) for the required additive database migration and local run instructions. The original project overview below is retained for context.
+
 <div align="center">
 
 <h1>📚 BIT Library</h1>

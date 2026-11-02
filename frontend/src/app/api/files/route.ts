@@ -1,7 +1,10 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const access = await requireApiUser(request, true);
+  if (access.error) return access.error;
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

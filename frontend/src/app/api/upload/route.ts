@@ -1,7 +1,10 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
+  const access = await requireApiUser(request, true);
+  if (access.error) return access.error;
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;

@@ -7,7 +7,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
       posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
         api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually in Next.js
@@ -33,11 +33,9 @@ function PostHogPageView() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (pathname && typeof window !== 'undefined') {
+    if (pathname && !pathname.startsWith('/auth/') && typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY) {
       let url = window.origin + pathname;
-      if (searchParams && searchParams.toString()) {
-        url = url + `?${searchParams.toString()}`;
-      }
+      // Do not send OAuth codes, search terms or tokens to analytics.
       posthog.capture('$pageview', {
         $current_url: url,
       });

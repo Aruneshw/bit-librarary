@@ -4,6 +4,7 @@ import { type Profile, type Department } from '@/types';
 import { createClient } from '@/lib/supabase';
 import { isAdminEmail } from '@/lib/adminEmails';
 import { getAuthToken } from '@/lib/authHelpers';
+import { safeNextPath } from '@/lib/auth/redirect';
 
 const ALLOWED_EMAIL_DOMAIN = '@bitsathy.ac.in';
 const ALLOWED_DEPARTMENTS: Department[] = ['CS', 'IT', 'AL', 'AD', 'EEE', 'ECE', 'EIE', 'ME', 'MZ', 'AG', 'BT'];
@@ -63,7 +64,7 @@ interface AuthState {
   setAvatarUrl: (url: string | null) => void;
   setLoading: (loading: boolean) => void;
   updateDepartment: (dept: Department) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: (next?: string) => Promise<void>;
   signOut: () => Promise<void>;
   fetchUser: () => Promise<void>;
 }
@@ -86,12 +87,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true });
 
-      // No local bypass checks needed here, as we authenticate directly via Supabase Auth magic link.
+      // Identity comes from the Supabase-verified Google session.
 
       const { data: { user: authUser } } = await supabase.auth.getUser();
 
       if (!authUser) {
-        set({ user: null, isAuthenticated: false, isLoading: false });
+        set({ user: null, avatarUrl: null, isAdmin: false, isAuthenticated: false, isLoading: false });
         return;
       }
 
@@ -213,12 +214,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  signInWithGoogle: async () => {
+  signInWithGoogle: async (next = "/hub") => {
     const supabase = createClient();
     const result = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/login`,
+        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeNextPath(next))}`,
         queryParams: {
           hd: 'bitsathy.ac.in',
           prompt: 'select_account',

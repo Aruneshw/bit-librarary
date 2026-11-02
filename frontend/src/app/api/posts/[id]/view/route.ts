@@ -1,7 +1,10 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const access = await requireApiUser(request, false);
+  if (access.error) return access.error;
   try {
     const { id } = await params;
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

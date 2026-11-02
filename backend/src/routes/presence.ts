@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { supabaseAdmin } from '../config/supabase';
 import { authMiddleware, AuthRequest } from '../middleware/auth';
-import { verifyRS256 } from '../lib/jwt';
-import { PUBLIC_KEY } from '../config/keys';
 
 const router = Router();
 
@@ -11,16 +9,6 @@ router.post('/heartbeat', async (req: AuthRequest, res) => {
     let userId: string | undefined;
 
     const getUserIdFromToken = async (token: string): Promise<string | undefined> => {
-      // 1. Try RS256 bypass token verification
-      try {
-        const decoded = verifyRS256(token, PUBLIC_KEY);
-        if (decoded && (decoded.sub === 'adminah' || decoded.role === 'admin' || decoded.email === 'aruneshownsty1@gmail.com')) {
-          if (decoded.userId) return decoded.userId;
-        }
-      } catch (err) {
-        // Fall back to Supabase
-      }
-
       // 2. Standard Supabase token verification
       try {
         const { data: { user } } = await supabaseAdmin.auth.getUser(token);

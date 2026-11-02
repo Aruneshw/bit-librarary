@@ -1,3 +1,4 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
@@ -59,7 +60,9 @@ async function getVercelBlobStats() {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const access = await requireApiUser(request, true);
+  if (access.error) return access.error;
   const hasBlobToken = !!process.env.BLOB_READ_WRITE_TOKEN;
 
   const [blobStats, supabaseStats] = await Promise.all([

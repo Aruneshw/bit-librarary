@@ -450,6 +450,7 @@ export default function DashboardPage() {
 
               <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 pointer-events-auto max-w-[55%] sm:max-w-none">
                 {isAdmin && <VisitorCount />}
+                <button onClick={() => router.push('/hub')} className="font-mono text-xs text-arc-blue border border-arc-blue/40 px-3 py-1.5 rounded-md hover:bg-arc-blue/10">BIT HUB ↗</button>
                 <SystemClock />
 <PushToggle />
                 {user?.department && (

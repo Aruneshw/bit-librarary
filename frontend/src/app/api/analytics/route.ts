@@ -1,3 +1,4 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
@@ -50,7 +51,9 @@ function last7Range() {
   return { start: start.toISOString(), end: end.toISOString() };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  const access = await requireApiUser(request, true);
+  if (access.error) return access.error;
   const supabase = getAdmin();
   if (!supabase) {
     return NextResponse.json({ error: 'Service role not configured' }, { status: 500 });

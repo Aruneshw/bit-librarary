@@ -1,7 +1,10 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
+  const access = await requireApiUser(request, true);
+  if (access.error) return access.error;
   try {
     const { fileId, storage_provider, blob_path, file_url, post_id } = await request.json();
 

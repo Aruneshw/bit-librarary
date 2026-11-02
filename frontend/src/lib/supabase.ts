@@ -303,6 +303,7 @@ class MockQueryBuilder {
 
 export function createClient() {
   if (!hasValidEnv) {
+    if (process.env.NODE_ENV === 'production') throw new Error('Supabase configuration is required in production.');
     console.warn('⚠️ ARC_OS: Supabase credentials missing/placeholder. Running in fully functional Client Mock Mode.');
     
     return {

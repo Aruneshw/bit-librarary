@@ -1,3 +1,4 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
@@ -9,6 +10,8 @@ const admin = createClient(supabaseUrl, serviceRoleKey, {
 });
 
 export async function GET(req: Request) {
+  const access = await requireApiUser(req, false);
+  if (access.error) return access.error;
   try {
     const url = new URL(req.url);
     const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20'), 1), 100);

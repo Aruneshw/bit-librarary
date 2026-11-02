@@ -1,3 +1,4 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
@@ -5,6 +6,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export async function PUT(request: Request) {
+  const access = await requireApiUser(request, true);
+  if (access.error) return access.error;
   try {
     const body = await request.json();
     const { pollId, question, endDate, multipleChoice, anonymous, showLiveResults, options } = body;

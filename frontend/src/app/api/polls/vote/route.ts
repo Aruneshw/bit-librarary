@@ -1,3 +1,4 @@
+import { requireApiUser } from '@/lib/auth/api';
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
@@ -5,8 +6,11 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export async function POST(request: Request) {
+  const access = await requireApiUser(request, false);
+  if (access.error) return access.error;
   try {
-    const { pollId, optionIds, userId } = await request.json();
+    const { pollId, optionIds } = await request.json();
+    const userId = access.user.id;
 
     if (!pollId || !optionIds?.length || !userId) {
       return NextResponse.json({ error: 'pollId, optionIds[], and userId required' }, { status: 400 });

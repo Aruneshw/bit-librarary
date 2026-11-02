@@ -48,3 +48,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+# Local logs, generated PWA assets and credentials
+*.log
+*.pem
+*.key
+frontend/public/sw.js
+frontend/public/workbox-*.js
+.env.*
+!.env.example
+!.env.local.example

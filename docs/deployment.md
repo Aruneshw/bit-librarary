@@ -1,81 +1,45 @@
-# ARC_OS Academic Nexus — Deployment Guide
+# BIT HUB production deployment
 
-This document describes how to deploy the database, frontend, and backend for the ARC_OS Academic Nexus, using the credentials you provided.
+The repository contains a Next.js frontend (`frontend`) and the existing Library Express API (`backend`). BIT HUB talks to Supabase directly with database-enforced authorization. Keep the existing Library database and backend; do not run the old schema/seed scripts against production.
 
----
+## Required environment
 
-## 1. Database Setup (Supabase)
+Use `frontend/.env.local.example` and `backend/.env.example` as templates. Store real values in the hosting provider's secret settings and local ignored environment files.
 
-To initialize your tables, RLS policies, and triggers:
+Frontend:
+- `NEXT_PUBLIC_SUPABASE_URL`: the existing project's API URL.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: its publishable key (legacy anon fallback remains supported).
+- `SUPABASE_SERVICE_ROLE_KEY`: server-only secret for existing Library/admin APIs. Never prefix this with `NEXT_PUBLIC_`.
+- `NEXT_PUBLIC_API_URL`: the deployed Library API URL, ending in `/api/v1`.
+- `NEXT_PUBLIC_HUB_DEMO_ENABLED=false`: production uses real authentication/data. Enable only for explicitly requested public previews.
+- Existing optional AI, analytics, upload and Redis secrets must remain server-only as applicable.
 
-1. Go to your **Supabase Dashboard** for the project `wyczuyicyswcdsrcbfwa`.
-2. Click on the **SQL Editor** tab in the left sidebar.
-3. Click **New query**.
-4. Open the [schema.sql](file:///mnt/FDrive/bit-library/database/schema.sql) file. Copy its entire content and paste it into the editor.
-5. Click **Run**. This will create the database tables (`profiles`, `subjects`, `questions`, `question_views`, `settings`) and the automatic user signup trigger.
-6. Open the [seed.sql](file:///mnt/FDrive/bit-library/database/seed.sql) file. Copy its content, paste it into the editor, and click **Run**. This will populate the subjects and the sample questions bank.
+Backend: `SUPABASE_URL`, server-only `SUPABASE_SERVICE_ROLE_KEY`, exact `CORS_ORIGIN`, and the existing Redis configuration.
 
----
+## Security prerequisite
 
-## 2. Authentication Setup (Supabase)
+The old repository contained a service-role credential in this document and a custom signing key in source. Those values must be treated as exposed. This release removes the shared-key admin bypass and its signing keys; all API authentication now verifies Supabase-issued sessions. It also stops accepting administrator roles from user-editable metadata.
 
-Because the specification mandates authentication with a `@bitsathy.ac.in` domain, we use **Google OAuth**:
+Rotate the exposed Supabase credential in the project's API-key settings and replace it in every backend/frontend hosting secret and ignored local environment file. Revoke old privileged sessions as appropriate. Removing the text from this commit does not remove it from Git history. Do not publish a replacement credential in Git, chat, or screenshots.
 
-1. In the **Supabase Dashboard**, navigate to **Authentication** > **Providers** > **Google**.
-2. **Enable** the Google provider.
-3. Retrieve your **Client ID** and **Client Secret** from the [Google Cloud Console](https://console.cloud.google.com/apis/credentials):
-   - Create a Web Application credential.
-   - Set the Authorized Redirect URI to the URL provided in the Supabase Google Provider dashboard (e.g. `https://wyczuyicyswcdsrcbfwa.supabase.co/auth/v1/callback`).
-4. Paste the **Client ID** and **Client Secret** into your Supabase Google Auth configurations.
-5. Save the configuration.
+## Google OAuth
 
----
+1. In Google Cloud, use a Web application OAuth client. The authorized redirect URI is `https://<project-ref>.supabase.co/auth/v1/callback`.
+2. In Supabase Authentication → Providers → Google, enable Google and save the client ID/secret there.
+3. In Supabase Authentication → URL Configuration, set the Site URL to the actual HTTPS production domain. Allow `https://<production-domain>/auth/callback` and the local development callback `http://localhost:3000/auth/callback`. Add exact preview domains only when needed.
+4. The app starts Google PKCE sign-in, verifies the returned session on the server, restricts return paths to app routes, checks confirmed campus identity (plus existing explicitly allowed Library administrators), and redirects to `/hub` by default.
+5. Verify the complete sign-in/sign-out/re-login flow with a real campus account. The Google `hd` hint is not an authorization check; database policies enforce campus access.
 
-## 3. Pushing Code to GitHub
+## Supabase schema
 
-To push the codebase to your GitHub account:
+Apply the additive migrations in `supabase/migrations` in timestamp order to the existing Library project. The first migration expects the existing `profiles` table. Never reset the live database. Verify the Hub tables, private `hub-covers` bucket, row-level policies, and Realtime publication afterward.
 
-1. Open a terminal on your local system in the root directory `/mnt/FDrive/bit-library/`.
-2. Rename the default branch to `main`:
-   ```bash
-   git branch -M main
-   ```
-3. Add your remote GitHub repository:
-   ```bash
-   git remote add origin <your-github-repository-url>
-   ```
-4. Push the code:
-   ```bash
-   git push -u origin main
-   ```
+## Hosting and release
 
----
+The Git remote is `https://github.com/Aruneshw/bit-librarary.git`. For the existing Vercel deployment, keep Root Directory `frontend`, Build Command `npm run build`, and the Next.js framework preset. The Express Library backend must be deployed separately using its existing host, `npm run build`, and `npm start`.
 
-## 4. Deploying Frontend to Vercel
+Push only after tests pass and secrets have been removed from tracked files. A GitHub push may trigger the existing hosting integration; verify the deployment status, live `/login`, `/hub`, and the OAuth return URL afterward. A successful Git push alone is not evidence of a successful live deployment.
 
-To deploy your frontend to Vercel:
+Production pages and auth/API responses are not cached by the service worker. Only versioned Next.js static assets use the runtime cache. Protected pages refresh sessions using the Next.js proxy.
 
-1. In the **Vercel Dashboard**, click **Add New** > **Project**.
-2. Import your GitHub repository.
-3. Configure the project parameters:
-   - **Framework Preset**: Next.js
-   - **Root Directory**: `frontend` (Ensure you edit this setting, since Next.js is located in the nested `frontend` folder)
-4. Add the following **Environment Variables**:
-   - `NEXT_PUBLIC_SUPABASE_URL` = `https://wyczuyicyswcdsrcbfwa.supabase.co`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y3p1eWljeXN3Y2RzcmNiZndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4NDA5MzQsImV4cCI6MjA5NjQxNjkzNH0.GKFfZB7cTWxS46l3xxgvCxCsmLUXoRm6_xgfDuFz_Ek`
-   - `NEXT_PUBLIC_API_URL` = `<your-deployed-backend-url>/api/v1` (Note: Update this value after deploying the backend)
-5. Click **Deploy**.
-
----
-
-## 5. Deploying Backend to Render or Koyeb
-
-Since Next.js App Router runs purely on the edge / serverless on Vercel, the Express backend should be deployed to a persistent server provider (like Render, Railway, or Koyeb):
-
-1. Connect your repository to your server hosting provider.
-2. Select Root Directory as `backend`.
-3. Set the build command to `npm run build` and start command to `npm start`.
-4. Add the following **Environment Variables**:
-   - `SUPABASE_URL` = `https://wyczuyicyswcdsrcbfwa.supabase.co`
-   - `SUPABASE_SERVICE_ROLE_KEY` = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5Y3p1eWljeXN3Y2RzcmNiZndhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDg0MDkzNCwiZXhwIjoyMDk2NDE2OTM0fQ.Veb8jTE4khhnJUQBeauhr41pIXN1OlJk4oXakhkuCGw`
-   - `CORS_ORIGIN` = `<your-deployed-vercel-frontend-url>`
+See `BIT_HUB.md` for the feature model and current limitations.

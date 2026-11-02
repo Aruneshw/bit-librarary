@@ -6,12 +6,28 @@ const withPWA = require("next-pwa")({
   disable: process.env.NODE_ENV === "development",
   register: false,
   skipWaiting: true,
+  cacheStartUrl: false,
+  dynamicStartUrl: false,
+  cacheOnFrontEndNav: false,
+  runtimeCaching: [
+    { urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate', handler: 'NetworkOnly' },
+    { urlPattern: /\/api\/|\.supabase\.co\//, handler: 'NetworkOnly' },
+    { urlPattern: /\/_next\/static\//, handler: 'CacheFirst', options: { cacheName: 'bithub-static-v1', expiration: { maxEntries: 100, maxAgeSeconds: 604800 } } },
+  ],
 });
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { VueLoaderPlugin } = require('vue-loader');
+
 const nextConfig: NextConfig = {
+  // Turbopack can be re-enabled if desired since custom webpack is removed
   turbopack: {},
+  outputFileTracingRoot: process.cwd(),
   async headers() {
     return [
+      { source: '/hub/:path*', headers: [{ key: 'Cache-Control', value: 'private, no-store' }] },
+      { source: '/auth/:path*', headers: [{ key: 'Cache-Control', value: 'private, no-store' }] },
+      { source: '/api/:path*', headers: [{ key: 'Cache-Control', value: 'private, no-store' }] },
       {
         source: '/(.*)',
         headers: [

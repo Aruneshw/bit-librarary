@@ -1,70 +1,37 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { getSupabasePublishableKey } from '@/lib/supabase';
+import { createSupabaseServerClient } from '@/lib/supabaseServer';
 import { isAdminEmail } from '@/lib/adminEmails';
+import { safeNextPath } from '@/lib/auth/redirect';
 
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get('code');
-  const tokenHash = searchParams.get('token_hash');
-  const type = searchParams.get('type');
-  const requestedNext = searchParams.get('next') ?? '/dashboard';
-  const next = requestedNext.startsWith('/') && !requestedNext.startsWith('//')
-    ? requestedNext
-    : '/dashboard';
-
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    getSupabasePublishableKey(),
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove(name: string, options: CookieOptions) {
-          cookieStore.delete({ name, ...options });
-        },
-      },
+  const url = new URL(request.url);
+  const next = safeNextPath(url.searchParams.get('next'));
+  const fail = (code: string) => {
+    const target = new URL('/login', url.origin);
+    target.searchParams.set('error', code);
+    target.searchParams.set('next', next);
+    return NextResponse.redirect(target, { headers: { 'Cache-Control': 'private, no-store' } });
+  };
+  const code = url.searchParams.get('code');
+  if (!code) return fail('auth-callback-failed');
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) return fail('auth-callback-failed');
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user?.email_confirmed_at || !user.email ||
+        (!user.email.toLowerCase().endsWith('@bitsathy.ac.in') && !isAdminEmail(user.email))) {
+      await supabase.auth.signOut();
+      return fail('campus-account-required');
     }
-  );
-
-  // 1. Handle magic link token verification (Bypass Login)
-  if (tokenHash && type) {
-    const { error } = await supabase.auth.verifyOtp({
-      type: type as any,
-      token_hash: tokenHash,
-    });
-
-    if (!error) {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.id && !isAdminEmail(user.email)) {
-        await supabase.rpc('increment_login_count', { target_user_id: user.id });
-      }
-      return NextResponse.redirect(`${origin}${next}`);
-    } else {
-      console.error('Verify OTP error:', error.message);
+    // The Library signup trigger normally creates this row. Handle older accounts too.
+    const { data: profile, error: profileError } = await supabase.from('profiles').select('id').eq('id', user.id).maybeSingle();
+    if (profileError) return fail('profile-unavailable');
+    if (!profile) {
+      const { error: insertError } = await supabase.from('profiles').insert({ id: user.id, email: user.email, name: user.user_metadata.full_name || user.user_metadata.name || user.email.split('@')[0] });
+      if (insertError && insertError.code !== '23505') return fail('profile-unavailable');
     }
-  }
-
-  // 2. Handle PKCE Code exchange (Google OAuth)
-  if (code) {
-    const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error && sessionData?.session?.user?.id) {
-      const authUser = sessionData.session.user;
-      if (!isAdminEmail(authUser.email)) {
-        await supabase.rpc('increment_login_count', { target_user_id: authUser.id });
-      }
-      return NextResponse.redirect(`${origin}${next}`);
-    } else {
-      console.error('Exchange code error:', error?.message);
-    }
-  }
-
-  // Fallback to error redirect
-  return NextResponse.redirect(`${origin}/login?error=auth-callback-failed`);
+    if (!isAdminEmail(user.email)) await supabase.rpc('increment_login_count', { target_user_id: user.id });
+    return NextResponse.redirect(new URL(next, url.origin), { headers: { 'Cache-Control': 'private, no-store' } });
+  } catch { return fail('auth-callback-failed'); }
 }

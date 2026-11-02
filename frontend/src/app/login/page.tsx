@@ -1,14 +1,21 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AuthorizationCard from '@/components/auth/AuthorizationCard';
 import DepartmentSelector from '@/components/auth/DepartmentSelector';
 import { useAuthStore } from '@/store/authStore';
+import { safeNextPath } from '@/lib/auth/redirect';
 
 export default function LoginPage() {
   const { user, isAuthenticated, isAdmin, fetchUser, isLoading } = useAuthStore();
   const router = useRouter();
+  const [authError, setAuthError] = useState('');
+  const destination = () => safeNextPath(new URLSearchParams(window.location.search).get('next'));
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get('error');
+    if (code) queueMicrotask(() => setAuthError(code === 'campus-account-required' ? 'Please choose your verified campus Google account.' : code === 'profile-unavailable' ? 'Your profile could not be loaded. Please try signing in again.' : 'Sign-in could not be completed. Please try again.'));
+  }, []);
   const needsDepartment = !isLoading && isAuthenticated && !isAdmin && Boolean(user && !user.department);
 
   useEffect(() => {
@@ -17,12 +24,12 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isLoading && isAuthenticated && (user?.department || isAdmin)) {
-      router.replace('/dashboard');
+      router.replace(destination());
     }
   }, [isLoading, isAuthenticated, isAdmin, user, router]);
 
   const handleDepartmentSelect = () => {
-    router.replace('/dashboard');
+    router.replace(destination());
   };
 
   return (
@@ -38,7 +45,7 @@ export default function LoginPage() {
               className="font-orbitron text-arc-blue text-2xl md:text-[28px] font-bold tracking-wider"
               style={{ textShadow: '0 0 12px rgba(0,217,255,0.5)' }}
             >
-              BIT LIBRARY
+              BIT HUB
             </h1>
 
             <div className="w-full h-px bg-gradient-to-r from-transparent via-terminal-green/40 to-transparent" />
@@ -55,7 +62,7 @@ export default function LoginPage() {
             <DepartmentSelector onSelect={handleDepartmentSelect} />
           </div>
         ) : (
-          <AuthorizationCard />
+          <><AuthorizationCard />{authError && <p role="alert" className="mt-4 max-w-sm text-center text-warning-red">{authError}</p>}</>
         )}
       </div>
     </main>
