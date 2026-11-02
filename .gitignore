@@ -58,3 +58,4 @@ frontend/public/workbox-*.js
 .env.*
 !.env.example
 !.env.local.example
+.neon

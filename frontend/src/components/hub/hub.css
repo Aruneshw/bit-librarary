@@ -111,6 +111,61 @@
   margin-top: 6px;
   letter-spacing: 0.35px;
 }
+.hub-user-marquee {
+  display: block;
+  overflow: hidden;
+  width: 210px;
+  max-width: 100%;
+  margin-top: 4px;
+  color: #00e5ef;
+  font:
+    11px/1.4 "Share Tech Mono",
+    monospace;
+  letter-spacing: 2.4px;
+  white-space: nowrap;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 10%,
+    #000 90%,
+    transparent
+  );
+  animation: hub-user-fade 9s ease forwards;
+}
+.hub-user-marquee > span {
+  display: inline-block;
+  min-width: 100%;
+  animation: hub-user-run 5.5s linear infinite;
+}
+@keyframes hub-user-run {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+@keyframes hub-user-fade {
+  0%,
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-user-marquee > span {
+    animation: none;
+  }
+}
 .hub-search {
   display: flex;
   align-items: center;
@@ -204,6 +259,21 @@
 .hub-account small {
   display: block;
   font-size: 12px;
+}
+.hub-signout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border: 1px solid #0b6269;
+  border-radius: 4px;
+  color: #a5c6d9;
+  background: #001016a8;
+}
+.hub-root .hub-signout:hover:not(:disabled),
+.hub-root .hub-signout:focus-visible {
+  color: #ff8a9a;
+  border-color: #ff4b62;
 }
 .hub-mobile-menu {
   display: none;

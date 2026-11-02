@@ -14,10 +14,36 @@ import {
   type Student,
 } from "@/lib/hub/types";
 const DEMO_KEY = "bithub-demo-v1";
+type OAuthIdentity = {
+  name: string;
+  avatar_url: string | null;
+};
+function readOAuthIdentity(user: {
+  email?: string | null;
+  user_metadata?: Record<string, unknown> | null;
+}): OAuthIdentity {
+  const metadata = user.user_metadata || {};
+  const name = [metadata.full_name, metadata.name].find(
+    (value): value is string =>
+      typeof value === "string" && value.trim().length > 0,
+  );
+  const avatar = [metadata.avatar_url, metadata.picture].find(
+    (value): value is string =>
+      typeof value === "string" && value.startsWith("https://"),
+  );
+  return {
+    name: (name || user.email?.split("@")[0] || "").trim(),
+    avatar_url: avatar || null,
+  };
+}
 export function useHub() {
   const [data, setData] = useState<HubData>(EMPTY_HUB);
   const [userId, setUserId] = useState("");
   const [isReviewer, setIsReviewer] = useState(false);
+  const [identity, setIdentity] = useState<OAuthIdentity>({
+    name: "",
+    avatar_url: null,
+  });
   const [demo, setDemo] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -57,6 +83,25 @@ export function useHub() {
           }
         } else {
           setUserId(user!.id);
+          const oauth = readOAuthIdentity(user!);
+          setIdentity(oauth);
+          if (oauth.avatar_url) {
+            try {
+              const { data: profile } = await client!
+                .from("hub_profiles")
+                .select("avatar_url")
+                .eq("id", user!.id)
+                .maybeSingle();
+              if (profile && profile.avatar_url !== oauth.avatar_url) {
+                await client!
+                  .from("hub_profiles")
+                  .update({ avatar_url: oauth.avatar_url })
+                  .eq("id", user!.id);
+              }
+            } catch {
+              /* Keep the Google photo as a display fallback if sync fails. */
+            }
+          }
           setIsReviewer(isAdminEmail(user!.email) || user!.app_metadata.role === "admin");
           setData(await loadHub());
         }
@@ -87,8 +132,9 @@ export function useHub() {
   }, [demo, userId]);
   async function signOut() {
     await run(async () => {
-      const { error } = await hubClient()!.auth.signOut({ scope: 'local' });
+      const { error } = await hubClient()!.auth.signOut();
       if (error) throw new Error('Could not sign out. Please try again.');
+      setIdentity({ name: "", avatar_url: null });
       setData(EMPTY_HUB); setMessages([]);
       window.location.replace('/login?next=/hub');
     });
@@ -393,9 +439,16 @@ export function useHub() {
           ),
         }));
       else {
+        const payload = {
+          id: userId,
+          ...input,
+          ...(identity.avatar_url && !input.avatar_url
+            ? { avatar_url: identity.avatar_url }
+            : {}),
+        };
         const { error } = await hubClient()!
           .from("hub_profiles")
-          .upsert({ id: userId, ...input });
+          .upsert(payload);
         if (error) throw new Error(error.message);
         await refresh();
       }
@@ -422,16 +475,7 @@ export function useHub() {
           cover.size > 5 * 1024 * 1024
         )
           throw new Error("Choose a PNG, JPG or WebP image under 5 MB.");
-        if (!demo) {
-          coverPath = `${userId}/${crypto.randomUUID()}.${cover.type.split("/")[1]}`;
-          const { error } = await hubClient()!
-            .storage.from("hub-covers")
-            .upload(coverPath, cover, {
-              contentType: cover.type,
-              upsert: false,
-            });
-          if (error) throw new Error(error.message);
-        } else {
+        if (demo) {
           coverPath = await new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(String(reader.result));
@@ -457,19 +501,28 @@ export function useHub() {
           ),
         }));
       } else {
-        try {
-          await rpc("hub_submit_project", {
-            input: { ...input, cover_path: coverPath },
-          });
-          await refresh();
-        } catch (error) {
-          if (coverPath)
-            await hubClient()!.storage.from("hub-covers").remove([coverPath]);
-          throw error;
-        }
+        const form = new FormData();
+        form.set("title", input.title);
+        form.set("description", input.description);
+        form.set("category", input.category);
+        form.set("technologies", JSON.stringify(input.technologies));
+        form.set("repository_url", input.repository_url);
+        form.set("demo_url", input.demo_url);
+        if (cover) form.set("cover", cover);
+        const response = await fetch("/api/hub/projects", {
+          method: "POST",
+          body: form,
+          credentials: "same-origin",
+        });
+        const payload = (await response.json().catch(() => null)) as
+          | { error?: string }
+          | null;
+        if (!response.ok)
+          throw new Error(payload?.error || "The project could not be submitted.");
+        await refresh();
       }
       setNotice(
-        "Project submitted. It appears on your profile; +5 XP is awarded after approval.",
+        "Project submitted. It appears on your profile; XP is awarded after approval.",
       );
     });
   }
@@ -491,7 +544,20 @@ export function useHub() {
           ),
         }));
       } else {
-        await rpc("hub_archive_project", { project: id });
+        const response = await fetch(
+          `/api/hub/projects/${encodeURIComponent(id)}`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "archive" }),
+            credentials: "same-origin",
+          },
+        );
+        const payload = (await response.json().catch(() => null)) as
+          | { error?: string }
+          | null;
+        if (!response.ok)
+          throw new Error(payload?.error || "The project could not be archived.");
         await refresh();
       }
       setNotice("Project archived.");
@@ -530,6 +596,8 @@ export function useHub() {
     setActiveRoom,
     setError,
     setNotice,
+    identityName: identity.name,
+    identityAvatar: identity.avatar_url,
     refresh,
     joinRoom,
     leaveRoom,

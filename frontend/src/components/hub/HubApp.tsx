@@ -29,7 +29,6 @@ const NAV: HubPage[] = [
   "Hackathons",
   "Projects",
   "Leaderboard",
-  "Courses",
   "Profile",
 ];
 function Panel({
@@ -87,12 +86,30 @@ function Modal({
     </dialog>
   );
 }
+function NameTicker({ name }: { name: string }) {
+  const [visible, setVisible] = useState(true);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setVisible(false), 9000);
+    return () => window.clearTimeout(timer);
+  }, []);
+  if (!name || !visible) return null;
+  return (
+    <em className="hub-user-marquee" aria-hidden="true">
+      <span>{name.toUpperCase()}</span>
+    </em>
+  );
+}
 function Cover({ project }: { project: Project }) {
   const [url, setUrl] = useState("");
   useEffect(() => {
     let active = true;
     if (!project.cover_path) return;
-    if (project.cover_path.startsWith("data:image/")) return;
+    if (
+      project.cover_path.startsWith("data:image/") ||
+      project.cover_path.startsWith("https://") ||
+      project.cover_path.startsWith("/api/")
+    )
+      return;
     hubClient()
       ?.storage.from("hub-covers")
       .createSignedUrl(project.cover_path, 3600)
@@ -103,9 +120,11 @@ function Cover({ project }: { project: Project }) {
       active = false;
     };
   }, [project.cover_path]);
-  const displayUrl = project.cover_path?.startsWith("data:image/")
-    ? project.cover_path
-    : url;
+  const directUrl =
+    project.cover_path?.startsWith("data:image/") ||
+    project.cover_path?.startsWith("https://") ||
+    project.cover_path?.startsWith("/api/");
+  const displayUrl = directUrl ? project.cover_path : url;
   return displayUrl ? (
     <img
       className="hub-project-cover"
@@ -121,7 +140,7 @@ function Cover({ project }: { project: Project }) {
 }
 export default function HubApp() {
   const hub = useHub();
-  const { data, userId, demo, busy } = hub;
+  const { data, userId, demo, busy, identityName, identityAvatar } = hub;
   const [page, setPage] = useState<HubPage>("Home");
   const [query, setQuery] = useState("");
   const [domain, setDomain] = useState("All");
@@ -139,6 +158,27 @@ export default function HubApp() {
   const searchRef = useRef<HTMLInputElement>(null);
   const messageEnd = useRef<HTMLDivElement>(null);
   const me = data.students.find((s) => s.id === userId);
+  const displayName = (me?.name || identityName || "").trim();
+  const headerStudent: Student | null = me
+    ? { ...me, avatar_url: me.avatar_url || identityAvatar }
+    : identityAvatar && displayName
+      ? {
+          id: userId || "oauth-user",
+          name: displayName,
+          department: "",
+          college: "",
+          year: 1,
+          bio: "",
+          skills: [],
+          available: true,
+          avatar_url: identityAvatar,
+          github_url: "",
+          xp: 0,
+          project_count: 0,
+          achievement_count: 0,
+          visibility: "campus",
+        }
+      : null;
   const ranked = rankStudents(data.students);
   const myRank = data.summary ? data.summary.rank : ranked.findIndex((s) => s.id === userId) + 1;
   const room = data.rooms.find((r) => r.id === hub.activeRoom);
@@ -458,6 +498,7 @@ export default function HubApp() {
       bio: String(form.get("bio")).trim(),
       skills: form.getAll("skills").map(String),
       available: form.get("available") === "on",
+      avatar_url: me?.avatar_url || identityAvatar || null,
       github_url: String(form.get("github_url")).trim(),
       visibility: String(form.get("visibility")),
     });
@@ -482,6 +523,9 @@ export default function HubApp() {
           <span>
             <b>BIT HUB</b>
             <small>STUDENT COLLABORATION PLATFORM</small>
+            {displayName && (
+              <NameTicker key={displayName} name={displayName} />
+            )}
           </span>
         </Link>
         <form
@@ -520,13 +564,27 @@ export default function HubApp() {
             {unread > 0 && <i />}
           </button>
           <button className="hub-account" onClick={() => navigate("Profile")}>
-            {me && <Avatar student={me} small />}
+            {headerStudent && <Avatar student={headerStudent} small />}
             <span>
-              <b>{me?.name || "YOUR PROFILE"}</b>
-              <small>{me?.department || "Join the community"}</small>
+              <b>{displayName || "YOUR PROFILE"}</b>
+              <small>
+                {me?.department ||
+                  (displayName ? "BIT student" : "Join the community")}
+              </small>
             </span>
             <span>⌄</span>
           </button>
+          {!demo && (
+            <button
+              className="hub-signout"
+              aria-label="Sign out"
+              title="Sign out"
+              disabled={busy}
+              onClick={() => act(hub.signOut())}
+            >
+              <Icon name="SignOut" size={18} />
+            </button>
+          )}
         </div>
       </header>
       <aside className={`hub-sidebar ${menu ? "open" : ""}`}>
@@ -1443,24 +1501,6 @@ export default function HubApp() {
                 )}
               </>
             )}
-            {page === "Courses" && (
-              <Panel title="BIT LIBRARY COURSES">
-                <div className="hub-course-entry">
-                  <Icon name="Courses" size={58} />
-                  <h1>Learn something. Build something.</h1>
-                  <p>
-                    Your existing subjects, notes, study materials, and learning
-                    progress are waiting in BIT Library.
-                  </p>
-                  <Link className="hub-button" href="/dashboard">
-                    Open BIT Library <Icon name="Arrow" size={18} />
-                  </Link>
-                  <Link className="hub-text-button" href="/journey">
-                    View your learning journey <Icon name="Arrow" size={15} />
-                  </Link>
-                </div>
-              </Panel>
-            )}
           </>
         )}
         <footer className="hub-footer">
@@ -1635,7 +1675,7 @@ export default function HubApp() {
                   required
                   minLength={2}
                   maxLength={80}
-                  defaultValue={me?.name}
+                  defaultValue={me?.name || identityName}
                 />
               </label>
               <label>

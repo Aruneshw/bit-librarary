@@ -11,3 +11,8 @@ export function safeNextPath(value: string | null | undefined): string {
 export function demoAllowed(environment: string | undefined, enabled: string | undefined) {
   return environment !== 'production' || enabled === 'true';
 }
+/** Choose the landing page after sign-in; a plain administrator sign-in opens the admin view. */
+export function resolvePostLoginPath(requestedNext: string | null | undefined, isAdmin: boolean): string {
+  if (requestedNext) return safeNextPath(requestedNext);
+  return isAdmin ? '/admin' : '/hub';
+}

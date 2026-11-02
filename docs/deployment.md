@@ -1,6 +1,6 @@
 # BIT HUB production deployment
 
-The repository contains a Next.js frontend (`frontend`) and the existing Library Express API (`backend`). BIT HUB talks to Supabase directly with database-enforced authorization. Keep the existing Library database and backend; do not run the old schema/seed scripts against production.
+The repository contains a Next.js frontend (`frontend`) and the existing Library Express API (`backend`). BIT HUB profiles, rooms, messages, events, and notifications use Supabase with database-enforced authorization. Project records and project XP use Neon through authenticated Next.js routes. Keep the existing Library database and backend; do not run the old schema/seed scripts against production.
 
 ## Required environment
 
@@ -9,7 +9,11 @@ Use `frontend/.env.local.example` and `backend/.env.example` as templates. Store
 Frontend:
 - `NEXT_PUBLIC_SUPABASE_URL`: the existing project's API URL.
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: its publishable key (legacy anon fallback remains supported).
-- `SUPABASE_SERVICE_ROLE_KEY`: server-only secret for existing Library/admin APIs. Never prefix this with `NEXT_PUBLIC_`.
+- `SUPABASE_SERVICE_ROLE_KEY`: server-only secret for existing Library/admin APIs, project visibility/profile lookups, and approval notifications. Never prefix this with `NEXT_PUBLIC_`.
+- `NEON_DATABASE_URL`: server-only pooled Neon Postgres connection string for project records and project XP. Apply `database/neon_projects.sql` once, then set this in Vercel. Never prefix it with `NEXT_PUBLIC_`.
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINT_URL_S3`, `AWS_REGION`: server-only Neon Object Storage credentials pulled by `neon deploy` for the linked branch. Required for project cover uploads.
+- `NEON_STORAGE_BUCKET`: optional bucket name, defaults to `uploads`.
+- `BLOB_READ_WRITE_TOKEN`: optional Vercel Blob token still used by other media uploads (not project covers).
 - `NEXT_PUBLIC_API_URL`: the deployed Library API URL, ending in `/api/v1`.
 - `NEXT_PUBLIC_HUB_DEMO_ENABLED=false`: production uses real authentication/data. Enable only for explicitly requested public previews.
 - Existing optional AI, analytics, upload and Redis secrets must remain server-only as applicable.
@@ -27,12 +31,23 @@ Rotate the exposed Supabase credential in the project's API-key settings and rep
 1. In Google Cloud, use a Web application OAuth client. The authorized redirect URI is `https://<project-ref>.supabase.co/auth/v1/callback`.
 2. In Supabase Authentication → Providers → Google, enable Google and save the client ID/secret there.
 3. In Supabase Authentication → URL Configuration, set the Site URL to the actual HTTPS production domain. Allow `https://<production-domain>/auth/callback` and the local development callback `http://localhost:3000/auth/callback`. Add exact preview domains only when needed.
-4. The app starts Google PKCE sign-in, verifies the returned session on the server, restricts return paths to app routes, checks confirmed campus identity (plus existing explicitly allowed Library administrators), and redirects to `/hub` by default.
-5. Verify the complete sign-in/sign-out/re-login flow with a real campus account. The Google `hd` hint is not an authorization check; database policies enforce campus access.
+4. The app starts Google PKCE sign-in, verifies the returned session on the server, restricts return paths to app routes, checks confirmed campus identity (plus existing explicitly allowed Library administrators), and redirects to `/hub` by default. Approved administrators who sign in without an explicit destination land on `/admin`.
+5. Verify the complete sign-in/sign-out/re-login flow with a real campus account and with an allowlisted administrator account. The app intentionally omits the Google `hd` hint so administrators with personal Google accounts (for example `aruneshownsty1@gmail.com`) can sign in; the `hd` hint is not an authorization check, so database policies and the server-side callback still enforce campus/admin access.
+
+## Neon project storage
+
+BIT HUB projects, project XP, and project covers live in Neon. Apply
+`database/neon_projects.sql` once to the Neon database, then set
+`NEON_DATABASE_URL` in the frontend environment. Link the project with the
+Neon CLI (`neon init --project-id ... --branch production --services
+postgres,object-storage`), declare the `uploads` bucket, and run `neon deploy`.
+Copy the resulting `AWS_*` values into the frontend environment; the bucket is
+private and covers are streamed through an authenticated route. See
+[Neon project storage](NEON_PROJECTS.md).
 
 ## Supabase schema
 
-Apply the additive migrations in `supabase/migrations` in timestamp order to the existing Library project. The first migration expects the existing `profiles` table. Never reset the live database. Verify the Hub tables, private `hub-covers` bucket, row-level policies, and Realtime publication afterward.
+Apply the additive migrations in `supabase/migrations` in timestamp order to the existing Library project. The first migration expects the existing `profiles` table. Never reset the live database. Verify the Hub tables, row-level policies, and Realtime publication afterward. The `hub-covers` bucket and `public.hub_projects` objects are legacy and are no longer used by the project UI.
 
 ## Hosting and release
 

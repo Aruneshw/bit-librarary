@@ -1,7 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { hubClient } from '@/lib/hub/client';
 import { safeUrl, type Project } from '@/lib/hub/types';
 import './hub.css';
 type ReviewProject = Project & { owner_name: string };
@@ -12,29 +11,55 @@ export default function HubReview() {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const load = useCallback(async () => {
-    const client = hubClient();
-    if (!client) throw new Error('Database connection unavailable.');
-    const { data, error } = await client.rpc('hub_review_queue');
-    if (error) throw new Error(error.message);
-    setProjects(data || []);
+    const response = await fetch('/api/hub/review', {
+      cache: 'no-store',
+      credentials: 'same-origin',
+    });
+    const payload = (await response.json().catch(() => null)) as
+      | { projects?: ReviewProject[]; error?: string }
+      | null;
+    if (!response.ok) {
+      throw new Error(payload?.error || 'The review queue could not be loaded.');
+    }
+    setProjects(payload?.projects || []);
   }, []);
   useEffect(() => {
     let active = true;
-    const client = hubClient();
-    if (!client) return;
-    void client.rpc('hub_review_queue').then(({ data, error }) => {
-      if (!active) return;
-      if (error) setError(error.message);
-      else setProjects(data || []);
-      setLoading(false);
-    });
+    fetch('/api/hub/review', { cache: 'no-store', credentials: 'same-origin' })
+      .then(async (response) => {
+        const payload = (await response.json().catch(() => null)) as
+          | { projects?: ReviewProject[]; error?: string }
+          | null;
+        if (!response.ok) {
+          throw new Error(payload?.error || 'The review queue could not be loaded.');
+        }
+        return payload?.projects || [];
+      })
+      .then((queue) => {
+        if (active) {
+          setProjects(queue);
+          setLoading(false);
+        }
+      })
+      .catch((reason) => {
+        if (active) {
+          setError(reason instanceof Error ? reason.message : 'The review queue could not be loaded.');
+          setLoading(false);
+        }
+      });
     return () => { active = false; };
   }, []);
   async function review(project: ReviewProject, decision: 'approved' | 'rejected') {
     setBusy(project.id); setError(''); setNotice('');
     try {
-      const { error } = await hubClient()!.rpc('hub_review_project', { project: project.id, decision });
-      if (error) throw new Error(error.message);
+      const response = await fetch('/api/hub/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: project.id, decision }),
+        credentials: 'same-origin',
+      });
+      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) throw new Error(payload?.error || 'The review decision could not be saved.');
       setNotice(`${project.title} ${decision}.`);
       await load();
     } catch (e) { setError(e instanceof Error ? e.message : 'Review failed. Please retry.'); }

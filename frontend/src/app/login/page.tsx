@@ -5,16 +5,16 @@ import { useRouter } from 'next/navigation';
 import AuthorizationCard from '@/components/auth/AuthorizationCard';
 import DepartmentSelector from '@/components/auth/DepartmentSelector';
 import { useAuthStore } from '@/store/authStore';
-import { safeNextPath } from '@/lib/auth/redirect';
+import { resolvePostLoginPath } from '@/lib/auth/redirect';
 
 export default function LoginPage() {
   const { user, isAuthenticated, isAdmin, fetchUser, isLoading } = useAuthStore();
   const router = useRouter();
   const [authError, setAuthError] = useState('');
-  const destination = () => safeNextPath(new URLSearchParams(window.location.search).get('next'));
+  const destination = () => resolvePostLoginPath(new URLSearchParams(window.location.search).get('next'), isAdmin);
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get('error');
-    if (code) queueMicrotask(() => setAuthError(code === 'campus-account-required' ? 'Please choose your verified campus Google account.' : code === 'profile-unavailable' ? 'Your profile could not be loaded. Please try signing in again.' : 'Sign-in could not be completed. Please try again.'));
+    if (code) queueMicrotask(() => setAuthError(code === 'campus-account-required' ? 'Please use your verified campus Google account or an approved admin account.' : code === 'profile-unavailable' ? 'Your profile could not be loaded. Please try signing in again.' : 'Sign-in could not be completed. Please try again.'));
   }, []);
   const needsDepartment = !isLoading && isAuthenticated && !isAdmin && Boolean(user && !user.department);
 

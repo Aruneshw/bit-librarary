@@ -214,14 +214,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  signInWithGoogle: async (next = "/hub") => {
+  signInWithGoogle: async (next) => {
     const supabase = createClient();
+    const callback = `${window.location.origin}/auth/callback`;
     const result = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(safeNextPath(next))}`,
+        // Do not send an `hd` hint: it hides non-campus Google accounts, which
+        // would lock out allowlisted administrators such as
+        // aruneshownsty1@gmail.com. Campus/admin access is enforced server-side
+        // in the callback and auth middleware, not by the account chooser.
+        redirectTo: next ? `${callback}?next=${encodeURIComponent(safeNextPath(next))}` : callback,
         queryParams: {
-          hd: 'bitsathy.ac.in',
           prompt: 'select_account',
         },
       },

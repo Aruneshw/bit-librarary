@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabaseServer';
 import { isAdminEmail } from '@/lib/adminEmails';
-import { safeNextPath } from '@/lib/auth/redirect';
+import { safeNextPath, resolvePostLoginPath } from '@/lib/auth/redirect';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const next = safeNextPath(url.searchParams.get('next'));
+  const requestedNext = url.searchParams.get('next');
+  const next = safeNextPath(requestedNext);
   const fail = (code: string) => {
     const target = new URL('/login', url.origin);
     target.searchParams.set('error', code);
@@ -32,6 +33,9 @@ export async function GET(request: Request) {
       if (insertError && insertError.code !== '23505') return fail('profile-unavailable');
     }
     if (!isAdminEmail(user.email)) await supabase.rpc('increment_login_count', { target_user_id: user.id });
-    return NextResponse.redirect(new URL(next, url.origin), { headers: { 'Cache-Control': 'private, no-store' } });
+    // Administrators normally sign in with a personal Google account and cannot
+    // use the campus-only Hub, so a plain sign-in lands on the admin view.
+    const destination = resolvePostLoginPath(requestedNext, isAdminEmail(user.email));
+    return NextResponse.redirect(new URL(destination, url.origin), { headers: { 'Cache-Control': 'private, no-store' } });
   } catch { return fail('auth-callback-failed'); }
 }

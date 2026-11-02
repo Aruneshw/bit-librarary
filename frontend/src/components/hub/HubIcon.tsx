@@ -21,6 +21,8 @@ const paths: Record<string, string> = {
   Star: "m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3z",
   Check: "m4 12 5 5L20 6",
   Menu: "M3 6h18M3 12h18M3 18h18",
+  SignOut:
+    "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",
   Globe:
     "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M2 12h20M12 2c-6 6-6 14 0 20 6-6 6-14 0-20",
 };

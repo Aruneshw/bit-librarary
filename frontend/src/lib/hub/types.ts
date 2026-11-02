@@ -15,7 +15,6 @@ export type HubPage =
   | "Hackathons"
   | "Projects"
   | "Leaderboard"
-  | "Courses"
   | "Profile";
 export interface Student {
   id: string;
