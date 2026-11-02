@@ -647,9 +647,11 @@ export default function HubApp() {
                   hub
                     .refresh()
                     .then(() => hub.setError(""))
-                    .catch(() =>
+                    .catch((cause) =>
                       hub.setError(
-                        "Database unavailable. Apply the Hub database setup and retry.",
+                        cause instanceof Error && cause.message
+                          ? cause.message
+                          : "Database unavailable. Apply the Hub database setup and retry.",
                       ),
                     ),
                 )

@@ -105,10 +105,12 @@ export function useHub() {
           setIsReviewer(isAdminEmail(user!.email) || user!.app_metadata.role === "admin");
           setData(await loadHub());
         }
-      } catch {
+      } catch (cause) {
         if (alive)
           setError(
-            "Could not connect to BIT HUB. Retry, or open the demo to review the interface.",
+            cause instanceof Error && cause.message
+              ? cause.message
+              : "Could not connect to BIT HUB. Retry, or open the demo to review the interface.",
           );
       } finally {
         if (alive) setLoading(false);
