@@ -282,12 +282,14 @@ export function useHub() {
       backgroundRefresh();
     });
   }
-  async function inviteMembers(room: Room, members: string[]) {
+  async function inviteMembers(room: Room, members: string[]): Promise<number> {
+    let invited = 0;
     await run(async () => {
-      const invited = await rpc("hub_invite_members", { room: room.id, members });
+      invited = Number(await rpc("hub_invite_members", { room: room.id, members })) || 0;
       setNotice(`${invited} invitation${invited === 1 ? "" : "s"} sent.`);
       await refresh();
     });
+    return invited;
   }
   async function respondInvite(invite: string, accept: boolean) {
     const roomId = data.invites.find(item => item.id === invite)?.room_id ?? null;

@@ -150,6 +150,89 @@ function HubClock() {
   }, []);
   return <span className="hub-clock">{time || "──:──:──"} IST</span>;
 }
+function InviteRoomModal({
+  student,
+  rooms,
+  busy,
+  error,
+  close,
+  send,
+}: {
+  student: Student;
+  rooms: Room[];
+  busy: boolean;
+  error: string;
+  close: () => void;
+  send: (roomId: string, studentId: string) => Promise<number>;
+}) {
+  const [roomId, setRoomId] = useState(rooms[0]?.id ?? "");
+  const [sending, setSending] = useState(false);
+  const [result, setResult] = useState<"none" | "sent" | "member">("none");
+  const chosen = rooms.find(r => r.id === roomId);
+  return (
+    <Modal title={`Invite ${student.name}`} close={close}>
+      {result !== "none" ? (
+        <p className="hub-invite-sent">
+          {result === "sent"
+            ? `Invitation sent to ${student.name}. They can accept it from anywhere in the Hub, which moves them into “${chosen?.name}”.`
+            : `${student.name} is already a member of “${chosen?.name}”. Open the room and start the discussion.`}
+        </p>
+      ) : (
+        <div className="hub-form">
+          <p>
+            Pick one of your rooms. {student.name} gets a notification and can
+            accept or decline; accepting joins the room for a live discussion.
+          </p>
+          <div className="hub-invite-rooms" role="radiogroup" aria-label="Your rooms">
+            {rooms.map(r => (
+              <label key={r.id} className={r.id === roomId ? "selected" : ""}>
+                <input
+                  type="radio"
+                  name="invite-room"
+                  value={r.id}
+                  checked={r.id === roomId}
+                  onChange={() => setRoomId(r.id)}
+                />
+                <span>
+                  <b>{r.name}</b>
+                  <small>
+                    {r.kind === "team" ? "Team" : "Bubble"} ·{" "}
+                    {r.member_count}/{r.capacity} members
+                    {r.finalized_at ? " · finalised" : ""}
+                  </small>
+                </span>
+              </label>
+            ))}
+          </div>
+          {error && <p role="alert" className="hub-form-error">{error}</p>}
+          <div className="hub-form-actions">
+            <button className="hub-text-button" onClick={close}>
+              Not now
+            </button>
+            <button
+              className="hub-button"
+              disabled={busy || sending || !roomId}
+              onClick={async () => {
+                setSending(true);
+                try {
+                  const invited = await send(roomId, student.id);
+                  setResult(invited >= 1 ? "sent" : "member");
+                } catch {
+                  /* hub.error renders above. */
+                } finally {
+                  setSending(false);
+                }
+              }}
+            >
+              {sending ? "Sending…" : `Invite to “${chosen?.name || "room"}”`}
+              <Icon name="Send" size={17} />
+            </button>
+          </div>
+        </div>
+      )}
+    </Modal>
+  );
+}
 export default function HubApp() {
   const hub = useHub();
   const { data, userId, demo, busy, identityName, identityAvatar } = hub;
@@ -160,9 +243,10 @@ export default function HubApp() {
   const [year, setYear] = useState("All");
   const [menu, setMenu] = useState(false);
   const [modal, setModal] = useState<
-    "project" | "room" | "profile" | "notifications" | null
+    "project" | "room" | "profile" | "notifications" | "invite" | null
   >(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [inviteTarget, setInviteTarget] = useState<Student | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [roomKind, setRoomKind] = useState<"bubble" | "team">("bubble");
   const [draft, setDraft] = useState("");
@@ -263,6 +347,25 @@ export default function HubApp() {
     setSelectedStudent(s);
     setPage("Profile");
   }
+  // Rooms I host; only a host can invite, matching the database rule.
+  const hostedRooms = data.rooms.filter(r => r.is_host);
+  function openInvite(s: Student) {
+    if (!me) {
+      setModal("profile");
+      return;
+    }
+    if (hostedRooms.length === 0) {
+      setRoomKind("bubble");
+      setModal("room");
+      setNoticeLike("Create a room first — then you can invite students to discuss in it.");
+      return;
+    }
+    setInviteTarget(s);
+    setModal("invite");
+  }
+  function setNoticeLike(text: string) {
+    hub.setNotice(text);
+  }
   function studentCard(s: Student) {
     const connection = data.connections.find(
       (c) =>
@@ -317,6 +420,15 @@ export default function HubApp() {
                 : "Requested"
               : "Connect"}
           </button>
+          {!demo && me && hostedRooms.length > 0 && (
+            <button
+              className="hub-more hub-invite-button"
+              title={`Invite ${s.name} to discuss in one of your rooms`}
+              onClick={() => openInvite(s)}
+            >
+              <Icon name="Chat" size={16} /> Invite to room
+            </button>
+          )}
           <button
             className="hub-more"
             aria-label={`More about ${s.name}`}
@@ -1430,6 +1542,11 @@ export default function HubApp() {
                           Connect <Icon name="Send" size={17} />
                         </button>
                       )}
+                      {!demo && me && profile.id !== userId && hostedRooms.length > 0 && (
+                        <button className="hub-text-button" onClick={() => openInvite(profile)}>
+                          Invite to my room
+                        </button>
+                      )}
                     </div>
                     <div className="hub-profile-grid">
                       <Panel title="STUDENT PROFILE">
@@ -1681,6 +1798,20 @@ export default function HubApp() {
           </form>
         </Modal>
       )}
+      {modal === "invite" && inviteTarget && (
+        <InviteRoomModal
+          student={inviteTarget}
+          rooms={hostedRooms}
+          busy={busy}
+          error={hub.error}
+          close={() => setModal(null)}
+          send={async (roomId, studentId) => {
+            const room = hostedRooms.find(r => r.id === roomId);
+            if (!room) throw new Error("Pick one of your rooms.");
+            return hub.inviteMembers(room, [studentId]);
+          }}
+        />
+      )}
       {modal === "profile" && (
         <Modal
           title={
@@ -1742,6 +1873,10 @@ export default function HubApp() {
             </label>
             <fieldset>
               <legend>Your skills & interests</legend>
+              <p className="hub-skill-hint">
+                These power the Explore skill filters — students searching a
+                skill find you, and room hosts can invite you to discuss.
+              </p>
               <div className="hub-skill-options">
                 {DOMAINS.map((d) => (
                   <label key={d}>

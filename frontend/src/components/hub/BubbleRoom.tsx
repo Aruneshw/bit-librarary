@@ -18,7 +18,7 @@ type Props = {
   students?: Student[];
   cancel?: (reason?: string) => Promise<void>;
   removeMember?: (member: string) => Promise<void>;
-  invite?: (members: string[]) => Promise<void>;
+  invite?: (members: string[]) => Promise<number>;
   finalize?: (finalists: string[], endsAt: string) => Promise<void>;
 };
 function position(slot: number) {
