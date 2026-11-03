@@ -139,6 +139,17 @@ function Cover({ project }: { project: Project }) {
     </div>
   );
 }
+function HubClock() {
+  const [time, setTime] = useState("");
+  useEffect(() => {
+    const update = () =>
+      setTime(new Date().toLocaleTimeString("en-IN", { hour12: false, timeZone: "Asia/Kolkata" }));
+    update();
+    const timer = setInterval(update, 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <span className="hub-clock">{time || "──:──:──"} IST</span>;
+}
 export default function HubApp() {
   const hub = useHub();
   const { data, userId, demo, busy, identityName, identityAvatar } = hub;
@@ -155,7 +166,6 @@ export default function HubApp() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [roomKind, setRoomKind] = useState<"bubble" | "team">("bubble");
   const [draft, setDraft] = useState("");
-  const [time, setTime] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const messageEnd = useRef<HTMLDivElement>(null);
   const me = data.students.find((s) => s.id === userId);
@@ -214,15 +224,6 @@ export default function HubApp() {
     setSelectedStudent(null);
   }
   useEffect(() => {
-    const update = () =>
-      setTime(
-        new Date().toLocaleTimeString("en-IN", {
-          hour12: false,
-          timeZone: "Asia/Kolkata",
-        }),
-      );
-    update();
-    const timer = setInterval(update, 1000);
     const key = (e: KeyboardEvent) => {
       if (
         e.key === "/" &&
@@ -236,7 +237,6 @@ export default function HubApp() {
     };
     window.addEventListener("keydown", key);
     return () => {
-      clearInterval(timer);
       window.removeEventListener("keydown", key);
     };
   }, []);
@@ -551,7 +551,7 @@ export default function HubApp() {
           <kbd>/</kbd>
         </form>
         <div className="hub-header-right">
-          <span className="hub-clock">{time || "──:──:──"} IST</span>
+          <HubClock />
           <span className="hub-online">
             <i className="hub-dot" />
             {demo ? "DEMO" : hub.loading ? "LOADING" : "CAMPUS"}
@@ -688,6 +688,23 @@ export default function HubApp() {
           </div>
         ) : (
           <>
+            {!demo && hub.data.invites.some(invite => invite.status === "pending") && (
+              <section className="hub-invites" aria-label="Team invitations">
+                {hub.data.invites
+                  .filter(invite => invite.status === "pending")
+                  .map(invite => (
+                    <div key={invite.id} className="hub-invite-row">
+                      <Icon name="Chat" />
+                      <span>
+                        <b>Team invitation: {invite.room_name}</b>
+                        <small>The host wants you on their hackathon team.</small>
+                      </span>
+                      <button className="hub-button" disabled={busy} onClick={() => act(hub.respondInvite(invite.id, true))}>Accept & join</button>
+                      <button className="hub-text-button" disabled={busy} onClick={() => act(hub.respondInvite(invite.id, false))}>Decline</button>
+                    </div>
+                  ))}
+              </section>
+            )}
             {page === "Home" && (
               <>
                 <section className="hub-welcome hub-panel">
@@ -1023,7 +1040,7 @@ export default function HubApp() {
                   </button>
                 </div>
                 {page === "Chat" && room?.kind === "bubble" ? (
-                  <BubbleRoom key={room.id} room={room} userId={userId} messages={hub.messages.filter(m => m.room_id === room.id)} status={hub.chatStatus} busy={busy} hasOlder={hub.hasOlder} send={hub.sendMessage} older={hub.olderMessages} back={() => hub.setActiveRoom(null)} leave={() => hub.leaveRoom(room)} />
+                  <BubbleRoom key={room.id} room={room} userId={userId} messages={hub.messages.filter(m => m.room_id === room.id)} status={hub.chatStatus} busy={busy} hasOlder={hub.hasOlder} send={hub.sendMessage} older={hub.olderMessages} back={() => hub.setActiveRoom(null)} leave={() => hub.leaveRoom(room)} students={data.students} cancel={reason => hub.cancelRoom(room, reason)} removeMember={member => hub.removeMember(room, member)} invite={members => hub.inviteMembers(room, members)} finalize={(finalists, endsAt) => hub.finalizeTeam(room, finalists, endsAt)} />
                 ) : page === "Chat" && room ? (
                   <div className="hub-chat-layout">
                     <Panel
@@ -1066,12 +1083,12 @@ export default function HubApp() {
                             {room.capacity} students
                           </p>
                         </div>
-                        {room.owner_id !== userId && (
+                        {(room.is_member || room.is_host) && (
                           <button
                             className="hub-small-button"
                             onClick={() => act(hub.leaveRoom(room))}
                           >
-                            Leave room
+                            {room.is_host ? "Exit & close room" : "Leave room"}
                           </button>
                         )}
                       </header>

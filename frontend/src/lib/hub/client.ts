@@ -4,6 +4,7 @@ import {
   rankStudents,
   type HubData,
   type Project,
+  type RoomInvite,
   type Student,
 } from "./types";
 
@@ -69,6 +70,12 @@ export async function loadHub(): Promise<HubData> {
     client.from("hub_connections").select("*").limit(500),
     client.from("hub_students").select("*").eq("id", user.id).maybeSingle(),
     client.rpc("hub_metrics"),
+    client
+      .from("hub_room_invites")
+      .select("id,room_id,inviter_id,invitee_id,status")
+      .eq("invitee_id", user.id)
+      .eq("status", "pending")
+      .limit(100),
   ]);
   if (results.some((r) => r.error))
     throw new Error(
@@ -92,13 +99,19 @@ export async function loadHub(): Promise<HubData> {
     const position = students.findIndex((student) => student.id === user.id);
     summary.rank = position >= 0 ? position + 1 : null;
   }
+  const rooms = (results[1].data || []) as HubData["rooms"];
+  const inviteRows = (results[7].data || []) as Omit<RoomInvite, "room_name">[];
   return {
     students,
     summary: summary || undefined,
     projects: projectData.projects,
-    rooms: results[1].data!,
+    rooms,
     events: results[2].data!,
     notifications: results[3].data!,
     connections: results[4].data!,
+    invites: inviteRows.map(invite => ({
+      ...invite,
+      room_name: rooms.find(room => room.id === invite.room_id)?.name || "a team room",
+    })),
   } as HubData;
 }

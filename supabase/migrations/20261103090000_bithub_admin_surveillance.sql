@@ -46,6 +46,7 @@ begin
    select jsonb_agg(jsonb_build_object(
      'id', r.id, 'name', r.name, 'kind', r.kind, 'category', r.category,
      'capacity', r.capacity, 'created_at', r.created_at,
+     'finalized_at', r.finalized_at, 'hackathon_ends_at', r.hackathon_ends_at,
      'owner_id', o.id, 'owner_name', o.name,
      'member_count', (select count(*) from public.hub_room_members m where m.room_id = r.id),
      'online_count', (select count(distinct p.user_id) from public.hub_room_presence p

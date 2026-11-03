@@ -12,7 +12,7 @@ const withPWA = require("next-pwa")({
   runtimeCaching: [
     { urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate', handler: 'NetworkOnly' },
     { urlPattern: /\/api\/|\.supabase\.co\//, handler: 'NetworkOnly' },
-    { urlPattern: /\/_next\/static\//, handler: 'CacheFirst', options: { cacheName: 'bithub-static-v1', expiration: { maxEntries: 100, maxAgeSeconds: 604800 } } },
+    { urlPattern: /\/_next\/static\//, handler: 'CacheFirst', options: { cacheName: 'bithub-static-v2', expiration: { maxEntries: 100, maxAgeSeconds: 604800 } } },
   ],
 });
 
@@ -20,8 +20,14 @@ const withPWA = require("next-pwa")({
 const { VueLoaderPlugin } = require('vue-loader');
 
 const nextConfig: NextConfig = {
+  // The repository lives on a slow/network drive. `NEXT_DEV_DIR` relocates the
+  // whole build directory to local disk so `next dev` compiles and serves
+  // pages dramatically faster. Never set in CI or on Vercel.
+  ...(process.env.NEXT_DEV_DIR
+    ? { distDir: process.env.NEXT_DEV_DIR }
+    : {}),
   // Turbopack can be re-enabled if desired since custom webpack is removed
-  turbopack: {},
+  turbopack: { root: "/media/aruneshwaran/FDrive/bit-library" },
   async headers() {
     return [
       { source: '/hub/:path*', headers: [{ key: 'Cache-Control', value: 'private, no-store' }] },

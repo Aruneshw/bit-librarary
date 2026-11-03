@@ -12,10 +12,11 @@ BIT HUB extends the existing Next.js 16 / React 19 / Supabase app. The default e
 - A trusted project XP ledger in Neon: five points once per approved project (configurable through Supabase `hub_policy`); pending submissions cannot assign XP; reapproval is idempotent; archiving/rejecting revokes points while preserving the ledger row.
 - Leaderboard, stable tie ordering by XP descending/name/ID, notifications, and a Courses entry into the original Library.
 - An explicit interactive demo, with synthetic students/events/projects in `frontend/src/lib/hub/demo.ts`. It uses sessionStorage only and never writes sample data to the database. `?demo=1` enables it in development. Production requires real sign-in unless `NEXT_PUBLIC_HUB_DEMO_ENABLED=true` is explicitly set. New demo projects remain pending and do not create fake approval points.
+- Bubble and team lifecycle: every room is visible to all signed-in students, joining is atomic with a one-room-per-student rule (joining moves you out of your previous room; full rooms refuse with a clear message), members can exit any time, and hosts can cancel their room or remove members. Team rooms support host invitations with accept/decline, host finalisation of the finalist list, a hackathon end date, live typing indicators ("X is typing…") with names in the roster, and automatic deletion of team rooms once their end date passes.
 
 ## Run locally
 
-From `frontend`, run `npm install` if dependencies are not installed, then `npm run dev -- --webpack`. Open `http://localhost:3000/hub?demo=1` for the interactive demo. The existing local environment remains in use; do not commit credentials. Use `npm run build` for the production build.
+From `frontend`, run `npm install` if dependencies are not installed, then `npm run dev:fast`. It keeps the build directory on local disk (`/tmp/bithub-dev`) instead of the slow project drive, which makes page loads and hot reloads several times faster; plain `npm run dev -- --webpack` still works on fast disks. Open `http://localhost:3000/hub?demo=1` for the interactive demo. The existing local environment remains in use; do not commit credentials. Use `npm run build` for the production build.
 
 ## Database activation required
 

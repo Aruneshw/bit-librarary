@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { createClient } from '@/lib/supabase';
@@ -9,11 +10,14 @@ import { usePresenceStore } from '@/store/presenceStore';
 import { sumNonAdminLoginCount } from '@/lib/adminEmails';
 import { getAuthHeaders } from '@/lib/authHelpers';
 import FileManager from '@/components/admin/FileManager';
-import AnalyticsCarousel from '@/components/admin/AnalyticsCarousel';
 import PollComposer from '@/components/admin/PollComposer';
 import FeatureNoticeEditor from '@/components/admin/FeatureNoticeEditor';
-import FolderExplorer from '@/components/admin/FolderExplorer';
 import HubSurveillance from '@/components/admin/HubSurveillance';
+
+// The chart bundles are large and only render after the metrics load, so they
+// are fetched on demand instead of delaying the terminal's first interaction.
+const AnalyticsCarousel = dynamic(() => import('@/components/admin/AnalyticsCarousel'), { ssr: false });
+const FolderExplorer = dynamic(() => import('@/components/admin/FolderExplorer'), { ssr: false });
 
 interface UserProfile {
   id: string;

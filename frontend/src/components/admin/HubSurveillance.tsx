@@ -11,6 +11,8 @@ interface AdminRoom {
   category: string;
   capacity: number;
   created_at: string;
+  finalized_at?: string | null;
+  hackathon_ends_at?: string | null;
   owner_id: string;
   owner_name: string;
   member_count: number;
@@ -153,6 +155,7 @@ export default function HubSurveillance() {
                     <p className="font-mono text-[10px] mt-1">
                       <span className={room.online_count > 0 ? 'text-terminal-green' : 'text-white/30'}>● {room.online_count} online</span>
                       <span className="text-white/30"> / {room.member_count} of {room.capacity} members · joined {new Date(room.created_at).toLocaleString()}</span>
+                      {room.finalized_at && <span className="text-terminal-green"> · TEAM FINALISED{room.hackathon_ends_at ? ` → ends ${new Date(room.hackathon_ends_at).toLocaleString()}` : ''}</span>}
                     </p>
                   </div>
                   <button

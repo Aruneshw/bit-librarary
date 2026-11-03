@@ -55,7 +55,18 @@ export interface Room {
   member_count: number;
   kind: "bubble" | "team";
   is_member: boolean;
+  is_host: boolean;
+  finalized_at: string | null;
+  hackathon_ends_at: string | null;
   created_at: string;
+}
+export interface RoomInvite {
+  id: string;
+  room_id: string;
+  inviter_id: string;
+  invitee_id: string;
+  status: "pending" | "accepted" | "declined";
+  room_name: string;
 }
 export interface HubEvent {
   id: string;
@@ -93,6 +104,7 @@ export interface HubData {
   events: HubEvent[];
   notifications: HubNotification[];
   connections: Connection[];
+  invites: RoomInvite[];
 }
 export const EMPTY_HUB: HubData = {
   students: [],
@@ -101,6 +113,7 @@ export const EMPTY_HUB: HubData = {
   events: [],
   notifications: [],
   connections: [],
+  invites: [],
 };
 export function rankStudents(students: Student[]) {
   return [...students].sort(

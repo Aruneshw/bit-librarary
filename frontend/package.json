@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:fast": "NEXT_DEV_DIR=/tmp/bithub-dev next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"

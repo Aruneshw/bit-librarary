@@ -115,6 +115,9 @@ export function useHub() {
     if (!userId) return;
     const client = hubClient();
     if (!client) return;
+    // Notification bursts (connection spam, batch approvals) must not each
+    // trigger a campus-wide reload; coalesce them into one refresh.
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const channel = client
       .channel(`hub-updates-${userId}`)
       .on(
@@ -126,11 +129,13 @@ export function useHub() {
           filter: `user_id=eq.${userId}`,
         },
         () => {
-          refresh().catch(() => {});
+          clearTimeout(timer);
+          timer = setTimeout(() => { refresh().catch(() => {}); }, 2500);
         },
       )
       .subscribe();
     return () => {
+      clearTimeout(timer);
       void client.removeChannel(channel);
     };
   }, [userId, refresh]);
@@ -214,29 +219,89 @@ export function useHub() {
     if (result.error) throw new Error(result.error.message);
     return result.data;
   }
+  // Directory rows are patched locally so navigation never waits for the
+  // campus-wide refetch; the background refresh settles the authoritative data.
+  function patchRoom(id: string, patch: (room: Room) => Room) {
+    setData(current => ({
+      ...current,
+      rooms: current.rooms.map(room => (room.id === id ? patch(room) : room)),
+    }));
+  }
+  function backgroundRefresh() {
+    refresh().catch(() => {});
+  }
   async function joinRoom(room: Room) {
     await run(async () => {
       if (!room.is_member) {
-        await rpc("hub_join_room", { room: room.id });
-        await refresh();
+        try {
+          await rpc("hub_join_room", { room: room.id });
+        } catch (cause) {
+          throw new Error(cause instanceof Error && cause.message.includes("full")
+            ? `“${room.name}” is full. Try another bubble.`
+            : `Could not join “${room.name}”. Please try again.`);
+        }
+        patchRoom(room.id, item => ({ ...item, is_member: true, member_count: item.member_count + 1 }));
+        backgroundRefresh();
       }
       setActiveRoom(room.id);
     });
   }
   async function leaveRoom(room: Room) {
     await run(async () => {
-      if (room.owner_id === userId)
-        throw new Error(
-          "As the room host, keep your place until the room is closed.",
-        );
+      if (room.is_host) {
+        // Closing your own room cancels it for everyone, matching the DB rule.
+        await rpc("hub_cancel_room", { room: room.id, reason: "" });
+        backgroundRefresh();
+        setActiveRoom(null);
+        setNotice(`“${room.name}” is closed. Students were notified.`);
+        return;
+      }
       const { error } = await hubClient()!
         .from("hub_room_members")
         .delete()
         .eq("room_id", room.id)
         .eq("user_id", userId);
       if (error) throw new Error(error.message);
-      await refresh();
+      patchRoom(room.id, item => ({ ...item, is_member: false, member_count: Math.max(0, item.member_count - 1) }));
+      backgroundRefresh();
       setActiveRoom(null);
+    });
+  }
+  async function cancelRoom(room: Room, reason = "") {
+    await run(async () => {
+      await rpc("hub_cancel_room", { room: room.id, reason });
+      backgroundRefresh();
+      setActiveRoom(null);
+      setNotice(`“${room.name}” is closed.`);
+    });
+  }
+  async function removeMember(room: Room, member: string) {
+    await run(async () => {
+      await rpc("hub_remove_member", { room: room.id, member });
+      patchRoom(room.id, item => ({ ...item, member_count: Math.max(0, item.member_count - 1) }));
+      backgroundRefresh();
+    });
+  }
+  async function inviteMembers(room: Room, members: string[]) {
+    await run(async () => {
+      const invited = await rpc("hub_invite_members", { room: room.id, members });
+      setNotice(`${invited} invitation${invited === 1 ? "" : "s"} sent.`);
+      await refresh();
+    });
+  }
+  async function respondInvite(invite: string, accept: boolean) {
+    const roomId = data.invites.find(item => item.id === invite)?.room_id ?? null;
+    await run(async () => {
+      await rpc("hub_respond_invite", { invite, accept });
+      await refresh();
+      if (accept && roomId) setActiveRoom(roomId);
+    });
+  }
+  async function finalizeTeam(room: Room, finalists: string[], endsAt: string) {
+    await run(async () => {
+      await rpc("hub_finalize_team", { room: room.id, finalists, ends_at: endsAt });
+      await refresh();
+      setNotice("Team finalised. Everyone selected was notified.");
     });
   }
   async function sendMessage(body: string) {
@@ -278,7 +343,28 @@ export function useHub() {
   ) {
     await run(async () => {
       const id = await rpc("hub_create_room", { input });
-      await refresh();
+      setData(current => ({
+        ...current,
+        rooms: [
+          {
+            id,
+            owner_id: userId,
+            is_host: true,
+            finalized_at: null,
+            hackathon_ends_at: null,
+            name: input.name,
+            description: input.description,
+            category: input.category,
+            capacity: input.capacity,
+            kind: input.kind,
+            member_count: 1,
+            is_member: true,
+            created_at: new Date().toISOString(),
+          },
+          ...current.rooms,
+        ],
+      }));
+      backgroundRefresh();
       setActiveRoom(id);
       setNotice(
         `${input.kind === "team" ? "Team" : "Bubble"} created. Your discussion room is ready.`,
@@ -422,6 +508,11 @@ export function useHub() {
     refresh,
     joinRoom,
     leaveRoom,
+    cancelRoom,
+    removeMember,
+    inviteMembers,
+    respondInvite,
+    finalizeTeam,
     createRoom,
     connect,
     acceptConnection,

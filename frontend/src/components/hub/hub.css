@@ -2805,3 +2805,4 @@
 .hub-review-actions button { padding: 8px 20px; border: 1px solid #00e8ed; color: #00e8ed; background: #002529; cursor: pointer; }
 .hub-review-actions button:disabled { opacity: .5; cursor: wait; }
 .hub-review a { color: #00e8ed; }
+.hub-invites{margin:0 0 18px;display:grid;gap:8px}.hub-invite-row{display:flex;align-items:center;gap:12px;background:#071720;border:1px solid #1d4d5c;border-left:3px solid #38e9bf;border-radius:7px;padding:12px 14px;color:#cfe9ef;font-size:12px}.hub-invite-row b{font-size:12px}.hub-invite-row small{display:block;color:#6d929f;font-size:10px}.hub-invite-row>span{flex:1;min-width:0}

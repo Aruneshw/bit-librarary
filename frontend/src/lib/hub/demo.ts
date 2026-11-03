@@ -101,6 +101,9 @@ export const DEMO_DATA: HubData = {
       member_count: 3,
       kind: "bubble",
       is_member: false,
+      is_host: false,
+      finalized_at: null,
+      hackathon_ends_at: null,
       created_at: "2026-11-01T10:00:00Z",
     },
     {
@@ -114,6 +117,9 @@ export const DEMO_DATA: HubData = {
       member_count: 4,
       kind: "bubble",
       is_member: false,
+      is_host: false,
+      finalized_at: null,
+      hackathon_ends_at: null,
       created_at: "2026-11-01T11:00:00Z",
     },
     {
@@ -127,6 +133,9 @@ export const DEMO_DATA: HubData = {
       member_count: 2,
       kind: "bubble",
       is_member: false,
+      is_host: false,
+      finalized_at: null,
+      hackathon_ends_at: null,
       created_at: "2026-11-01T12:00:00Z",
     },
     {
@@ -140,6 +149,9 @@ export const DEMO_DATA: HubData = {
       member_count: 3,
       kind: "team",
       is_member: true,
+      is_host: true,
+      finalized_at: null,
+      hackathon_ends_at: null,
       created_at: "2026-11-01T12:00:00Z",
     },
   ],
@@ -179,6 +191,7 @@ export const DEMO_DATA: HubData = {
     },
   ],
   connections: [],
+  invites: [],
 };
 const titles = [
   "Smart Campus Navigator",

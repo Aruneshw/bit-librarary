@@ -1,11 +1,26 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { hubClient } from "@/lib/hub/client";
-export type BubbleMember = { id: string; name: string; joined_at: string; online: boolean; slot: number };
+export type BubbleMember = { id: string; name: string; joined_at: string; online: boolean; typing: boolean; team_status: 'member' | 'finalist'; slot: number };
 export function useBubbleRoom(room: string) {
   const [members, setMembers] = useState<BubbleMember[]>([]);
   const [error, setError] = useState("");
   const [connected, setConnected] = useState(false);
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const lastPulse = useRef(0);
+  const clearTyping = useCallback(() => {
+    clearTimeout(typingTimer.current);
+    void hubClient()?.rpc("hub_set_typing", { room, typing: false });
+  }, [room]);
+  const pulseTyping = useCallback(() => {
+    const now = Date.now();
+    if (now - lastPulse.current > 2500) {
+      lastPulse.current = now;
+      void hubClient()?.rpc("hub_set_typing", { room, typing: true });
+    }
+    clearTimeout(typingTimer.current);
+    typingTimer.current = setTimeout(clearTyping, 5000);
+  }, [room, clearTyping]);
   useEffect(() => {
     const client = hubClient();
     if (!client) return;
@@ -52,11 +67,13 @@ export function useBubbleRoom(room: string) {
     return () => {
       alive = false;
       clearInterval(timer);
+      clearTimeout(typingTimer.current);
       window.removeEventListener("online", focus);
       void client.removeChannel(channel);
       // Per-tab sessions keep another open tab online. Abandoned sessions expire after 45s.
       void client.rpc("hub_bubble_pulse", { room, session, exiting: true });
+      void client.rpc("hub_set_typing", { room, typing: false });
     };
   }, [room]);
-  return { members, error, connected };
+  return { members, error, connected, pulseTyping, clearTyping };
 }
