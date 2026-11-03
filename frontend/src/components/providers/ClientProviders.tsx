@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { PostHogProvider } from './PostHogProvider';
+import { PostHogAnalytics } from './PostHogAnalytics';
 
 const MatrixBackground = dynamic(() => import('@/components/animations/MatrixBackground'), { ssr: false });
 const PresenceProvider = dynamic(() => import('./PresenceProvider'), { ssr: false });
@@ -9,11 +9,12 @@ const StudyTrackerProvider = dynamic(() => import('./StudyTrackerProvider'), { s
 
 export default function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
-    <PostHogProvider>
+    <>
+      <PostHogAnalytics />
       <PresenceProvider />
       <StudyTrackerProvider />
       <MatrixBackground />
       {children}
-    </PostHogProvider>
+    </>
   );
 }

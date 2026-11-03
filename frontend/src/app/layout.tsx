@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import 'katex/dist/katex.min.css';
+// KaTeX styles are imported by components/questions/QuestionModal.tsx instead:
+// they are only needed by the math renderer, and a global import made this CSS
+// render-blocking on every page, including the Hub.
 
 export const metadata: Metadata = {
   title: "BIT LIBRARY — Academic Nexus",

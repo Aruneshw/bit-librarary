@@ -3,6 +3,13 @@ import { useCallback, useEffect, useState } from "react";
 import { isAdminEmail } from "@/lib/adminEmails";
 import { hubClient, loadHub } from "@/lib/hub/client";
 import {
+  loadConnectionsSlice,
+  loadNotificationsSlice,
+  loadProjectsSlice,
+  loadRoomsSlice,
+  loadSelfSlice,
+} from "@/lib/hub/client";
+import {
   EMPTY_HUB,
   mergeRoomMessages,
   type HubData,
@@ -50,6 +57,52 @@ export function useHub() {
   const [chatStatus, setChatStatus] = useState("Connecting");
   const [hasOlder, setHasOlder] = useState(false);
   const refresh = useCallback(async () => setData(await loadHub()), []);
+  const patch = useCallback(
+    (part: Partial<HubData>) => setData(current => ({ ...current, ...part })),
+    [],
+  );
+  // Refresh only the slice an action can have changed. The full campus reload
+  // kept `busy` true for seconds, which is what made buttons feel unresponsive.
+  const settle = useCallback(
+    async (slice: Promise<Partial<HubData>>) => {
+      try {
+        patch(await slice);
+      } catch {
+        /* Keep the optimistic state; the next realtime event reconciles. */
+      }
+    },
+    [patch],
+  );
+  const roomsNow = useCallback(() => settle(loadRoomsSlice()), [settle]);
+  const refreshSelf = useCallback(async () => {
+    try {
+      const { self } = await loadSelfSlice(userId);
+      if (!self) return;
+      setData(current => ({
+        ...current,
+        students: current.students.some(s => s.id === self.id)
+          ? current.students.map(s => (s.id === self.id ? self : s))
+          : [...current.students, self],
+      }));
+    } catch {
+      /* Ignore; the next full load corrects it. */
+    }
+  }, [userId]);
+  const refreshProjects = useCallback(async () => {
+    try {
+      const slice = await loadProjectsSlice();
+      setData(current => ({
+        ...current,
+        projects: slice.projects,
+        students: slice.students,
+        summary: current.summary
+          ? { ...current.summary, projects: slice.approvedCount }
+          : current.summary,
+      }));
+    } catch {
+      /* Ignore; the next full load corrects it. */
+    }
+  }, []);
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -130,7 +183,14 @@ export function useHub() {
         },
         () => {
           clearTimeout(timer);
-          timer = setTimeout(() => { refresh().catch(() => {}); }, 2500);
+          timer = setTimeout(async () => {
+            // A notification arriving only changes the notification list; a full
+            // campus reload here was disabling the whole interface for seconds.
+            void settle(loadNotificationsSlice());
+            void settle(loadRoomsSlice());
+            // Approvals change XP, which the leaderboard and cards display.
+            await refreshProjects();
+          }, 2500);
         },
       )
       .subscribe();
@@ -138,7 +198,7 @@ export function useHub() {
       clearTimeout(timer);
       void client.removeChannel(channel);
     };
-  }, [userId, refresh]);
+  }, [userId, settle, refreshProjects]);
   useEffect(() => {
     if (!activeRoom) return;
     const client = hubClient();
@@ -228,7 +288,8 @@ export function useHub() {
     }));
   }
   function backgroundRefresh() {
-    refresh().catch(() => {});
+    // Room-shaped mutations only need the directory back, not the whole campus.
+    void settle(loadRoomsSlice());
   }
   async function joinRoom(room: Room) {
     await run(async () => {
@@ -287,7 +348,7 @@ export function useHub() {
     await run(async () => {
       invited = Number(await rpc("hub_invite_members", { room: room.id, members })) || 0;
       setNotice(`${invited} invitation${invited === 1 ? "" : "s"} sent.`);
-      await refresh();
+      await roomsNow();
     });
     return invited;
   }
@@ -295,14 +356,14 @@ export function useHub() {
     const roomId = data.invites.find(item => item.id === invite)?.room_id ?? null;
     await run(async () => {
       await rpc("hub_respond_invite", { invite, accept });
-      await refresh();
+      await roomsNow();
       if (accept && roomId) setActiveRoom(roomId);
     });
   }
   async function finalizeTeam(room: Room, finalists: string[], endsAt: string) {
     await run(async () => {
       await rpc("hub_finalize_team", { room: room.id, finalists, ends_at: endsAt });
-      await refresh();
+      await roomsNow();
       setNotice("Team finalised. Everyone selected was notified.");
     });
   }
@@ -387,14 +448,17 @@ export function useHub() {
         .from("hub_connections")
         .insert({ sender_id: userId, recipient_id: recipient.id });
       if (error) throw new Error(error.message);
-      await refresh();
-      setNotice(`Connection request sent to ${recipient.name}.`);
-    });
+      await settle(loadConnectionsSlice());
+      setNotice(`Connection request sent to ${recipient.name}.`);    });
   }
   async function acceptConnection(id: string) {
     await run(async () => {
       await rpc("hub_accept_connection", { connection: id });
-      await refresh();
+      await settle(
+        Promise.all([loadConnectionsSlice(), loadNotificationsSlice()]).then(
+          ([connections, notifications]) => ({ ...connections, ...notifications }),
+        ),
+      );
       setNotice("Connection accepted.");
     });
   }
@@ -411,7 +475,7 @@ export function useHub() {
         .from("hub_profiles")
         .upsert(payload);
       if (error) throw new Error(error.message);
-      await refresh();
+      await refreshSelf();
       setNotice("Your student profile is saved.");
     });
   }
@@ -453,7 +517,7 @@ export function useHub() {
         | null;
       if (!response.ok)
         throw new Error(payload?.error || "The project could not be submitted.");
-      await refresh();
+      await refreshProjects();
       setNotice(
         "Project submitted. It appears on your profile; XP is awarded after approval.",
       );
@@ -475,7 +539,7 @@ export function useHub() {
         | null;
       if (!response.ok)
         throw new Error(payload?.error || "The project could not be archived.");
-      await refresh();
+      await refreshProjects();
       setNotice("Project archived.");
     });
   }
@@ -487,7 +551,7 @@ export function useHub() {
         .update({ read_at: date })
         .eq("user_id", userId);
       if (error) throw new Error(error.message);
-      await refresh();
+      await settle(loadNotificationsSlice());
     });
   }
   return {
