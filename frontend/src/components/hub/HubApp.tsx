@@ -21,6 +21,7 @@ import { useHub } from "./useHub";
 import Icon from "./HubIcon";
 import { Avatar, DomainOptions, Globe, Radar, Tags } from "./HubVisuals";
 import "./hub.css";
+import { BubbleRoom } from "./BubbleRoom";
 const NAV: HubPage[] = [
   "Home",
   "Explore",
@@ -1020,7 +1021,9 @@ export default function HubApp() {
                     Create {page === "Teams" ? "team" : "bubble"}
                   </button>
                 </div>
-                {page === "Chat" && room ? (
+                {page === "Chat" && room?.kind === "bubble" ? (
+                  <BubbleRoom key={room.id} room={room} userId={userId} messages={hub.messages.filter(m => m.room_id === room.id)} status={hub.chatStatus} busy={busy} hasOlder={hub.hasOlder} send={hub.sendMessage} older={hub.olderMessages} back={() => hub.setActiveRoom(null)} leave={() => hub.leaveRoom(room)} />
+                ) : page === "Chat" && room ? (
                   <div className="hub-chat-layout">
                     <Panel
                       title="YOUR ROOMS"
