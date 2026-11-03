@@ -102,14 +102,14 @@ export async function POST(request: Request) {
   if (!parsed.ok) return fail(parsed.error, 400);
   const input = parsed.value;
 
-  const profile = await getProfile(access.user.id);
-  if (!profile) return fail('Create your student profile first.', 400);
-  const policy = await getProjectPolicy();
   const cover = form.get('cover');
 
   let coverKey: string | null = null;
   let coverStorage: ReturnType<typeof projectStorage> = null;
   try {
+    const profile = await getProfile(access.user.id);
+    if (!profile) return fail('Create your student profile first.', 400);
+    const policy = await getProjectPolicy();
     const [hourly] = (await sql`
       select count(*)::int as count
       from bithub.hub_projects

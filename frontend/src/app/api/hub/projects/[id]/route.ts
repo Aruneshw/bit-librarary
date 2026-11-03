@@ -24,17 +24,16 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     if (!target || target.owner_id !== access.user.id) {
       return fail('Project not found or not owned by you.', 404);
     }
-    if (target.status !== 'archived') {
-      await sql`
+    await sql`
+      with archived as (
         update bithub.hub_projects
         set status = 'archived'
         where id = ${id} and owner_id = ${access.user.id}
-      `;
-    }
-    await sql`
+        returning id
+      )
       update bithub.hub_project_xp
       set revoked_at = now()
-      where project_id = ${id} and revoked_at is null
+      where project_id in (select id from archived) and revoked_at is null
     `;
     return json({ ok: true, status: 'archived' });
   } catch (error) {

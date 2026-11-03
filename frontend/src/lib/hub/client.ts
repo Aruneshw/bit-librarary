@@ -81,7 +81,7 @@ export async function loadHub(): Promise<HubData> {
     [...rawStudents.filter((student) => student.id !== user.id), ...(self ? [self] : [])].map(
       (student) => ({
         ...student,
-        xp: (Number(student.xp) || 0) + (projectData.stats[student.id]?.xp || 0),
+        xp: projectData.stats[student.id]?.xp || 0,
         project_count: projectData.stats[student.id]?.project_count ?? 0,
       }),
     ),

@@ -91,8 +91,9 @@ psql "host=<pooler-host> hostaddr=<ipv4> port=5432 dbname=neondb \
 
 One row per approved project. `points` is read from the existing Supabase
 `hub_policy.project_xp` value (default 5) at approval time. Re-approval is
-idempotent; archiving sets `revoked_at`. Leaderboard XP is
-`Supabase hub_xp_ledger + Neon project XP`, merged in `loadHub`.
+idempotent; archiving and setting `revoked_at` occur in one database statement.
+Leaderboard XP comes exclusively from the Neon project ledger. Legacy
+Supabase project XP is not added again.
 
 ## API
 

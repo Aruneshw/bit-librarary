@@ -1,9 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { isAdminEmail } from "@/lib/adminEmails";
-import { demoAllowed } from "@/lib/auth/redirect";
 import { hubClient, loadHub } from "@/lib/hub/client";
-import { DEMO_DATA, DEMO_MESSAGES, DEMO_USER_ID } from "@/lib/hub/demo";
 import {
   EMPTY_HUB,
   mergeRoomMessages,
@@ -13,7 +11,6 @@ import {
   type Room,
   type Student,
 } from "@/lib/hub/types";
-const DEMO_KEY = "bithub-demo-v1";
 type OAuthIdentity = {
   name: string;
   avatar_url: string | null;
@@ -44,7 +41,6 @@ export function useHub() {
     name: "",
     avatar_url: null,
   });
-  const [demo, setDemo] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -59,59 +55,33 @@ export function useHub() {
     (async () => {
       try {
         const client = hubClient();
-        const forceDemo =
-          new URLSearchParams(window.location.search).get("demo") === "1" && demoAllowed(process.env.NODE_ENV, process.env.NEXT_PUBLIC_HUB_DEMO_ENABLED);
-        const user = forceDemo
-          ? null
-          : (await client?.auth.getUser())?.data.user;
+        const user = (await client?.auth.getUser())?.data.user;
         if (!alive) return;
-        if (!user && !forceDemo) { window.location.replace('/login?next=/hub'); return; }
-        if (forceDemo) {
-          setDemo(true);
-          setUserId(DEMO_USER_ID);
+        if (!user) { window.location.replace('/login?next=/hub'); return; }
+        setUserId(user.id);
+        const oauth = readOAuthIdentity(user);
+        setIdentity(oauth);
+        if (oauth.avatar_url) {
           try {
-            const saved = JSON.parse(
-              sessionStorage.getItem(DEMO_KEY) || "null",
-            );
-            setData(
-              saved?.data?.students ? saved.data : structuredClone(DEMO_DATA),
-            );
-            setMessages(saved?.messages || DEMO_MESSAGES);
-          } catch {
-            setData(structuredClone(DEMO_DATA));
-            setMessages(DEMO_MESSAGES);
-          }
-        } else {
-          setUserId(user!.id);
-          const oauth = readOAuthIdentity(user!);
-          setIdentity(oauth);
-          if (oauth.avatar_url) {
-            try {
-              const { data: profile } = await client!
+            const { data: profile } = await client!
+              .from("hub_profiles")
+              .select("avatar_url")
+              .eq("id", user.id)
+              .maybeSingle();
+            if (profile && profile.avatar_url !== oauth.avatar_url) {
+              await client!
                 .from("hub_profiles")
-                .select("avatar_url")
-                .eq("id", user!.id)
-                .maybeSingle();
-              if (profile && profile.avatar_url !== oauth.avatar_url) {
-                await client!
-                  .from("hub_profiles")
-                  .update({ avatar_url: oauth.avatar_url })
-                  .eq("id", user!.id);
-              }
-            } catch {
-              /* Keep the Google photo as a display fallback if sync fails. */
+                .update({ avatar_url: oauth.avatar_url })
+                .eq("id", user.id);
             }
+          } catch {
+            /* Keep the Google photo as a display fallback if sync fails. */
           }
-          setIsReviewer(isAdminEmail(user!.email) || user!.app_metadata.role === "admin");
-          setData(await loadHub());
         }
+        setIsReviewer(isAdminEmail(user.email) || user.app_metadata.role === "admin");
+        setData(await loadHub());
       } catch (cause) {
-        if (alive)
-          setError(
-            cause instanceof Error && cause.message
-              ? cause.message
-              : "Could not connect to BIT HUB. Retry, or open the demo to review the interface.",
-          );
+        if (alive) setError(cause instanceof Error ? cause.message : "BIT HUB could not load. Please retry.");
       } finally {
         if (alive) setLoading(false);
       }
@@ -121,7 +91,7 @@ export function useHub() {
     };
   }, []);
   useEffect(() => {
-    if (demo || !userId) return;
+    if (!userId) return;
     const client = hubClient();
     if (!client) return;
     const { data: { subscription } } = client.auth.onAuthStateChange((event, session) => {
@@ -131,7 +101,7 @@ export function useHub() {
       }
     });
     return () => subscription.unsubscribe();
-  }, [demo, userId]);
+  }, [userId]);
   async function signOut() {
     await run(async () => {
       const { error } = await hubClient()!.auth.signOut();
@@ -142,16 +112,7 @@ export function useHub() {
     });
   }
   useEffect(() => {
-    if (demo && !loading) {
-      try {
-        sessionStorage.setItem(DEMO_KEY, JSON.stringify({ data, messages }));
-      } catch {
-        /* Demo can continue if browser storage is full. */
-      }
-    }
-  }, [demo, data, messages, loading]);
-  useEffect(() => {
-    if (demo || !userId) return;
+    if (!userId) return;
     const client = hubClient();
     if (!client) return;
     const channel = client
@@ -165,18 +126,16 @@ export function useHub() {
           filter: `user_id=eq.${userId}`,
         },
         () => {
-          refresh().catch(() =>
-            setError("Live updates interrupted. Please retry."),
-          );
+          refresh().catch(() => {});
         },
       )
       .subscribe();
     return () => {
       void client.removeChannel(channel);
     };
-  }, [demo, userId, refresh]);
+  }, [userId, refresh]);
   useEffect(() => {
-    if (!activeRoom || demo) return;
+    if (!activeRoom) return;
     const client = hubClient();
     if (!client) return;
     let alive = true;
@@ -195,10 +154,7 @@ export function useHub() {
         .order("id", { ascending: false })
         .limit(50);
       if (!alive) return;
-      if (error) {
-        setError("Unable to load messages. Try reopening the room.");
-        return;
-      }
+      if (error) return;
       setMessages(old => mergeRoomMessages(activeRoom, old, rows as Message[]));
       setHasOlder(rows!.length === 50);
     };
@@ -234,7 +190,7 @@ export function useHub() {
       alive = false;
       void client.removeChannel(channel);
     };
-  }, [activeRoom, demo]);
+  }, [activeRoom]);
   async function run(action: () => Promise<void>) {
     setBusy(true);
     setError("");
@@ -261,21 +217,8 @@ export function useHub() {
   async function joinRoom(room: Room) {
     await run(async () => {
       if (!room.is_member) {
-        if (demo) {
-          if (room.member_count >= room.capacity)
-            throw new Error("This room is full. Try another bubble.");
-          setData((d) => ({
-            ...d,
-            rooms: d.rooms.map((r) =>
-              r.id === room.id
-                ? { ...r, is_member: true, member_count: r.member_count + 1 }
-                : r,
-            ),
-          }));
-        } else {
-          await rpc("hub_join_room", { room: room.id });
-          await refresh();
-        }
+        await rpc("hub_join_room", { room: room.id });
+        await refresh();
       }
       setActiveRoom(room.id);
     });
@@ -286,55 +229,34 @@ export function useHub() {
         throw new Error(
           "As the room host, keep your place until the room is closed.",
         );
-      if (demo)
-        setData((d) => ({
-          ...d,
-          rooms: d.rooms.map((r) =>
-            r.id === room.id
-              ? { ...r, is_member: false, member_count: r.member_count - 1 }
-              : r,
-          ),
-        }));
-      else {
-        const { error } = await hubClient()!
-          .from("hub_room_members")
-          .delete()
-          .eq("room_id", room.id)
-          .eq("user_id", userId);
-        if (error) throw new Error(error.message);
-        await refresh();
-      }
+      const { error } = await hubClient()!
+        .from("hub_room_members")
+        .delete()
+        .eq("room_id", room.id)
+        .eq("user_id", userId);
+      if (error) throw new Error(error.message);
+      await refresh();
       setActiveRoom(null);
     });
   }
   async function sendMessage(body: string) {
     if (!body.trim() || !activeRoom) return;
     await run(async () => {
-      const message = {
-        id: crypto.randomUUID(),
-        room_id: activeRoom,
-        sender_id: userId,
-        body: body.trim(),
-        created_at: new Date().toISOString(),
-      };
-      if (demo) setMessages((m) => [...m, message]);
-      else {
-        const { data: row, error } = await hubClient()!
-          .from("hub_messages")
-          .insert({ room_id: activeRoom, body: body.trim(), sender_id: userId })
-          .select()
-          .single();
-        if (error) throw new Error(error.message);
-        setMessages((m) =>
-          m.some((item) => item.id === row.id) ? m : [...m, row as Message],
-        );
-      }
+      const { data: row, error } = await hubClient()!
+        .from("hub_messages")
+        .insert({ room_id: activeRoom, body: body.trim(), sender_id: userId })
+        .select()
+        .single();
+      if (error) throw new Error(error.message);
+      setMessages((m) =>
+        m.some((item) => item.id === row.id) ? m : [...m, row as Message],
+      );
     });
   }
   async function olderMessages() {
     await run(async () => {
       const first = messages[0];
-      if (!first || !activeRoom || demo) return;
+      if (!first || !activeRoom) return;
       const { data: rows, error } = await hubClient()!
         .from("hub_messages")
         .select("*")
@@ -355,27 +277,8 @@ export function useHub() {
     >,
   ) {
     await run(async () => {
-      let id: string;
-      if (demo) {
-        id = crypto.randomUUID();
-        setData((d) => ({
-          ...d,
-          rooms: [
-            {
-              ...input,
-              id,
-              owner_id: userId,
-              member_count: 1,
-              is_member: true,
-              created_at: new Date().toISOString(),
-            },
-            ...d.rooms,
-          ],
-        }));
-      } else {
-        id = await rpc("hub_create_room", { input });
-        await refresh();
-      }
+      const id = await rpc("hub_create_room", { input });
+      await refresh();
       setActiveRoom(id);
       setNotice(
         `${input.kind === "team" ? "Team" : "Bubble"} created. Your discussion room is ready.`,
@@ -392,68 +295,35 @@ export function useHub() {
         )
       )
         return;
-      if (demo)
-        setData((d) => ({
-          ...d,
-          connections: [
-            ...d.connections,
-            {
-              id: crypto.randomUUID(),
-              sender_id: userId,
-              recipient_id: recipient.id,
-              status: "pending",
-            },
-          ],
-        }));
-      else {
-        const { error } = await hubClient()!
-          .from("hub_connections")
-          .insert({ sender_id: userId, recipient_id: recipient.id });
-        if (error) throw new Error(error.message);
-        await refresh();
-      }
+      const { error } = await hubClient()!
+        .from("hub_connections")
+        .insert({ sender_id: userId, recipient_id: recipient.id });
+      if (error) throw new Error(error.message);
+      await refresh();
       setNotice(`Connection request sent to ${recipient.name}.`);
     });
   }
   async function acceptConnection(id: string) {
     await run(async () => {
-      if (demo)
-        setData((d) => ({
-          ...d,
-          connections: d.connections.map((c) =>
-            c.id === id ? { ...c, status: "accepted" } : c,
-          ),
-        }));
-      else {
-        await rpc("hub_accept_connection", { connection: id });
-        await refresh();
-      }
+      await rpc("hub_accept_connection", { connection: id });
+      await refresh();
       setNotice("Connection accepted.");
     });
   }
   async function saveProfile(input: Partial<Student>) {
     await run(async () => {
-      if (demo)
-        setData((d) => ({
-          ...d,
-          students: d.students.map((s) =>
-            s.id === userId ? { ...s, ...input } : s,
-          ),
-        }));
-      else {
-        const payload = {
-          id: userId,
-          ...input,
-          ...(identity.avatar_url && !input.avatar_url
-            ? { avatar_url: identity.avatar_url }
-            : {}),
-        };
-        const { error } = await hubClient()!
-          .from("hub_profiles")
-          .upsert(payload);
-        if (error) throw new Error(error.message);
-        await refresh();
-      }
+      const payload = {
+        id: userId,
+        ...input,
+        ...(identity.avatar_url && !input.avatar_url
+          ? { avatar_url: identity.avatar_url }
+          : {}),
+      };
+      const { error } = await hubClient()!
+        .from("hub_profiles")
+        .upsert(payload);
+      if (error) throw new Error(error.message);
+      await refresh();
       setNotice("Your student profile is saved.");
     });
   }
@@ -470,59 +340,32 @@ export function useHub() {
     cover: File | null,
   ) {
     await run(async () => {
-      let coverPath: string | null = null;
       if (cover) {
         if (
           !["image/png", "image/jpeg", "image/webp"].includes(cover.type) ||
           cover.size > 5 * 1024 * 1024
         )
           throw new Error("Choose a PNG, JPG or WebP image under 5 MB.");
-        if (demo) {
-          coverPath = await new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(String(reader.result));
-            reader.onerror = reject;
-            reader.readAsDataURL(cover);
-          });
-        }
       }
-      if (demo) {
-        const project: Project = {
-          ...input,
-          id: crypto.randomUUID(),
-          owner_id: userId,
-          cover_path: coverPath,
-          status: "pending",
-          created_at: new Date().toISOString(),
-        };
-        setData((d) => ({
-          ...d,
-          projects: [project, ...d.projects],
-          students: d.students.map((s) =>
-            s.id === userId ? { ...s, project_count: s.project_count + 1 } : s,
-          ),
-        }));
-      } else {
-        const form = new FormData();
-        form.set("title", input.title);
-        form.set("description", input.description);
-        form.set("category", input.category);
-        form.set("technologies", JSON.stringify(input.technologies));
-        form.set("repository_url", input.repository_url);
-        form.set("demo_url", input.demo_url);
-        if (cover) form.set("cover", cover);
-        const response = await fetch("/api/hub/projects", {
-          method: "POST",
-          body: form,
-          credentials: "same-origin",
-        });
-        const payload = (await response.json().catch(() => null)) as
-          | { error?: string }
-          | null;
-        if (!response.ok)
-          throw new Error(payload?.error || "The project could not be submitted.");
-        await refresh();
-      }
+      const form = new FormData();
+      form.set("title", input.title);
+      form.set("description", input.description);
+      form.set("category", input.category);
+      form.set("technologies", JSON.stringify(input.technologies));
+      form.set("repository_url", input.repository_url);
+      form.set("demo_url", input.demo_url);
+      if (cover) form.set("cover", cover);
+      const response = await fetch("/api/hub/projects", {
+        method: "POST",
+        body: form,
+        credentials: "same-origin",
+      });
+      const payload = (await response.json().catch(() => null)) as
+        | { error?: string }
+        | null;
+      if (!response.ok)
+        throw new Error(payload?.error || "The project could not be submitted.");
+      await refresh();
       setNotice(
         "Project submitted. It appears on your profile; XP is awarded after approval.",
       );
@@ -530,70 +373,46 @@ export function useHub() {
   }
   async function archiveProject(id: string) {
     await run(async () => {
-      if (demo) {
-        const p = data.projects.find((p) => p.id === id);
-        setData((d) => ({
-          ...d,
-          projects: d.projects.filter((p) => p.id !== id),
-          students: d.students.map((s) =>
-            s.id === userId
-              ? {
-                  ...s,
-                  project_count: Math.max(0, s.project_count - 1),
-                  xp: s.xp - (p?.status === "approved" ? 5 : 0),
-                }
-              : s,
-          ),
-        }));
-      } else {
-        const response = await fetch(
-          `/api/hub/projects/${encodeURIComponent(id)}`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ action: "archive" }),
-            credentials: "same-origin",
-          },
-        );
-        const payload = (await response.json().catch(() => null)) as
-          | { error?: string }
-          | null;
-        if (!response.ok)
-          throw new Error(payload?.error || "The project could not be archived.");
-        await refresh();
-      }
+      const response = await fetch(
+        `/api/hub/projects/${encodeURIComponent(id)}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "archive" }),
+          credentials: "same-origin",
+        },
+      );
+      const payload = (await response.json().catch(() => null)) as
+        | { error?: string }
+        | null;
+      if (!response.ok)
+        throw new Error(payload?.error || "The project could not be archived.");
+      await refresh();
       setNotice("Project archived.");
     });
   }
   async function readNotifications() {
     await run(async () => {
       const date = new Date().toISOString();
-      if (demo)
-        setData((d) => ({
-          ...d,
-          notifications: d.notifications.map((n) => ({ ...n, read_at: date })),
-        }));
-      else {
-        const { error } = await hubClient()!
-          .from("hub_notifications")
-          .update({ read_at: date })
-          .eq("user_id", userId);
-        if (error) throw new Error(error.message);
-        await refresh();
-      }
+      const { error } = await hubClient()!
+        .from("hub_notifications")
+        .update({ read_at: date })
+        .eq("user_id", userId);
+      if (error) throw new Error(error.message);
+      await refresh();
     });
   }
   return {
+    demo: false,
     data,
     userId,
-    demo,
     loading,
     error,
     notice,
     busy,
     messages,
     activeRoom,
-    chatStatus: demo ? "Demo room" : chatStatus,
+    chatStatus,
     hasOlder,
     setActiveRoom,
     setError,

@@ -31,7 +31,11 @@ export interface ProjectPolicy {
   max_projects: number | null;
 }
 
-const DEFAULT_POLICY: ProjectPolicy = { project_xp: 5, max_projects: null };
+function requireSupabase() {
+  const admin = supabaseAdmin();
+  if (!admin) throw new Error('Profile storage is not configured.');
+  return admin;
+}
 
 export function json(body: unknown, status = 200) {
   return NextResponse.json(body, {
@@ -92,44 +96,44 @@ export interface ProfileInfo {
 }
 
 export async function getProfile(userId: string): Promise<ProfileInfo | null> {
-  const admin = supabaseAdmin();
-  if (!admin) return null;
+  const admin = requireSupabase();
   const { data, error } = await admin
     .from('hub_profiles')
     .select('id,name,visibility')
     .eq('id', userId)
     .maybeSingle();
-  if (error || !data) return null;
+  if (error) throw new Error('Your profile could not be loaded. Please retry.');
+  if (!data) return null;
   return data as ProfileInfo;
 }
 
 export async function getVisibilityMap(): Promise<Map<string, string>> {
-  const admin = supabaseAdmin();
+  const admin = requireSupabase();
   const map = new Map<string, string>();
-  if (!admin) return map;
-  const { data } = await admin.from('hub_profiles').select('id,visibility').limit(5000);
+  const { data, error } = await admin.from('hub_profiles').select('id,visibility').limit(5000);
+  if (error) throw new Error('Profile visibility could not be loaded. Please retry.');
   for (const profile of data || []) map.set(String(profile.id), String(profile.visibility));
   return map;
 }
 
 export async function getNames(ids: string[]): Promise<Map<string, string>> {
-  const admin = supabaseAdmin();
+  const admin = requireSupabase();
   const map = new Map<string, string>();
-  if (!admin || !ids.length) return map;
-  const { data } = await admin.from('hub_profiles').select('id,name').in('id', ids);
+  if (!ids.length) return map;
+  const { data, error } = await admin.from('hub_profiles').select('id,name').in('id', ids);
+  if (error) throw new Error('Project owners could not be loaded. Please retry.');
   for (const profile of data || []) map.set(String(profile.id), String(profile.name));
   return map;
 }
 
 export async function getProjectPolicy(): Promise<ProjectPolicy> {
-  const admin = supabaseAdmin();
-  if (!admin) return DEFAULT_POLICY;
-  const { data } = await admin
+  const admin = requireSupabase();
+  const { data, error } = await admin
     .from('hub_policy')
     .select('project_xp,max_projects')
     .eq('id', true)
     .maybeSingle();
-  if (!data) return DEFAULT_POLICY;
+  if (error || !data) throw new Error('Project limits could not be loaded. Please retry.');
   return {
     project_xp: Number(data.project_xp) || 0,
     max_projects: data.max_projects == null ? null : Number(data.max_projects),

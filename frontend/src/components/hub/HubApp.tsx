@@ -659,7 +659,6 @@ export default function HubApp() {
             >
               Retry
             </button>
-            <a href="/hub?demo=1">Open demo</a>
             <button aria-label="Dismiss error" onClick={() => hub.setError("")}>
               <Icon name="Close" size={16} />
             </button>
