@@ -18,5 +18,7 @@ test('a plain administrator sign-in lands on the admin view', () => {
   assert.equal(resolvePostLoginPath(null, false),'/hub');
   assert.equal(resolvePostLoginPath('/dashboard', true),'/dashboard');
   assert.equal(resolvePostLoginPath('/hub', false),'/hub');
-  assert.equal(resolvePostLoginPath('https://evil.example', true),'/hub');
+  assert.equal(resolvePostLoginPath('https://evil.example', true),'/admin');
+  assert.equal(resolvePostLoginPath('/hub', true),'/admin');
+  assert.equal(resolvePostLoginPath('/hub?demo=1', true),'/admin');
 });

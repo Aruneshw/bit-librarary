@@ -609,6 +609,7 @@ export default function HubApp() {
         </nav>
         <div className="hub-sidebar-bottom">
           {hub.isReviewer && <Link className="hub-text-button" href="/hub/review">Review projects</Link>}
+          {hub.isReviewer && <Link className="hub-text-button" href="/admin">Admin terminal</Link>}
           {!demo && <button className="hub-text-button" disabled={busy} onClick={() => act(hub.signOut())}>Sign out</button>}
           <div className="hub-switch">
             <span>QUICK SWITCH</span>

@@ -13,6 +13,7 @@ import AnalyticsCarousel from '@/components/admin/AnalyticsCarousel';
 import PollComposer from '@/components/admin/PollComposer';
 import FeatureNoticeEditor from '@/components/admin/FeatureNoticeEditor';
 import FolderExplorer from '@/components/admin/FolderExplorer';
+import HubSurveillance from '@/components/admin/HubSurveillance';
 
 interface UserProfile {
   id: string;
@@ -581,6 +582,16 @@ export default function AdminDashboard() {
           className="mt-8"
         >
           <AnalyticsCarousel />
+        </motion.div>
+
+        {/* BIT HUB Surveillance */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="mt-8"
+        >
+          <HubSurveillance />
         </motion.div>
 
         <motion.div 

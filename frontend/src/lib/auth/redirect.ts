@@ -13,6 +13,13 @@ export function demoAllowed(environment: string | undefined, enabled: string | u
 }
 /** Choose the landing page after sign-in; a plain administrator sign-in opens the admin view. */
 export function resolvePostLoginPath(requestedNext: string | null | undefined, isAdmin: boolean): string {
-  if (requestedNext) return safeNextPath(requestedNext);
+  if (requestedNext) {
+    const path = safeNextPath(requestedNext);
+    // /hub is what the Hub entry and the session proxy inject automatically.
+    // For an administrator that default must not beat the admin landing, or a
+    // signed-out visit to the site root would drop them into the student Hub.
+    if (isAdmin && (path === '/hub' || path.startsWith('/hub?'))) return '/admin';
+    return path;
+  }
   return isAdmin ? '/admin' : '/hub';
 }

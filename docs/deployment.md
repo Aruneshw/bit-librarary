@@ -47,7 +47,7 @@ private and covers are streamed through an authenticated route. See
 
 ## Supabase schema
 
-Apply the additive migrations in `supabase/migrations` in timestamp order to the existing Library project. The first migration expects the existing `profiles` table. Never reset the live database. Verify the Hub tables, row-level policies, and Realtime publication afterward. The `hub-covers` bucket and `public.hub_projects` objects are legacy and are no longer used by the project UI.
+Apply the additive migrations in `supabase/migrations` in timestamp order to the existing Library project. The first migration expects the existing `profiles` table. Never reset the live database. Verify the Hub tables, row-level policies, and Realtime publication afterward. `20261103090000_bithub_admin_surveillance.sql` grants the ADMIN TERMINAL its Hub superuser (live room telemetry, cross-room logs, room cancellation) and must be applied before administrators use the surveillance panel. The `hub-covers` bucket and `public.hub_projects` objects are legacy and are no longer used by the project UI.
 
 ## Hosting and release
 
