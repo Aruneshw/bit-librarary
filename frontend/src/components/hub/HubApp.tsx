@@ -545,7 +545,9 @@ export default function HubApp() {
                     {p.title}
                   </button>
                 </h3>
-                <span className={`hub-status ${p.status}`}>{p.status}</span>
+                <span className={`hub-status ${p.status}`}>
+                  {p.status === "approved" ? "published" : p.status}
+                </span>
               </div>
               <p>{p.description}</p>
               <Tags items={p.technologies} />
@@ -555,7 +557,7 @@ export default function HubApp() {
                     "Student"}
                 </span>
                 <span className="hub-cyan">
-                  {p.status === "approved" ? "+5 XP" : "Awaiting review"}
+                  {p.status === "approved" ? "+5 XP" : "Not published"}
                 </span>
               </div>
             </div>
@@ -1396,7 +1398,7 @@ export default function HubApp() {
                       Built by students. Shared with everyone.<span>_</span>
                     </h1>
                     <p>
-                      Your work speaks for you. Every approved project earns +5
+                      Your work speaks for you. Every published project earns +5
                       XP.
                     </p>
                   </div>
@@ -1444,7 +1446,7 @@ export default function HubApp() {
                       Build. Share. Rise.<span>_</span>
                     </h1>
                     <p>
-                      +5 XP per approved project. Recognition earned through
+                      +5 XP per published project. Recognition earned through
                       real work.
                     </p>
                   </div>
@@ -1513,7 +1515,7 @@ export default function HubApp() {
                   </div>
                   {!ranked.length && (
                     <p className="hub-empty">
-                      The leaderboard starts with your first approved project.
+                      The leaderboard starts with your first published project.
                     </p>
                   )}
                 </Panel>
@@ -1603,7 +1605,7 @@ export default function HubApp() {
                           </span>
                         </div>
                         <p className="hub-explainer">
-                          Skills are self-declared. Project approval is separate
+                          Skills are self-declared. Project XP is separate
                           from identity or expertise verification.
                         </p>
                       </Panel>
@@ -1663,7 +1665,7 @@ export default function HubApp() {
         <Modal title="Showcase your project" close={() => setModal(null)}>
           <form className="hub-form" onSubmit={(e) => act(submitProject(e))}>
             <p>
-              Share as many projects as you build. Each approved project earns
+              Share as many projects as you build. Each published project earns
               +5 XP once.
             </p>
             <label>
@@ -1734,8 +1736,8 @@ export default function HubApp() {
               />
             </label>
             <p className="hub-explainer">
-              New submissions are pending review. Uploading or editing cannot
-              assign points.
+              Published to the campus showcase the moment you submit, and the
+              XP is awarded once per project.
             </p>
             {hub.error && (
               <p role="alert" className="hub-form-error">

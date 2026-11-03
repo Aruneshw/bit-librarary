@@ -55,6 +55,7 @@ Run once against the Neon database:
 
 ```bash
 psql "$NEON_DATABASE_URL" -v ON_ERROR_STOP=1 -f database/neon_projects.sql
+psql "$NEON_DATABASE_URL" -v ON_ERROR_STOP=1 -f database/neon_auto_publish.sql
 ```
 
 The file creates the `bithub` schema, `bithub.hub_projects`, the

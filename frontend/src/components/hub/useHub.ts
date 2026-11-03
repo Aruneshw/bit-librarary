@@ -519,7 +519,7 @@ export function useHub() {
         throw new Error(payload?.error || "The project could not be submitted.");
       await refreshProjects();
       setNotice(
-        "Project submitted. It appears on your profile; XP is awarded after approval.",
+        "Project published to the campus showcase. Your XP has been added.",
       );
     });
   }

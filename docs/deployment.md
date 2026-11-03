@@ -10,7 +10,7 @@ Frontend:
 - `NEXT_PUBLIC_SUPABASE_URL`: the existing project's API URL.
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: its publishable key (legacy anon fallback remains supported).
 - `SUPABASE_SERVICE_ROLE_KEY`: server-only secret for existing Library/admin APIs, project visibility/profile lookups, and approval notifications. Never prefix this with `NEXT_PUBLIC_`.
-- `NEON_DATABASE_URL`: server-only pooled Neon Postgres connection string for project records and project XP. Apply `database/neon_projects.sql` once, then set this in Vercel. Never prefix it with `NEXT_PUBLIC_`.
+- `NEON_DATABASE_URL`: server-only pooled Neon Postgres connection string for project records and project XP. Apply `database/neon_projects.sql` then `database/neon_auto_publish.sql` once, then set this in Vercel. Never prefix it with `NEXT_PUBLIC_`.
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_ENDPOINT_URL_S3`, `AWS_REGION`: server-only Neon Object Storage credentials pulled by `neon deploy` for the linked branch. Required for project cover uploads.
 - `NEON_STORAGE_BUCKET`: optional bucket name, defaults to `uploads`.
 - `BLOB_READ_WRITE_TOKEN`: optional Vercel Blob token still used by other media uploads (not project covers).
@@ -37,7 +37,7 @@ Rotate the exposed Supabase credential in the project's API-key settings and rep
 ## Neon project storage
 
 BIT HUB projects, project XP, and project covers live in Neon. Apply
-`database/neon_projects.sql` once to the Neon database, then set
+`database/neon_projects.sql` and then `database/neon_auto_publish.sql` once to the Neon database, then set
 `NEON_DATABASE_URL` in the frontend environment. Link the project with the
 Neon CLI (`neon init --project-id ... --branch production --services
 postgres,object-storage`), declare the `uploads` bucket, and run `neon deploy`.

@@ -56,4 +56,4 @@ jobs:
             psql -v ON_ERROR_STOP=1 -f "$migration"
           done
       - run: psql -v ON_ERROR_STOP=1 -f database/tests/hub-integration.sql -f database/tests/hub-review.sql -f database/tests/hub-admin-access.sql -f database/tests/hub-bubble-presence.sql -f database/tests/hub-admin-surveillance.sql -f database/tests/hub-bubble-teams.sql -f database/tests/hub-admin-profile.sql
-      - run: psql -v ON_ERROR_STOP=1 -f database/neon_projects.sql -f database/tests/neon-projects.sql
+      - run: psql -v ON_ERROR_STOP=1 -f database/neon_projects.sql -f database/neon_auto_publish.sql -f database/tests/neon-projects.sql

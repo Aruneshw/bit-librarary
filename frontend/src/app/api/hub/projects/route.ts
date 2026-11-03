@@ -149,16 +149,29 @@ export async function POST(request: Request) {
     }
 
     const technologyJson = JSON.stringify(input.technologies);
+    // Projects publish on submission: the row is created approved and its XP is
+    // awarded in the same statement, so there is no review queue to wait for.
     const [row] = (await sql`
-      insert into bithub.hub_projects
-        (owner_id, title, description, category, technologies,
-         repository_url, demo_url, cover_key)
-      values (
-        ${access.user.id}, ${input.title}, ${input.description}, ${input.category},
-        array(select jsonb_array_elements_text(${technologyJson}::jsonb)),
-        ${input.repository_url}, ${input.demo_url}, ${coverKey}
+      with created as (
+        insert into bithub.hub_projects
+          (owner_id, title, description, category, technologies,
+           repository_url, demo_url, cover_key, status, reviewed_at)
+        values (
+          ${access.user.id}, ${input.title}, ${input.description}, ${input.category},
+          array(select jsonb_array_elements_text(${technologyJson}::jsonb)),
+          ${input.repository_url}, ${input.demo_url}, ${coverKey}, 'approved', now()
+        )
+        returning id, owner_id, title, description, category, technologies,
+                  repository_url, demo_url, cover_url, cover_key, status,
+                  reviewed_at, reviewed_by, created_at
+      ),
+      awarded as (
+        insert into bithub.hub_project_xp (project_id, owner_id, points)
+        select id, owner_id, ${policy.project_xp}::integer from created
+        on conflict (project_id) do update set revoked_at = null
+        returning 1
       )
-      returning ${sql.unsafe(projectColumns)}
+      select ${sql.unsafe(projectColumns)} from created
     `) as ProjectRow[];
     return json({ project: toProject(row) }, 201);
   } catch (error) {

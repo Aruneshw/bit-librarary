@@ -8,7 +8,7 @@ BIT HUB extends the existing Next.js 16 / React 19 / Supabase app. The default e
 - Student profiles with department, college, year, bio, skills, portfolio URL, availability, and campus/private visibility. The Hub public-facing profile never selects email from Library profiles.
 - Discovery by text, skill, year and availability; connection requests and recipient acceptance.
 - Bubble waiting rooms and teams with configurable capacities, atomic joins, automatic host membership, member-only message history, 50-message pagination, live Postgres Changes subscriptions, reconnect history refresh, and message rate limiting.
-- Project title, description, domain, technologies, HTTPS repository/demo links, optional cover image upload to Neon Object Storage, pending/approved/rejected/archive state, portfolio display, and owner archiving. PNG/JPEG/WebP only, up to 5 MB. Project records live in Neon; see [BIT HUB project storage on Neon](NEON_PROJECTS.md).
+- Project title, description, domain, technologies, HTTPS repository/demo links, optional cover image upload to Neon Object Storage, and owner archiving. **Projects publish immediately on submission — there is no approval queue** — and the configured project XP is awarded at that moment, once per project. PNG/JPEG/WebP only, up to 5 MB. Project records live in Neon; see [BIT HUB project storage on Neon](NEON_PROJECTS.md).
 - A trusted project XP ledger in Neon: five points once per approved project (configurable through Supabase `hub_policy`); pending submissions cannot assign XP; reapproval is idempotent; archiving/rejecting revokes points while preserving the ledger row.
 - Leaderboard, stable tie ordering by XP descending/name/ID, notifications, and a Courses entry into the original Library.
 - An explicit interactive demo, with synthetic students/events/projects in `frontend/src/lib/hub/demo.ts`. It uses sessionStorage only and never writes sample data to the database. `?demo=1` enables it in development. Production requires real sign-in unless `NEXT_PUBLIC_HUB_DEMO_ENABLED=true` is explicitly set. New demo projects remain pending and do not create fake approval points.
@@ -22,7 +22,7 @@ From `frontend`, run `npm install` if dependencies are not installed, then `npm 
 
 The Arun Supabase connection now has access to the configured project (`wyczuyicyswcdsrcbfwa`). The collaboration and review/metrics migrations were applied on 2026-11-02. The remaining Hub tables (profiles, rooms, messages, connections, notifications, hackathons) have RLS; messages and notifications are published for Realtime. Local database tests use isolated PostgreSQL 17 with minimal Supabase auth/storage contracts.
 
-Project records, project XP, and cover images have moved out of Supabase. Apply `database/neon_projects.sql` once to the Neon database and set the server-only `NEON_DATABASE_URL`; create the private `uploads` bucket with `neon deploy` and set the `AWS_*` variables. See [Neon project storage](NEON_PROJECTS.md). The legacy `public.hub_projects` table, its RPCs, and the `hub-covers` bucket created by the Supabase migrations are retained for history but are no longer written or read by the BIT HUB project UI.
+Project records, project XP, and cover images have moved out of Supabase. Apply `database/neon_projects.sql` then `database/neon_auto_publish.sql` once to the Neon database and set the server-only `NEON_DATABASE_URL`; create the private `uploads` bucket with `neon deploy` and set the `AWS_*` variables. See [Neon project storage](NEON_PROJECTS.md). The legacy `public.hub_projects` table, its RPCs, and the `hub-covers` bucket created by the Supabase migrations are retained for history but are no longer written or read by the BIT HUB project UI.
 
 Apply the SQL files in `supabase/migrations` in timestamp order once through that project's SQL editor or the team's normal migration process. It is transactional and additive. Do not reset the existing database. The migration expects the existing `public.profiles`, Supabase auth/storage schemas, and Supabase roles. It adds only `hub_*` objects and a `hub_private` internal schema. On a normal Supabase instance it adds messages/notifications to `supabase_realtime`.
 
@@ -33,13 +33,13 @@ Then use two verified `@bitsathy.ac.in` accounts to verify actual sign-in, stora
 `hub_policy` is readable by students but writable only by trusted administrators/service role:
 
 - `max_projects = NULL`: unlimited total projects. Twenty submissions per hour limits bursts. An optional positive total limit can be set without changing the UI.
-- `project_xp = 5`: points awarded on the first approval and recorded in the Neon project ledger. Existing ledger values do not change when policy changes.
+- `project_xp = 5`: points awarded when a project is published (on submission) and recorded in the Neon project ledger. Existing ledger values do not change when the policy changes.
 - `max_room_capacity = 16`, `max_owned_rooms = 20`.
 - `hub_domains`: domain lookup table. The current interface exposes the seven initial domains; add new UI options alongside new domain records.
 
-Trusted reviewers use `/hub/review` to approve or reject pending submissions. Review access requires a confirmed account with server-managed `app_metadata.role = admin` or an existing allowlisted Library administrator email. User-editable metadata cannot grant access. Reviewers cannot approve their own projects; the database records reviewer identity and time. Repeated approvals cannot duplicate points. The review queue displays the oldest 100 submissions and refreshes after each decision. Browser roles have no direct project-update or ledger-write privileges.
+Since projects publish on submission, `/hub/review` normally stays empty. It remains available to administrators (confirmed account with server-managed `app_metadata.role = admin` or an allowlisted Library administrator email) to withdraw a project that breaks the rules; rejection revokes its XP and notifies the owner, and nobody can act on their own projects. User-editable metadata cannot grant access. Browser roles have no direct project-update or ledger-write privileges.
 
-Review the repository URL and evidence before approval. Duplicate active titles per owner and duplicate active repository URLs are rejected. These checks are not semantic plagiarism detection. Trusted reviewers manage `hub_hackathons`; no unverified external events are auto-published.
+Duplicate active titles per owner and duplicate active repository URLs are rejected at submission. These checks are not semantic plagiarism detection. Trusted reviewers manage `hub_hackathons`; no unverified external events are auto-published.
 
 ## Access and limits
 

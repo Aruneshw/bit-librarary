@@ -69,11 +69,11 @@ export default function HubReview() {
     <Link href="/hub" className="hub-text-button">← Back to BIT HUB</Link>
     <section className="hub-panel">
       <div className="hub-panel-heading"><h1>PROJECT REVIEW</h1></div>
-      <p>Review original student work before awarding points. Approvals award the configured project XP once. You cannot review your own projects.</p>
-      <p>Showing the oldest 100 pending submissions. The queue refreshes after each decision.</p>
+      <p>Projects now publish to the campus showcase the moment a student submits them, and their XP is awarded at that point, so there is normally nothing to approve here. Use this page only to withdraw a project that breaks the rules; rejection removes its XP and notifies the owner. You cannot act on your own projects.</p>
+      <p>Showing the oldest 100 submissions still waiting from the retired review flow.</p>
       {error && <p role="alert">{error} <button onClick={() => { setError(''); load().catch(e => setError(e.message)); }}>Retry</button></p>}
       {notice && <p role="status">{notice}</p>}
-      {loading ? <p role="status">Loading submissions…</p> : !error && !projects.length ? <p>No projects are waiting for review.</p> : null}
+      {loading ? <p role="status">Loading submissions…</p> : !error && !projects.length ? <p>Nothing is waiting. New projects are published automatically, so this queue stays empty.</p> : null}
       <div className="hub-review-list">{projects.map(project => <article key={project.id} className="hub-panel">
         <h2>{project.title}</h2><p>{project.owner_name} · {project.category} · {new Date(project.created_at).toLocaleDateString()}</p>
         <p style={{ whiteSpace: 'pre-wrap' }}>{project.description}</p><p>{project.technologies.join(' · ')}</p>
