@@ -3,6 +3,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type FocusEvent,
   type FormEvent,
   type ReactNode,
 } from "react";
@@ -17,6 +18,7 @@ import {
   type Student,
 } from "@/lib/hub/types";
 import { hubClient } from "@/lib/hub/client";
+import { normalizeUrl } from "@/lib/hub/projectValidation";
 import { useHub } from "./useHub";
 import Icon from "./HubIcon";
 import { Avatar, DomainOptions, Globe, Radar, Tags } from "./HubVisuals";
@@ -149,6 +151,14 @@ function HubClock() {
     return () => clearInterval(timer);
   }, []);
   return <span className="hub-clock">{time || "──:──:──"} IST</span>;
+}
+// Students paste "vaanwing.vercel.app" and native URL validation then blocks the
+// whole form with an unhelpful message. Complete the scheme as they leave the field.
+function fixUrlScheme(event: FocusEvent<HTMLInputElement>) {
+  const fixed = normalizeUrl(event.currentTarget.value);
+  if (fixed && fixed !== event.currentTarget.value) {
+    event.currentTarget.value = fixed;
+  }
 }
 function InviteRoomModal({
   student,
@@ -1701,6 +1711,7 @@ export default function HubApp() {
                 pattern="https://.*"
                 placeholder="https://github.com/you/project"
                 maxLength={500}
+                onBlur={fixUrlScheme}
               />
             </label>
             <label>
@@ -1709,8 +1720,9 @@ export default function HubApp() {
                 type="url"
                 name="demo_url"
                 pattern="https://.*"
-                placeholder="https://your-project.com"
+                placeholder="your-project.vercel.app"
                 maxLength={500}
+                onBlur={fixUrlScheme}
               />
             </label>
             <label>

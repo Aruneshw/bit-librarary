@@ -55,6 +55,16 @@ test('rejects non-https links', () => {
   assert.equal(validateProjectInput({ ...valid, demo_url: 'http://example.com' }).ok, false);
 });
 
+test('completes the scheme of a bare host instead of rejecting it', () => {
+  assert.equal(validateProjectInput({ ...valid, demo_url: 'vaanwing.vercel.app' }).value.demo_url, 'https://vaanwing.vercel.app');
+  assert.equal(validateProjectInput({ ...valid, repository_url: 'github.com/me/repo' }).value.repository_url, 'https://github.com/me/repo');
+  assert.equal(validateProjectInput({ ...valid, demo_url: '  VaanWing.vercel.app/path  ' }).value.demo_url, 'https://VaanWing.vercel.app/path');
+  assert.equal(validateProjectInput({ ...valid, demo_url: '' }).value.demo_url, '');
+  // Dangerous or cleartext schemes must never gain https silently.
+  assert.equal(validateProjectInput({ ...valid, demo_url: 'javascript:alert(1)' }).ok, false);
+  assert.equal(validateProjectInput({ ...valid, demo_url: 'http://example.com' }).ok, false);
+});
+
 test('normalizes technologies, removes blanks, and caps the list', () => {
   const result = validateProjectInput({
     ...valid,

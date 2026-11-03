@@ -25,8 +25,20 @@ function text(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+/**
+ * Students paste or type bare hosts ("vaanwing.vercel.app", "github.com/me/repo")
+ * far more often than full URLs, and a scheme-less value fails native browser URL
+ * validation with no useful message. Treat a scheme-less host as https.
+ */
+export function normalizeUrl(value: unknown): string {
+  const raw = text(value);
+  if (!raw) return '';
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) return raw;
+  return `https://${raw.replace(/^\/+/, '')}`;
+}
+
 function httpsUrl(value: unknown): { ok: true; value: string } | { ok: false; error: string } {
-  const url = text(value);
+  const url = normalizeUrl(value);
   if (!url) return { ok: true, value: '' };
   if (url.length > 500 || !HTTPS_RE.test(url)) {
     return { ok: false, error: 'Links must start with https:// and be under 500 characters.' };
